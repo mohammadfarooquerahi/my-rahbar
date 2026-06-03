@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, MessageCircle, Youtube, Instagram } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import Logo from "./Logo";
 
 export default function Footer() {
@@ -20,13 +20,13 @@ export default function Footer() {
                 href="#"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
-                <Instagram size={15} />
+                {/* <Instagram size={15} /> */}
               </a>
               <a
                 href="#"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
-                <Youtube size={15} />
+                {/* <Youtube size={15} /> */}
               </a>
               <a
                 href="mailto:info@myrahbar.com"
