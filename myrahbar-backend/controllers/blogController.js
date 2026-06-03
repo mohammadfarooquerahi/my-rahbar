@@ -48,9 +48,8 @@ const createBlog = async (req, res) => {
   const { title, content, excerpt, category, tags, status } = req.body;
   const featuredImage = req.file ? `/uploads/blogs/${req.file.filename}` : undefined;
 
-  if (!title || !content |
-<truncated 86 bytes>
-egory are required." });
+  if (!title || !content || !category) {
+    return res.status(400).json({ message: "Title, content and category are required." });
   }
 
   const slug = slugify(title, { lower: true, strict: true });

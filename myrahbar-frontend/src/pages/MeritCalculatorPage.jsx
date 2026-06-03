@@ -42,9 +42,297 @@ export default function MeritCalculatorPage() {
 
     const formula = selectedUni.aggregateFormula;
     const agg = calculateAggregate(matric, fsc, testScore, formula);
-    setAggregate
-<truncated 12223 bytes>
-div>
+    setAggregate(agg);
+
+    if (selectedDept?.lastMerit?.length > 0) {
+      const s = getMeritStatus(agg, selectedDept.lastMerit);
+      setStatus(s);
+    } else {
+      setStatus(null);
+    }
+  }, [
+    selectedUniSlug,
+    selectedDeptName,
+    matric,
+    fsc,
+    testScore,
+    selectedUni,
+    selectedDept,
+  ]);
+
+  const statusStyles = {
+    likely: {
+      bg: "bg-green-50",
+      border: "border-green-200",
+      text: "text-green-700",
+      icon: <CheckCircle size={20} className="text-green-600" />,
+    },
+    borderline: {
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      text: "text-orange-700",
+      icon: <AlertCircle size={20} className="text-orange-500" />,
+    },
+    unlikely: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      text: "text-red-700",
+      icon: <AlertCircle size={20} className="text-red-500" />,
+    },
+    unknown: {
+      bg: "bg-slate-50",
+      border: "border-slate-200",
+      text: "text-slate-600",
+      icon: <Info size={20} className="text-slate-400" />,
+    },
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>
+          Merit Calculator — Check Your Admission Chances | MyRahbar
+        </title>
+        <meta
+          name="description"
+          content="Calculate your aggregate percentage for any Karachi university. See if you meet the last closing merit and predict your admission chances."
+        />
+      </Helmet>
+
+      <div className="max-w-3xl mx-auto px-4 py-10">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: "#EFF6FF" }}
+          >
+            <Calculator size={26} style={{ color: "var(--navy)" }} />
+          </div>
+          <h1
+            className="text-3xl font-bold mb-2"
+            style={{ fontFamily: "Sora", color: "var(--navy)" }}
+          >
+            Merit Calculator
+          </h1>
+          <p className="text-slate-500">
+            Enter your results — see your aggregate and admission chances
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
+          {/* Step 1 — Select university */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              1. Select University
+            </label>
+            <select
+              value={selectedUniSlug}
+              onChange={(e) => {
+                setSelectedUniSlug(e.target.value);
+                setSelectedDeptName("");
+              }}
+              className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none bg-white text-slate-700 focus:border-blue-400"
+            >
+              <option value="">— Choose a university —</option>
+              {KARACHI_UNIVERSITIES.map((u) => (
+                <option key={u.id} value={u.slug}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Step 2 — Select department */}
+          {selectedUni && (
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                2. Select Department
+              </label>
+              <select
+                value={selectedDeptName}
+                onChange={(e) => setSelectedDeptName(e.target.value)}
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none bg-white text-slate-700 focus:border-blue-400"
+              >
+                <option value="">— Choose a department —</option>
+                {selectedUni.departments.map((d) => (
+                  <option key={d.name} value={d.name}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Show formula */}
+          {selectedUni && (
+            <div className="mb-6 bg-blue-50 rounded-xl p-4">
+              <p className="text-xs font-medium text-blue-700 mb-2 uppercase tracking-wide">
+                Aggregate Formula for {selectedUni.shortName}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {Object.entries(selectedUni.aggregateFormula).map(
+                  ([key, val]) => (
+                    <span
+                      key={key}
+                      className="text-sm font-medium text-blue-800"
+                      style={{ fontFamily: "DM Mono" }}
+                    >
+                      {key.toUpperCase()} × {(val * 100).toFixed(0)}%
+                    </span>
+                  ),
+                )}
+              </div>
+              <p className="text-xs text-blue-600 mt-1">
+                Test required: {selectedUni.testRequired}
+              </p>
+            </div>
+          )}
+
+          {/* Step 3 — Enter marks */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
+              3. Enter Your Marks
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Matric %
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={matric}
+                  onChange={(e) => setMatric(e.target.value)}
+                  placeholder="e.g. 85"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
+                  style={{ fontFamily: "DM Mono" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  FSc / Intermediate %
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={fsc}
+                  onChange={(e) => setFsc(e.target.value)}
+                  placeholder="e.g. 78"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
+                  style={{ fontFamily: "DM Mono" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Entry Test % (if required)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={testScore}
+                  onChange={(e) => setTest(e.target.value)}
+                  placeholder="e.g. 72"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
+                  style={{ fontFamily: "DM Mono" }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Result box */}
+          {aggregate !== null && (
+            <div className="space-y-4">
+              {/* Aggregate display */}
+              <div
+                className="rounded-2xl p-6 text-center text-white"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--navy), var(--blue))",
+                }}
+              >
+                <p className="text-sm text-blue-200 mb-1 uppercase tracking-wider">
+                  Your Aggregate
+                </p>
+                <p
+                  className="text-5xl font-bold"
+                  style={{ fontFamily: "DM Mono" }}
+                >
+                  {aggregate}%
+                </p>
+                {selectedUni && (
+                  <p className="text-blue-200 text-sm mt-2">
+                    For {selectedUni.shortName}
+                    {selectedDept ? " — " + selectedDept.name : ""}
+                  </p>
+                )}
+              </div>
+
+              {/* Merit status */}
+              {status && status.status !== "unknown" && (
+                <div
+                  className={
+                    "rounded-xl border p-4 flex items-start gap-3 " +
+                    statusStyles[status.status].bg +
+                    " " +
+                    statusStyles[status.status].border
+                  }
+                >
+                  {statusStyles[status.status].icon}
+                  <div>
+                    <p
+                      className={
+                        "font-semibold " + statusStyles[status.status].text
+                      }
+                      style={{ fontFamily: "Sora" }}
+                    >
+                      {status.label}
+                    </p>
+                    <p className="text-sm text-slate-600 mt-0.5">
+                      Last year closing merit was{" "}
+                      <span className="font-medium">
+                        {selectedDept.lastMerit[0].closing}%
+                      </span>
+                      {status.diff !== undefined && (
+                        <span>
+                          {" "}
+                          — you are{" "}
+                          <span className="font-medium">
+                            {Math.abs(status.diff.toFixed(1))}%
+                          </span>{" "}
+                          {status.diff >= 0 ? "above" : "below"} closing merit
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Last merit history */}
+              {selectedDept?.lastMerit?.length > 0 && (
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-3 uppercase tracking-wide">
+                    Closing Merit History
+                  </p>
+                  <div className="flex gap-4">
+                    {selectedDept.lastMerit.map((m) => (
+                      <div key={m.year} className="text-center">
+                        <p
+                          className="text-xl font-bold"
+                          style={{
+                            fontFamily: "DM Mono",
+                            color: "var(--navy)",
+                          }}
+                        >
+                          {m.closing}%
+                        </p>
+                        <p className="text-xs text-slate-500">{m.year}</p>
+                      </div>
                     ))}
                   </div>
                 </div>

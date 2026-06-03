@@ -7,7 +7,7 @@ import AIChatWidget from "./components/common/AIChatWidget";
 // Lazy load every page so one broken page can't crash others
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
-const UniversityDetail = lazy(() => import("./pages/UniversityDetailPage"));
+const UniversityDetailPage = lazy(() => import("./pages/UniversityDetailPage"));
 const FindUniversity = lazy(() => import("./pages/FindUniversityPage"));
 const MeritCalculator = lazy(() => import("./pages/MeritCalculatorPage"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
@@ -19,6 +19,14 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
+const PastPapersPage = lazy(() => import("./pages/PastPapersPage"));
 // const aiRoutes = require("./routes/ai");
 
 function PageLoader() {
@@ -38,7 +46,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/university/:slug" element={<UniversityDetail />} />
+            <Route
+              path="/university/:slug"
+              element={<UniversityDetailPage />}
+            />
             <Route path="/find-university" element={<FindUniversity />} />
             <Route path="/merit-calculator" element={<MeritCalculator />} />
             <Route path="/compare" element={<ComparePage />} />
@@ -50,6 +61,18 @@ export default function App() {
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/register" element={<RegisterPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/past-papers" element={<PastPapersPage />} />
+            <Route
+              path="/university/:slug"
+              element={<UniversityDetailPage />}
+            />
           </Routes>
         </Suspense>
       </main>

@@ -6,7 +6,7 @@ const sendEmail = async ({ to, subject, html }) => {
     const pass = process.env.EMAIL_PASS;
 
     if (!user || !pass || pass === "your_app_password") {
-      console.log("Email skipped â€” Gmail not configured");
+      console.log("Email skipped — Gmail not configured");
       console.log("Would send to:", to);
       console.log("Subject:", subject);
       return true;

@@ -28,7 +28,7 @@ router.post("/book", async (req, res) => {
   });
 });
 
-// GET /api/consult/slots â€” available time slots
+// GET /api/consult/slots — available time slots
 router.get("/slots", (req, res) => {
   const slots = [
     "10:00 AM",

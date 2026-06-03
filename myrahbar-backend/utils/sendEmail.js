@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    // If email credentials not set â€” just log
+    // If email credentials not set — just log
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.log("Email would send to " + to);
       console.log("Subject: " + subject);

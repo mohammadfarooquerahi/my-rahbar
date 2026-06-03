@@ -1,11 +1,12 @@
 const University = require("../models/University");
 const Review = require("../models/Review");
-
 // GET /api/universities
 const getAll = async (req, res) => {
   const { type, city, open } = req.query;
 
-  const filter = { status: "approved" };
+  // FIX: Changed from { status: "approved" } to an empty object
+  // This allows all universities to show on the Home Page regardless of status
+  const filter = {};
   if (type) filter.type = type;
   if (city) filter.city = city;
   if (open === "true") filter.admissionOpen = true;
@@ -21,8 +22,8 @@ const search = async (req, res) => {
   const { q } = req.query;
   if (!q) return res.json({ universities: [] });
 
+  // FIX: Removed the "status: 'approved'" property entirely from the query criteria
   const universities = await University.find({
-    status: "approved",
     $or: [
       { name: { $regex: q, $options: "i" } },
       { shortName: { $regex: q, $options: "i" } },
@@ -34,18 +35,24 @@ const search = async (req, res) => {
   res.json({ universities });
 };
 
+//get uni data
 // GET /api/universities/:slug
 const getOne = async (req, res) => {
-  const university = await University.findOne({
-    slug: req.params.slug,
-    status: "approved",
-  });
+  try {
+    // 1. Remove status: "approved" so it reads your database documents regardless of status flags
+    const university = await University.findOne({
+      slug: req.params.slug.toLowerCase(),
+    });
 
-  if (!university) {
-    return res.status(404).json({ message: "University not found." });
+    if (!university) {
+      return res.status(404).json({ message: "University not found" });
+    }
+
+    // 2. Wrap it inside the object key your frontend explicitly expects!
+    res.json({ university });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  res.json({ university });
 };
 
 // POST /api/universities/:id/reviews
@@ -78,7 +85,7 @@ const addCharge = async (req, res) => {
     return res.status(404).json({ message: "University not found." });
   }
 
-  // Add to first department as example â€” in production handle separately
+  // Add to first department as example — in production handle separately
   res.json({
     message: "Hidden charge submitted. Thank you for helping students!",
   });
@@ -86,14 +93,21 @@ const addCharge = async (req, res) => {
 
 // GET /api/universities/:id/reviews
 const getReviewsByUniversity = async (req, res) => {
-  const reviews = await Review.find({ 
-    universityId: req.params.id, 
-    status: "approved" 
+  const reviews = await Review.find({
+    universityId: req.params.id,
+    status: "approved",
   })
     .sort({ createdAt: -1 })
     .populate("userId", "name profileImage");
-  
+
   res.json({ reviews });
 };
 
-module.exports = { getAll, search, getOne, addReview, addCharge, getReviewsByUniversity };
+module.exports = {
+  getAll,
+  search,
+  getOne,
+  addReview,
+  addCharge,
+  getReviewsByUniversity,
+};

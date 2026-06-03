@@ -38,7 +38,7 @@ startAlertCron();
 // Security headers
 app.use(helmet());
 
-// CORS â€” allow frontend
+// CORS — allow frontend
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -54,7 +54,11 @@ app.use(cookieTracker);
 // Static file serving for uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Rate limiting â€” 100 requests per minute per IP
+// Serve uploaded files as static
+// const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Rate limiting — 100 requests per minute per IP
 const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,

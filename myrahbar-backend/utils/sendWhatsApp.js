@@ -1,6 +1,6 @@
 // WhatsApp message sender
 // We use Twilio WhatsApp API
-// Sign up free at twilio.com â€” get sandbox number for testing
+// Sign up free at twilio.com — get sandbox number for testing
 
 const sendWhatsApp = async (to, message) => {
   try {
@@ -9,7 +9,7 @@ const sendWhatsApp = async (to, message) => {
     const authToken = process.env.TWILIO_TOKEN;
     const from = process.env.TWILIO_WHATSAPP_FROM;
 
-    // If credentials not set â€” just log for now
+    // If credentials not set — just log for now
     if (!accountSid || !authToken || !from) {
       console.log("WhatsApp would send to " + to + ":");
       console.log(message);

@@ -1,10 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { OAuth2Client } = require("google-auth-library");
-const crypto = require("crypto");
 const User = require("../models/User");
-const sendEmail = require("../utils/sendEmail");
-
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT token
 const makeToken = (id) => {
@@ -15,66 +10,66 @@ const makeToken = (id) => {
 
 // POST /api/auth/register
 const register = async (req, res) => {
-  const { identifier, password, termsAccepted } = req.body;
+  const { name, email, whatsapp, password } = req.body;
 
-  if (!identifier || !password) {
-    return res.status(400).json({ message: "Contact identifier and password are required." });
+  if (!name || !email || !whatsapp || !password) {
+    return res.status(400).json({ message: "All fields are required." });
   }
 
-  if (!termsAccepted) {
-    return res.status(400).json({ message: "You must accept the Terms & Conditions." });
-  }
-
-  // Detect if identifier is email or whatsapp
-  const isEmail = identifier.includes("@");
-  const email = isEmail ? identifier.toLowerCase().trim() : undefined;
-  const whatsapp = !isEmail ? identifier.trim() : undefined;
-  const contactMethod = isEmail ? "email" : "whatsapp";
-
-  // Check if user exists
-  const existing = await User.findOne(isEmail ? { email } : { whatsapp });
+  const existing = await User.findOne({ email });
   if (existing) {
-    return res.status(400).json({ message: "An account with this contact already exists." });
+    return res
+      .status(400)
+      .json({ message: "An account with this email already exists." });
   }
 
-  const user = await User.create({ 
-    email, 
-    wha
-<truncated 4136 bytes>
- = Date.now() + 30 * 60 * 1000; // 30 minutes
-  await user.save({ validateBeforeSave: false });
+  const user = await User.create({ name, email, whatsapp, password });
+  const token = makeToken(user._id);
 
-  // In a real scenario, send email or whatsapp here
-  // const resetUrl = \`\${process.env.CLIENT_URL}/reset-password/\${resetToken}\`;
-  
-  res.json({ message: "Password reset instructions sent." });
+  res.status(201).json({
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      whatsapp: user.whatsapp,
+      role: user.role,
+    },
+  });
 };
 
-// POST /api/auth/reset-password
-const resetPassword = async (req, res) => {
-  const { token, password } = req.body;
+// POST /api/auth/login
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
-  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-  const user = await User.findOne({
-    resetPasswordToken: hashedToken,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-
-  if (!user) {
-    return res.status(400).json({ message: "Token is invalid or has expired." });
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
   }
 
-  user.password = password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    return res.status(401).json({ message: "Invalid email or password." });
+  }
 
-  const jwtToken = makeToken(user._id);
-  
+  const match = await user.checkPassword(password);
+  if (!match) {
+    return res.status(401).json({ message: "Invalid email or password." });
+  }
+
+  const token = makeToken(user._id);
+
   res.json({
-    token: jwtToken,
-    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      whatsapp: user.whatsapp,
+      role: user.role,
+      profile: user.profile,
+    },
   });
 };
 
@@ -99,4 +94,4 @@ const updateProfile = async (req, res) => {
   res.json({ user });
 };
 
-module.exports = { register, login, googleSignIn, forgotPassword, resetPassword, getMe, updateProfile };
+module.exports = { register, login, getMe, updateProfile };

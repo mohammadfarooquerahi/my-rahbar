@@ -2,12 +2,6 @@ const University = require("../models/University");
 const Review = require("../models/Review");
 const Booking = require("../models/ConsultingBooking");
 const User = require("../models/User");
-const Blog = require("../models/Blog");
-const PastPaper = require("../models/PastPaper");
-const ErrorLog = require("../models/ErrorLog");
-const CookieConsent = require("../models/CookieConsent");
-const xlsx = require("xlsx");
-const slugify = require("slugify");
 
 // GET all universities (any status)
 const getAllUnis = async (req, res) => {
@@ -40,53 +34,62 @@ const rejectUni = async (req, res) => {
   res.json({ university: uni, message: "University rejected." });
 };
 
-// GET all reviews (
-<truncated 3811 bytes>
-ls ? row.degreeLevels.split(",").map(s => s.trim()) : [],
-      };
-
-      const existing = await University.findOne({ slug });
-      if (existing) {
-        await University.findByIdAndUpdate(existing._id, uniData);
-        updatedCount++;
-      } else {
-        await University.create(uniData);
-        addedCount++;
-      }
-    }
-
-    res.json({ 
-      message: "Excel data processed successfully.",
-      added: addedCount,
-      updated: updatedCount 
-    });
-  } catch (error) {
-    console.error("Excel processing error:", error);
-    res.status(500).json({ message: "Failed to process Excel file." });
-  }
+// GET all reviews (pending first)
+const getAllReviews = async (req, res) => {
+  const reviews = await Review.find({})
+    .sort({ createdAt: -1 })
+    .populate("userId", "name email")
+    .populate("universityId", "name shortName");
+  res.json({ reviews });
 };
 
-// GET error logs
-const getErrorLogs = async (req, res) => {
-  const logs = await ErrorLog.find({}).sort({ createdAt: -1 }).populate("userId", "name email");
-  res.json(logs);
-};
-
-// Resolve error
-const resolveError = async (req, res) => {
-  const log = await ErrorLog.findByIdAndUpdate(
+// Approve review
+const approveReview = async (req, res) => {
+  const review = await Review.findByIdAndUpdate(
     req.params.id,
-    { isResolved: true, resolvedAt: new Date(), resolvedBy: req.user._id },
-    { new: true }
+    { status: "approved" },
+    { new: true },
   );
-  if (!log) return res.status(404).json({ message: "Error log not found." });
-  res.json({ message: "Error resolved.", log });
+  if (!review) return res.status(404).json({ message: "Review not found." });
+
+  // Update university rating
+  const allApproved = await Review.find({
+    universityId: review.universityId,
+    status: "approved",
+  });
+  if (allApproved.length > 0) {
+    const avg =
+      allApproved.reduce((sum, r) => sum + r.rating, 0) / allApproved.length;
+    await University.findByIdAndUpdate(review.universityId, {
+      overallRating: Math.round(avg * 10) / 10,
+      reviewCount: allApproved.length,
+    });
+  }
+
+  res.json({ review, message: "Review approved." });
 };
 
-// GET user tracking data
-const getUserTracking = async (req, res) => {
-  const tracking = await CookieConsent.find({}).sort({ lastActive: -1 }).populate("userId", "name email");
-  res.json(tracking);
+// Reject review
+const rejectReview = async (req, res) => {
+  const review = await Review.findByIdAndUpdate(
+    req.params.id,
+    { status: "rejected" },
+    { new: true },
+  );
+  if (!review) return res.status(404).json({ message: "Review not found." });
+  res.json({ review, message: "Review rejected." });
+};
+
+// GET all bookings
+const getAllBookings = async (req, res) => {
+  const bookings = await Booking.find({}).sort({ createdAt: -1 });
+  res.json({ bookings });
+};
+
+// GET all users
+const getAllUsers = async (req, res) => {
+  const users = await User.find({}).select("-password").sort({ createdAt: -1 });
+  res.json({ users });
 };
 
 module.exports = {
@@ -98,9 +101,4 @@ module.exports = {
   rejectReview,
   getAllBookings,
   getAllUsers,
-  getDashboardStats,
-  uploadExcel,
-  getErrorLogs,
-  resolveError,
-  getUserTracking,
 };

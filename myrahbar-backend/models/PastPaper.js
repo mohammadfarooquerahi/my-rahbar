@@ -2,18 +2,25 @@ const mongoose = require("mongoose");
 
 const pastPaperSchema = new mongoose.Schema(
   {
-    university: { type: mongoose.Schema.Types.ObjectId, ref: "University", required: true },
+    universityId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "University",
+      required: true,
+    },
     universityName: { type: String, required: true },
-    year: { type: Number, required: true },
+    universitySlug: { type: String, required: true },
     subject: { type: String, required: true },
-    degreeLevel: { type: String },
+    year: { type: Number, required: true },
+    degreeLevel: { type: String, default: "Bachelors" },
     fileUrl: { type: String, required: true },
     fileName: { type: String, required: true },
-    fileType: { type: String },
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    fileSize: { type: String, default: "" },
+    isFree: { type: Boolean, default: true },
+    downloadCount: { type: Number, default: 0 },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("PastPaper", pastPaperSchema);

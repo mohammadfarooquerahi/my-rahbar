@@ -10,24 +10,14 @@ const {
   rejectReview,
   getAllBookings,
   getAllUsers,
-  getDashboardStats,
-  uploadExcel,
-  getErrorLogs,
-  resolveError,
-  getUserTracking,
 } = require("../controllers/adminController");
 const { protect, adminOnly } = require("../middleware/auth");
-const { uploadExcel: uploadExcelMiddleware } = require("../config/multer");
 
 router.use(protect);
 router.use(adminOnly);
 
-// Dashboard Stats
-router.get("/dashboard", getDashboardStats);
-
 // Universities
 router.get("/universities", getAllUnis);
-router.post("/upload-excel", uploadExcelMiddleware.single("file"), uploadExcel);
 router.post("/universities", async (req, res) => {
   try {
     const uni = await University.create(req.body);
@@ -61,10 +51,5 @@ router.put("/reviews/:id/reject", rejectReview);
 // Bookings and users
 router.get("/bookings", getAllBookings);
 router.get("/users", getAllUsers);
-router.get("/user-tracking", getUserTracking);
-
-// Error Logs
-router.get("/error-logs", getErrorLogs);
-router.put("/error-logs/:id/resolve", resolveError);
 
 module.exports = router;

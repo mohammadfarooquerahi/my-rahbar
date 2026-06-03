@@ -1,3 +1,1183 @@
+import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Shield,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Users,
+  BookOpen,
+  MessageSquare,
+  Plus,
+  Edit2,
+  Trash2,
+  Save,
+  X,
+  LogOut,
+  Eye,
+  Bell,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+} from "lucide-react";
+
+import { useAuthStore } from "../store";
+
+const TABS = [
+  "Dashboard",
+  "Universities",
+  "Add University",
+  "Upload Excel",
+  "Reviews",
+  "Error Logs",
+  "Past Papers",
+  "Blogs",
+  "News",
+];
+
+const EMPTY_UNI = {
+  name: "",
+  slug: "",
+  shortName: "",
+  type: "government",
+  city: "Karachi",
+  established: "",
+  website: "",
+  admissionOpen: true,
+  admissionDeadline: "",
+  testRequired: "",
+  admissionFee: "",
+  hostelAvailable: false,
+  hostelFee: "",
+  messFee: "",
+  aggregateFormula: { matric: 0.1, fsc: 0.4, test: 0.5 },
+  scholarships: "",
+  requiredDocuments: "",
+  departments: [],
+};
+
+const EMPTY_DEPT = {
+  name: "",
+  category: "CS",
+  semesterFee: "",
+  seats: { merit: 0, selfFinance: 0 },
+  lastMerit: [{ year: 2024, closing: "" }],
+};
+
+export default function AdminPage() {
+  const { user, isLoggedIn, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("Universities");
+  const [unis, setUnis] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editingUni, setEditingUni] = useState(null);
+  const [uniForm, setUniForm] = useState(EMPTY_UNI);
+  const [deptForm, setDeptForm] = useState(EMPTY_DEPT);
+  const [departments, setDepartments] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [expandedUni, setExpandedUni] = useState(null);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [errorLogs, setErrorLogs] = useState([]);
+  const [excelFile, setExcelFile] = useState(null);
+  const [pastPapers, setPastPapers] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [news, setNews] = useState([]);
+  const [paperForm, setPaperForm] = useState({
+    universityId: "",
+    year: "2024",
+    subject: "",
+    degreeLevel: "Bachelors",
+    file: null,
+  });
+  const [blogForm, setBlogForm] = useState({
+    title: "",
+    content: "",
+    category: "Guide",
+    file: null,
+  });
+  const [newsForm, setNewsForm] = useState({
+    title: "",
+    content: "",
+    type: "news",
+    priority: "medium",
+    isActive: true,
+    expiresAt: "",
+  });
+
+  const token = JSON.parse(localStorage.getItem("rahbar-auth") || "{}")?.state
+    ?.token;
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + token,
+  };
+
+  const handleUploadPaper = async (e) => {
+    e.preventDefault();
+    if (!paperForm.file) return showMsg("File is required");
+    const formData = new FormData();
+    formData.append("universityId", paperForm.universityId);
+    formData.append("year", paperForm.year);
+    formData.append("subject", paperForm.subject);
+    formData.append("degreeLevel", paperForm.degreeLevel);
+    formData.append("file", paperForm.file);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/pastpapers/upload", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg("Past paper uploaded");
+      setPaperForm({
+        universityId: "",
+        year: "2024",
+        subject: "",
+        degreeLevel: "Bachelors",
+        file: null,
+      });
+      loadData();
+    } catch (err) {
+      showMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUploadBlog = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", blogForm.title);
+    formData.append("content", blogForm.content);
+    formData.append("category", blogForm.category);
+    formData.append("status", "published");
+    if (blogForm.file) formData.append("featuredImage", blogForm.file);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/blogs", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg("Blog created");
+      setBlogForm({ title: "", content: "", category: "Guide", file: null });
+      loadData();
+    } catch (err) {
+      showMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateNews = async () => {
+    if (!newsForm.title.trim() || !newsForm.content.trim())
+      return showMsg("Title and content are required.");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(newsForm),
+      });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg("News created successfully");
+      setNewsForm({
+        title: "",
+        content: "",
+        type: "news",
+        priority: "medium",
+        isActive: true,
+        expiresAt: "",
+      });
+      loadData();
+    } catch (err) {
+      showMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateNews = async () => {
+    if (!newsForm.title.trim() || !newsForm.content.trim())
+      return showMsg("Title and content are required.");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/news/" + newsForm._id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(newsForm),
+      });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg("News updated successfully");
+      setNewsForm({
+        title: "",
+        content: "",
+        type: "news",
+        priority: "medium",
+        isActive: true,
+        expiresAt: "",
+      });
+      loadData();
+    } catch (err) {
+      showMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleNewsActive = async (item) => {
+    try {
+      const res = await fetch("/api/news/" + item._id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ isActive: !item.isActive }),
+      });
+      if (!res.ok) throw new Error("Toggle failed");
+      showMsg(item.isActive ? "Unpublished" : "Published");
+      loadData();
+    } catch {
+      showMsg("Failed to toggle status.");
+    }
+  };
+
+  const handleDeleteNews = async (id) => {
+    if (!window.confirm("Delete this news item?")) return;
+    try {
+      const res = await fetch("/api/news/" + id, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token },
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      showMsg("News deleted");
+      loadData();
+    } catch {
+      showMsg("Failed to delete.");
+    }
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isLoggedIn) {
+        navigate("/auth/login");
+        return;
+      }
+      if (user?.role !== "admin") navigate("/");
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isLoggedIn, user, navigate]);
+
+  useEffect(() => {
+    loadData();
+  }, [activeTab]);
+
+  const showMsg = (text) => {
+    setMsg(text);
+    setTimeout(() => setMsg(""), 3000);
+  };
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      if (activeTab === "Universities") {
+        const res = await fetch("/api/admin/universities", { headers });
+        const data = await res.json();
+        setUnis(data.universities || []);
+      }
+      if (activeTab === "Reviews") {
+        const res = await fetch("/api/admin/reviews", { headers });
+        const data = await res.json();
+        setReviews(data.reviews || []);
+      }
+      if (activeTab === "Dashboard") {
+        const res = await fetch("/api/admin/dashboard", { headers });
+        const data = await res.json();
+        setDashboardStats(data);
+      }
+      if (activeTab === "Error Logs") {
+        const res = await fetch("/api/admin/error-logs", { headers });
+        const data = await res.json();
+        setErrorLogs(data || []);
+      }
+      if (activeTab === "Past Papers") {
+        const res = await fetch("/api/pastpapers", { headers });
+        const data = await res.json();
+        setPastPapers(data || []);
+      }
+      if (activeTab === "Blogs") {
+        const res = await fetch("/api/blogs", { headers });
+        const data = await res.json();
+        setBlogs(data.blogs || []);
+      }
+      if (activeTab === "News") {
+        const res = await fetch("/api/news", { headers });
+        const data = await res.json();
+        setNews(data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // University actions
+  const approveUni = async (id) => {
+    await fetch("/api/admin/universities/" + id + "/approve", {
+      method: "PUT",
+      headers,
+    });
+    showMsg("University approved and is now live");
+    loadData();
+  };
+
+  const rejectUni = async (id) => {
+    await fetch("/api/admin/universities/" + id + "/reject", {
+      method: "PUT",
+      headers,
+    });
+    showMsg("University rejected");
+    loadData();
+  };
+
+  const deleteUni = async (id) => {
+    if (!window.confirm("Delete this university?")) return;
+    await fetch("/api/admin/universities/" + id, { method: "DELETE", headers });
+    showMsg("University deleted");
+    loadData();
+  };
+
+  // Start editing a university
+  const startEdit = (uni) => {
+    setEditingUni(uni._id);
+    setUniForm({
+      name: uni.name,
+      slug: uni.slug,
+      shortName: uni.shortName,
+      type: uni.type,
+      city: uni.city,
+      established: uni.established,
+      website: uni.website,
+      admissionOpen: uni.admissionOpen,
+      admissionDeadline: uni.admissionDeadline
+        ? new Date(uni.admissionDeadline).toISOString().split("T")[0]
+        : "",
+      testRequired: uni.testRequired,
+      admissionFee: uni.admissionFee,
+      hostelAvailable: uni.hostelAvailable,
+      hostelFee: uni.hostelFee || "",
+      messFee: uni.messFee || "",
+      aggregateFormula: uni.aggregateFormula,
+      scholarships: uni.scholarships?.join(", ") || "",
+      requiredDocuments: uni.requiredDocuments?.join(", ") || "",
+    });
+    setDepartments(uni.departments || []);
+    setActiveTab("Add University");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Save university (create or update)
+  const saveUniversity = async () => {
+    if (!uniForm.name || !uniForm.slug || !uniForm.shortName) {
+      showMsg("Name, slug and short name are required");
+      return;
+    }
+
+    const payload = {
+      ...uniForm,
+      established: parseInt(uniForm.established) || 0,
+      admissionFee: parseInt(uniForm.admissionFee) || 0,
+      hostelFee: parseInt(uniForm.hostelFee) || null,
+      messFee: parseInt(uniForm.messFee) || null,
+      scholarships: uniForm.scholarships
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      requiredDocuments: uniForm.requiredDocuments
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      departments,
+      status: "approved",
+    };
+
+    try {
+      let res;
+      if (editingUni) {
+        res = await fetch("/api/admin/universities/" + editingUni, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await fetch("/api/admin/universities", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload),
+        });
+      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showMsg(
+        editingUni
+          ? "University updated successfully"
+          : "University added successfully",
+      );
+      setUniForm(EMPTY_UNI);
+      setDepartments([]);
+      setEditingUni(null);
+      setActiveTab("Universities");
+      loadData();
+    } catch (err) {
+      showMsg("Error: " + err.message);
+    }
+  };
+
+  // Add department to list
+  const addDepartment = () => {
+    if (!deptForm.name) {
+      showMsg("Department name is required");
+      return;
+    }
+    setDepartments((prev) => [
+      ...prev,
+      {
+        ...deptForm,
+        semesterFee: parseInt(deptForm.semesterFee) || 0,
+        seats: {
+          merit: parseInt(deptForm.seats.merit) || 0,
+          selfFinance: parseInt(deptForm.seats.selfFinance) || 0,
+        },
+        lastMerit: deptForm.lastMerit[0].closing
+          ? [
+              {
+                year: parseInt(deptForm.lastMerit[0].year),
+                closing: parseFloat(deptForm.lastMerit[0].closing),
+              },
+            ]
+          : [],
+      },
+    ]);
+    setDeptForm(EMPTY_DEPT);
+    showMsg("Department added");
+  };
+
+  const removeDept = (index) => {
+    setDepartments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Review actions
+  const approveReview = async (id) => {
+    await fetch("/api/admin/reviews/" + id + "/approve", {
+      method: "PUT",
+      headers,
+    });
+    showMsg("Review approved");
+    loadData();
+  };
+
+  const rejectReview = async (id) => {
+    await fetch("/api/admin/reviews/" + id + "/reject", {
+      method: "PUT",
+      headers,
+    });
+    showMsg("Review rejected");
+    loadData();
+  };
+
+  const statusBadge = (status) => {
+    const map = {
+      pending: "bg-yellow-100 text-yellow-700",
+      approved: "bg-green-100 text-green-700",
+      rejected: "bg-red-100 text-red-700",
+    };
+    return (
+      <span
+        className={
+          "text-xs font-medium px-2 py-0.5 rounded-full " +
+          (map[status] || map.pending)
+        }
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const handleExcelUpload = async (e) => {
+    e.preventDefault();
+    if (!excelFile) {
+      showMsg("Please select an Excel file first");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", excelFile);
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/upload-excel", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showMsg(`Successfully processed ${data.universitiesAdded} universities!`);
+      setExcelFile(null);
+      e.target.reset();
+    } catch (err) {
+      showMsg("Error uploading Excel: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateFormula = (key, val) => {
+    setUniForm((prev) => ({
+      ...prev,
+      aggregateFormula: {
+        ...prev.aggregateFormula,
+        [key]: parseFloat(val) || 0,
+      },
+    }));
+  };
+
+  if (!isLoggedIn || user?.role !== "admin") return null;
+
+  return (
+    <>
+      <Helmet>
+        <title>Admin Panel | MyRahbar</title>
+      </Helmet>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
+              style={{ background: "var(--navy)" }}
+            >
+              <Shield size={18} />
+            </div>
+            <div>
+              <h1
+                className="text-2xl font-bold"
+                style={{ fontFamily: "Sora", color: "var(--navy)" }}
+              >
+                Admin Panel
+              </h1>
+              <p className="text-slate-500 text-sm">
+                Logged in as {user?.name}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              to="/"
+              className="text-sm text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50"
+            >
+              View Site
+            </Link>
+            <button
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+              className="flex items-center gap-1.5 text-sm text-red-500 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50"
+            >
+              <LogOut size={13} /> Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Success message */}
+        {msg && (
+          <div className="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
+            {msg}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            {
+              label: "Universities",
+              value: unis.length,
+              icon: <BookOpen size={16} />,
+              color: "text-blue-600 bg-blue-50",
+            },
+            {
+              label: "Pending",
+              value: unis.filter((u) => u.status === "pending").length,
+              icon: <Clock size={16} />,
+              color: "text-orange-600 bg-orange-50",
+            },
+            {
+              label: "Reviews",
+              value: reviews.length,
+              icon: <MessageSquare size={16} />,
+              color: "text-green-600 bg-green-50",
+            },
+            {
+              label: "Bookings",
+              value: bookings.length,
+              icon: <Users size={16} />,
+              color: "text-purple-600 bg-purple-50",
+            },
+          ].map((s, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl border border-slate-200 p-4"
+            >
+              <div
+                className={
+                  "w-8 h-8 rounded-xl flex items-center justify-center mb-2 " +
+                  s.color
+                }
+              >
+                {s.icon}
+              </div>
+              <p
+                className="text-2xl font-bold"
+                style={{ fontFamily: "Sora", color: "var(--navy)" }}
+              >
+                {s.value}
+              </p>
+              <p className="text-xs text-slate-500">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-5 flex-wrap">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                if (tab !== "Add University") {
+                  setEditingUni(null);
+                  setUniForm(EMPTY_UNI);
+                  setDepartments([]);
+                }
+              }}
+              className={
+                "px-4 py-2 text-sm font-medium rounded-xl border transition-colors " +
+                (activeTab === tab
+                  ? "border-blue-500 bg-blue-50 text-blue-700"
+                  : "border-slate-200 text-slate-600 hover:bg-slate-50")
+              }
+            >
+              {tab === "Add University" && (
+                <Plus size={13} className="inline mr-1" />
+              )}
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* ===== DASHBOARD TAB ===== */}
+        {activeTab === "Dashboard" && dashboardStats && (
+          <div className="space-y-6">
+            <h2
+              className="text-xl font-bold"
+              style={{ fontFamily: "Sora", color: "var(--navy)" }}
+            >
+              System Overview
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                <p className="text-3xl font-black text-blue-600 mb-2">
+                  {dashboardStats.totalUsers}
+                </p>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
+                  Total Users
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                <p className="text-3xl font-black text-green-600 mb-2">
+                  {dashboardStats.totalReviews}
+                </p>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
+                  Total Reviews
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                <p className="text-3xl font-black text-purple-600 mb-2">
+                  {dashboardStats.totalBookings}
+                </p>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
+                  Consult Bookings
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                <p className="text-3xl font-black text-red-600 mb-2">
+                  {dashboardStats.totalErrors}
+                </p>
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
+                  Logged Errors
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== UPLOAD EXCEL TAB ===== */}
+        {activeTab === "Upload Excel" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 max-w-xl mx-auto mt-10">
+            <h2
+              className="text-xl font-bold mb-2"
+              style={{ fontFamily: "Sora", color: "var(--navy)" }}
+            >
+              Upload University Excel Data
+            </h2>
+            <p className="text-sm text-slate-500 mb-6">
+              Bulk import universities and departments using the official
+              MyRahbar Excel template.
+            </p>
+
+            <form onSubmit={handleExcelUpload} className="space-y-6">
+              <div className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:bg-slate-50 transition-colors">
+                <input
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={(e) => setExcelFile(e.target.files[0])}
+                  className="hidden"
+                  id="excel-upload"
+                />
+                <label
+                  htmlFor="excel-upload"
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                    <BookOpen size={24} />
+                  </div>
+                  <span className="text-sm font-semibold text-blue-600 hover:underline">
+                    Select Excel File
+                  </span>
+                  <span className="text-xs text-slate-400 mt-2">
+                    {excelFile ? excelFile.name : "No file selected"}
+                  </span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !excelFile}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition disabled:opacity-50 flex justify-center items-center gap-2"
+              >
+                {loading ? (
+                  "Processing..."
+                ) : (
+                  <>
+                    <Save size={18} /> Process Import
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ===== ERROR LOGS TAB ===== */}
+        {activeTab === "Error Logs" && (
+          <div className="space-y-4">
+            <h2
+              className="text-xl font-bold mb-4"
+              style={{ fontFamily: "Sora", color: "var(--navy)" }}
+            >
+              System Error Logs
+            </h2>
+            {loading ? (
+              <p>Loading...</p>
+            ) : errorLogs.length === 0 ? (
+              <p className="text-slate-500">No errors logged.</p>
+            ) : (
+              errorLogs.map((err) => (
+                <div
+                  key={err._id}
+                  className="bg-white p-4 rounded-xl border border-red-200 border-l-4 border-l-red-500 flex justify-between items-start"
+                >
+                  <div>
+                    <h4 className="font-bold text-red-700">{err.message}</h4>
+                    <p className="text-xs text-slate-500 font-mono mt-1">
+                      {err.route} • {new Date(err.timestamp).toLocaleString()}
+                    </p>
+                    {err.stack && (
+                      <pre className="text-[10px] text-slate-400 mt-2 max-h-24 overflow-y-auto bg-slate-50 p-2 rounded">
+                        {err.stack}
+                      </pre>
+                    )}
+                  </div>
+                  <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                    Unresolved
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* ===== UNIVERSITIES TAB ===== */}
+        {activeTab === "Universities" && (
+          <div className="space-y-3">
+            {loading && (
+              <p className="text-center text-slate-400 py-10">Loading...</p>
+            )}
+            {!loading && unis.length === 0 && (
+              <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
+                <BookOpen size={36} className="mx-auto mb-3 text-slate-300" />
+                <p className="text-slate-500 mb-4">No universities yet</p>
+                <button
+                  onClick={() => setActiveTab("Add University")}
+                  className="text-sm font-medium text-white px-4 py-2 rounded-xl"
+                  style={{ background: "var(--navy)" }}
+                >
+                  Add First University
+                </button>
+              </div>
+            )}
+
+            {unis.map((uni) => (
+              <div
+                key={uni._id}
+                className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
+              >
+                {/* University row */}
+                <div className="flex items-center justify-between gap-4 p-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0"
+                      style={{ background: "var(--navy)" }}
+                    >
+                      {uni.shortName?.slice(0, 2)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-800 truncate">
+                        {uni.name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        {statusBadge(uni.status)}
+                        <span className="text-xs text-slate-400 capitalize">
+                          {uni.type}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          {uni.departments?.length || 0} depts
+                        </span>
+                        {uni.admissionOpen ? (
+                          <span className="text-xs text-green-600">● Open</span>
+                        ) : (
+                          <span className="text-xs text-red-500">● Closed</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                    {uni.status === "pending" && (
+                      <>
+                        <button
+                          onClick={() => approveUni(uni._id)}
+                          className="text-xs font-medium text-green-700 bg-green-100 px-3 py-1.5 rounded-lg hover:bg-green-200"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => rejectUni(uni._id)}
+                          className="text-xs font-medium text-red-600 bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => startEdit(uni)}
+                      className="flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100"
+                    >
+                      <Edit2 size={12} /> Edit
+                    </button>
+                    <Link
+                      to={"/university/" + uni.slug}
+                      target="_blank"
+                      className="p-1.5 text-slate-400 hover:text-blue-600"
+                    >
+                      <Eye size={15} />
+                    </Link>
+                    <button
+                      onClick={() => deleteUni(uni._id)}
+                      className="p-1.5 text-slate-400 hover:text-red-500"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setExpandedUni(expandedUni === uni._id ? null : uni._id)
+                      }
+                      className="p-1.5 text-slate-400"
+                    >
+                      {expandedUni === uni._id ? (
+                        <ChevronUp size={15} />
+                      ) : (
+                        <ChevronDown size={15} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Expanded departments view */}
+                {expandedUni === uni._id && (
+                  <div className="border-t border-slate-100 px-4 pb-4 pt-3 bg-slate-50">
+                    <p className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">
+                      Departments
+                    </p>
+                    {uni.departments?.length === 0 && (
+                      <p className="text-xs text-slate-400">
+                        No departments added yet
+                      </p>
+                    )}
+                    <div className="grid gap-2">
+                      {uni.departments?.map((d, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between bg-white rounded-xl px-3 py-2 text-sm"
+                        >
+                          <span className="font-medium text-slate-700">
+                            {d.name}
+                          </span>
+                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                            <span>
+                              Fee: PKR {d.semesterFee?.toLocaleString()}
+                            </span>
+                            <span>Merit seats: {d.seats?.merit}</span>
+                            {d.lastMerit?.[0] && (
+                              <span>Last merit: {d.lastMerit[0].closing}%</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ===== ADD / EDIT UNIVERSITY TAB ===== */}
+        {activeTab === "Add University" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2
+              className="text-lg font-bold text-slate-800 mb-5"
+              style={{ fontFamily: "Sora" }}
+            >
+              {editingUni ? "Edit University" : "Add New University"}
+            </h2>
+
+            <div className="space-y-5">
+              {/* Basic info */}
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
+                  Basic Information
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      University Full Name *
+                    </label>
+                    <input
+                      value={uniForm.name}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, name: e.target.value }))
+                      }
+                      placeholder="e.g. University of Karachi"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Short Name *
+                    </label>
+                    <input
+                      value={uniForm.shortName}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, shortName: e.target.value }))
+                      }
+                      placeholder="e.g. UoK"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      URL Slug * (no spaces, use dashes)
+                    </label>
+                    <input
+                      value={uniForm.slug}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          slug: e.target.value
+                            .toLowerCase()
+                            .replace(/\s+/g, "-"),
+                        }))
+                      }
+                      placeholder="e.g. university-of-karachi"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Type
+                    </label>
+                    <select
+                      value={uniForm.type}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, type: e.target.value }))
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none bg-white focus:border-blue-400"
+                    >
+                      <option value="government">Government</option>
+                      <option value="private">Private</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      City
+                    </label>
+                    <input
+                      value={uniForm.city}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, city: e.target.value }))
+                      }
+                      placeholder="Karachi"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Established Year
+                    </label>
+                    <input
+                      type="number"
+                      value={uniForm.established}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          established: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. 1951"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Official Website
+                    </label>
+                    <input
+                      value={uniForm.website}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, website: e.target.value }))
+                      }
+                      placeholder="https://university.edu.pk"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Entry Test Required
+                    </label>
+                    <input
+                      value={uniForm.testRequired}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          testRequired: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. NTS / ECAT / Own Test"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Admission info */}
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
+                  Admission Details
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Admission Deadline
+                    </label>
+                    <input
+                      type="date"
+                      value={uniForm.admissionDeadline}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          admissionDeadline: e.target.value,
+                        }))
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Admission Fee (PKR)
+                    </label>
+                    <input
+                      type="number"
+                      value={uniForm.admissionFee}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          admissionFee: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. 3500"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={uniForm.admissionOpen}
+                        onChange={(e) =>
+                          setUniForm((p) => ({
+                            ...p,
+                            admissionOpen: e.target.checked,
+                          }))
+                        }
+                        className="rounded"
+                      />
+                      Admission Currently Open
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={uniForm.hostelAvailable}
+                        onChange={(e) =>
+                          setUniForm((p) => ({
+                            ...p,
+                            hostelAvailable: e.target.checked,
                           }))
                         }
                         className="rounded"
@@ -30,9 +1210,980 @@
                         </label>
                         <input
                           type="number"
-                          value={uniForm.mes
-<truncated 17316 bytes>
-          {bookings.map((b) => (
+                          value={uniForm.messFee}
+                          onChange={(e) =>
+                            setUniForm((p) => ({
+                              ...p,
+                              messFee: e.target.value,
+                            }))
+                          }
+                          placeholder="e.g. 6000"
+                          className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Aggregate formula */}
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
+                  Aggregate Formula (must add up to 1.0)
+                </p>
+                <div className="grid grid-cols-3 gap-4">
+                  {["matric", "fsc", "test"].map((key) => (
+                    <div key={key}>
+                      <label className="block text-xs text-slate-500 mb-1 uppercase">
+                        {key} weight
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="1"
+                        value={uniForm.aggregateFormula[key]}
+                        onChange={(e) => updateFormula(key, e.target.value)}
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                        style={{ fontFamily: "DM Mono" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Total:{" "}
+                  {(
+                    (uniForm.aggregateFormula.matric || 0) +
+                    (uniForm.aggregateFormula.fsc || 0) +
+                    (uniForm.aggregateFormula.test || 0)
+                  ).toFixed(2)}{" "}
+                  (should be 1.00)
+                </p>
+              </div>
+
+              {/* Scholarships */}
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
+                  Scholarships & Documents
+                </p>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Scholarships (comma separated)
+                    </label>
+                    <input
+                      value={uniForm.scholarships}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          scholarships: e.target.value,
+                        }))
+                      }
+                      placeholder="HEC Need-Based, Merit Scholarship, Vice Chancellor Award"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Required Documents (comma separated)
+                    </label>
+                    <input
+                      value={uniForm.requiredDocuments}
+                      onChange={(e) =>
+                        setUniForm((p) => ({
+                          ...p,
+                          requiredDocuments: e.target.value,
+                        }))
+                      }
+                      placeholder="Matric Certificate, FSc Certificate, CNIC, Domicile, 4 Photos"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Departments */}
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
+                  Departments
+                </p>
+
+                {/* Existing departments */}
+                {departments.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    {departments.map((d, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3"
+                      >
+                        <div>
+                          <p className="font-medium text-slate-700 text-sm">
+                            {d.name}
+                          </p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {d.category} · PKR{" "}
+                            {parseInt(d.semesterFee).toLocaleString()}/sem ·
+                            Merit: {d.seats?.merit} · SF: {d.seats?.selfFinance}
+                            {d.lastMerit?.[0]?.closing
+                              ? " · Last merit: " + d.lastMerit[0].closing + "%"
+                              : ""}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => removeDept(i)}
+                          className="p-1 text-slate-400 hover:text-red-500"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add department form */}
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-3">
+                    Add Department
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Department Name *
+                      </label>
+                      <input
+                        value={deptForm.name}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({ ...p, name: e.target.value }))
+                        }
+                        placeholder="e.g. BS Computer Science"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Category
+                      </label>
+                      <select
+                        value={deptForm.category}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({
+                            ...p,
+                            category: e.target.value,
+                          }))
+                        }
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      >
+                        {[
+                          "CS",
+                          "Engineering",
+                          "Medical",
+                          "Business",
+                          "Arts",
+                          "Architecture",
+                          "Law",
+                          "Sciences",
+                        ].map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Semester Fee (PKR)
+                      </label>
+                      <input
+                        type="number"
+                        value={deptForm.semesterFee}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({
+                            ...p,
+                            semesterFee: e.target.value,
+                          }))
+                        }
+                        placeholder="e.g. 25000"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Last Closing Merit %
+                      </label>
+                      <input
+                        type="number"
+                        value={deptForm.lastMerit[0].closing}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({
+                            ...p,
+                            lastMerit: [
+                              { year: 2024, closing: e.target.value },
+                            ],
+                          }))
+                        }
+                        placeholder="e.g. 75.5"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Merit Seats
+                      </label>
+                      <input
+                        type="number"
+                        value={deptForm.seats.merit}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({
+                            ...p,
+                            seats: { ...p.seats, merit: e.target.value },
+                          }))
+                        }
+                        placeholder="e.g. 60"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">
+                        Self-Finance Seats
+                      </label>
+                      <input
+                        type="number"
+                        value={deptForm.seats.selfFinance}
+                        onChange={(e) =>
+                          setDeptForm((p) => ({
+                            ...p,
+                            seats: { ...p.seats, selfFinance: e.target.value },
+                          }))
+                        }
+                        placeholder="e.g. 30"
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={addDepartment}
+                    className="mt-3 flex items-center gap-2 text-sm font-medium text-white px-4 py-2 rounded-xl"
+                    style={{ background: "var(--blue)" }}
+                  >
+                    <Plus size={14} /> Add Department
+                  </button>
+                </div>
+              </div>
+
+              {/* Save button */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={saveUniversity}
+                  className="flex items-center gap-2 text-sm font-semibold text-white px-6 py-3 rounded-xl"
+                  style={{ background: "var(--green)" }}
+                >
+                  <Save size={15} />
+                  {editingUni ? "Update University" : "Save University"}
+                </button>
+                <button
+                  onClick={() => {
+                    setUniForm(EMPTY_UNI);
+                    setDepartments([]);
+                    setEditingUni(null);
+                    setActiveTab("Universities");
+                  }}
+                  className="text-sm font-medium text-slate-600 border border-slate-200 px-6 py-3 rounded-xl hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== REVIEWS TAB ===== */}
+        {activeTab === "Reviews" && (
+          <div className="space-y-3">
+            {loading && (
+              <p className="text-center text-slate-400 py-10">Loading...</p>
+            )}
+            {!loading && reviews.length === 0 && (
+              <p className="text-center text-slate-400 py-10">No reviews yet</p>
+            )}
+            {reviews.map((r) => (
+              <div
+                key={r._id}
+                className="bg-white rounded-2xl border border-slate-200 p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      {statusBadge(r.status)}
+                      <span className="text-xs text-slate-400">
+                        ⭐ {r.rating}/5
+                      </span>
+                      <span className="text-xs text-slate-400">
+                        {new Date(r.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-700">{r.text}</p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      By: {r.userId?.name || "Anonymous"}
+                    </p>
+                  </div>
+                  {r.status === "pending" && (
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        onClick={() => approveReview(r._id)}
+                        className="text-xs font-medium text-green-700 bg-green-100 px-3 py-1.5 rounded-lg hover:bg-green-200"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => rejectReview(r._id)}
+                        className="text-xs font-medium text-red-600 bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ===== PAST PAPERS TAB ===== */}
+        {activeTab === "Past Papers" && (
+          <div className="space-y-6">
+            {/* Upload form */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6">
+              <h2
+                className="text-lg font-bold mb-5"
+                style={{ fontFamily: "Sora", color: "var(--navy)" }}
+              >
+                Upload Past Paper (PDF only)
+              </h2>
+
+              <form onSubmit={handleUploadPaper} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Select University *
+                    </label>
+                    <select
+                      required
+                      value={paperForm.universityId}
+                      onChange={(e) =>
+                        setPaperForm({
+                          ...paperForm,
+                          universityId: e.target.value,
+                        })
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none bg-white focus:border-blue-400"
+                    >
+                      <option value="">— Choose University —</option>
+                      {unis.map((u) => (
+                        <option key={u._id} value={u._id}>
+                          {u.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Subject / Department *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="e.g. Entry Test, Computer Science"
+                      value={paperForm.subject}
+                      onChange={(e) =>
+                        setPaperForm({ ...paperForm, subject: e.target.value })
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Year *
+                    </label>
+                    <input
+                      required
+                      type="number"
+                      placeholder="e.g. 2024"
+                      min="2000"
+                      max="2030"
+                      value={paperForm.year}
+                      onChange={(e) =>
+                        setPaperForm({ ...paperForm, year: e.target.value })
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Degree Level
+                    </label>
+                    <select
+                      value={paperForm.degreeLevel}
+                      onChange={(e) =>
+                        setPaperForm({
+                          ...paperForm,
+                          degreeLevel: e.target.value,
+                        })
+                      }
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none bg-white focus:border-blue-400"
+                    >
+                      <option value="Bachelors">Bachelors (BS/BE/BBA)</option>
+                      <option value="Masters">Masters (MS/MBA)</option>
+                      <option value="Medical">Medical (MBBS/BDS)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* File upload */}
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">
+                    PDF File * (max 20MB)
+                  </label>
+                  <div
+                    className="border-2 border-dashed border-slate-300 hover:border-blue-400 rounded-2xl p-6 text-center cursor-pointer transition-colors"
+                    onClick={() =>
+                      document.getElementById("paper-file-input").click()
+                    }
+                  >
+                    <input
+                      id="paper-file-input"
+                      type="file"
+                      accept=".pdf"
+                      className="hidden"
+                      onChange={(e) =>
+                        setPaperForm({ ...paperForm, file: e.target.files[0] })
+                      }
+                    />
+                    {paperForm.file ? (
+                      <div className="flex items-center justify-center gap-3">
+                        <FileText size={24} className="text-red-500" />
+                        <div className="text-left">
+                          <p className="font-medium text-slate-700 text-sm">
+                            {paperForm.file.name}
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            {(paperForm.file.size / 1024).toFixed(0)} KB
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <FileText
+                          size={28}
+                          className="mx-auto mb-2 text-slate-400"
+                        />
+                        <p className="text-sm text-slate-600 font-medium">
+                          Click to select PDF file
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Only PDF files allowed • Max 20MB
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={
+                    loading || !paperForm.file || !paperForm.universityId
+                  }
+                  className="flex items-center gap-2 text-sm font-semibold text-white px-6 py-3 rounded-xl disabled:opacity-50"
+                  style={{ background: "var(--green)" }}
+                >
+                  {loading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={15} />
+                      Upload Paper
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* Papers list */}
+            <div>
+              <h3 className="font-semibold text-slate-700 mb-3 text-sm">
+                Uploaded Papers ({pastPapers.length})
+              </h3>
+              {pastPapers.length === 0 && (
+                <p className="text-slate-400 text-sm text-center py-8 bg-white rounded-2xl border border-slate-200">
+                  No papers uploaded yet
+                </p>
+              )}
+              <div className="grid gap-3">
+                {pastPapers.map((p) => (
+                  <div
+                    key={p._id}
+                    className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-red-100 text-red-500 rounded-xl flex items-center justify-center shrink-0">
+                        <FileText size={16} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-700 text-sm">
+                          {p.subject} — {p.year}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {p.universityName} • {p.degreeLevel} • {p.fileSize} •{" "}
+                          {p.downloadCount} downloads
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={p.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100"
+                      >
+                        View
+                      </a>
+                      <button
+                        onClick={async () => {
+                          if (!window.confirm("Delete this paper?")) return;
+                          const token = JSON.parse(
+                            localStorage.getItem("rahbar-auth") || "{}",
+                          )?.state?.token;
+                          await fetch("/api/pastpapers/" + p._id, {
+                            method: "DELETE",
+                            headers: { Authorization: "Bearer " + token },
+                          });
+                          showMsg("Paper deleted");
+                          loadData();
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-red-500"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== BLOGS TAB ===== */}
+        {activeTab === "Blogs" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6">
+              <h2 className="text-lg font-bold mb-4">Create Blog</h2>
+              <form onSubmit={handleUploadBlog} className="grid gap-4">
+                <input
+                  required
+                  placeholder="Title"
+                  className="border p-2 rounded-xl"
+                  value={blogForm.title}
+                  onChange={(e) =>
+                    setBlogForm({ ...blogForm, title: e.target.value })
+                  }
+                />
+                <textarea
+                  required
+                  placeholder="Content (HTML support)"
+                  className="border p-2 rounded-xl h-32"
+                  value={blogForm.content}
+                  onChange={(e) =>
+                    setBlogForm({ ...blogForm, content: e.target.value })
+                  }
+                />
+                <input
+                  type="file"
+                  className="border p-1.5 rounded-xl"
+                  onChange={(e) =>
+                    setBlogForm({ ...blogForm, file: e.target.files[0] })
+                  }
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-blue-600 text-white p-2 rounded-xl"
+                >
+                  Publish
+                </button>
+              </form>
+            </div>
+
+            <div className="grid gap-3">
+              {blogs.map((b) => (
+                <div key={b._id} className="bg-white p-4 rounded-xl border">
+                  <p className="font-bold">{b.title}</p>
+                  <p className="text-xs text-slate-500">
+                    {b.category} • {b.views} views
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ===== NEWS TAB ===== */}
+        {activeTab === "News" && (
+          <div className="space-y-6">
+            {/* ── Stats row ── */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                {
+                  label: "Total Items",
+                  value: news.length,
+                  color: "text-blue-600",
+                },
+                {
+                  label: "Published",
+                  value: news.filter((n) => n.isActive).length,
+                  color: "text-emerald-600",
+                },
+                {
+                  label: "High Priority",
+                  value: news.filter((n) => n.priority === "high").length,
+                  color: "text-red-600",
+                },
+                {
+                  label: "Expiring Soon",
+                  value: news.filter(
+                    (n) =>
+                      n.expiresAt &&
+                      new Date(n.expiresAt) > new Date() &&
+                      new Date(n.expiresAt) - Date.now() <
+                        3 * 24 * 60 * 60 * 1000,
+                  ).length,
+                  color: "text-amber-600",
+                },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="bg-white border border-slate-100 rounded-2xl px-5 py-4"
+                >
+                  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">
+                    {s.label}
+                  </p>
+                  <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Create / Edit Form ── */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2
+                    className="text-lg font-bold text-slate-800"
+                    style={{ fontFamily: "Sora" }}
+                  >
+                    {newsForm._id ? "Edit News Item" : "Create News Item"}
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {newsForm._id
+                      ? "Update the fields below then save"
+                      : "Fill all required fields"}
+                  </p>
+                </div>
+                {newsForm._id && (
+                  <button
+                    onClick={() =>
+                      setNewsForm({
+                        title: "",
+                        content: "",
+                        type: "news",
+                        priority: "medium",
+                        isActive: true,
+                        expiresAt: "",
+                      })
+                    }
+                    className="text-xs text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50"
+                  >
+                    ✕ Cancel Edit
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                {/* Title */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                    Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    placeholder="e.g. KU announces Fall 2026 Admissions"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={newsForm.title}
+                    onChange={(e) =>
+                      setNewsForm({ ...newsForm, title: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* Content */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                    Content <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    placeholder="Full description, source details, or summary..."
+                    rows={4}
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-300 resize-none outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={newsForm.content}
+                    onChange={(e) =>
+                      setNewsForm({ ...newsForm, content: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* Type + Priority */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                      Type
+                    </label>
+                    <select
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                      value={newsForm.type}
+                      onChange={(e) =>
+                        setNewsForm({ ...newsForm, type: e.target.value })
+                      }
+                    >
+                      <option value="news">News</option>
+                      <option value="notification">Notification</option>
+                      <option value="announcement">Announcement</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                      Priority
+                    </label>
+                    <select
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                      value={newsForm.priority}
+                      onChange={(e) =>
+                        setNewsForm({ ...newsForm, priority: e.target.value })
+                      }
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Expires At + Active toggle */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                      Expires At{" "}
+                      <span className="font-normal text-slate-400 normal-case">
+                        (optional)
+                      </span>
+                    </label>
+                    <input
+                      type="datetime-local"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                      value={newsForm.expiresAt || ""}
+                      onChange={(e) =>
+                        setNewsForm({ ...newsForm, expiresAt: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
+                    <div>
+                      <p className="text-sm font-bold text-slate-700">
+                        Publish immediately
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Show on public news page
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setNewsForm({
+                          ...newsForm,
+                          isActive: !newsForm.isActive,
+                        })
+                      }
+                      className={`w-12 h-6 rounded-full transition-colors relative ${newsForm.isActive ? "bg-blue-600" : "bg-slate-300"}`}
+                    >
+                      <span
+                        className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${newsForm.isActive ? "translate-x-6" : "translate-x-0.5"}`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <div className="flex gap-3 pt-1">
+                  <button
+                    onClick={newsForm._id ? handleUpdateNews : handleCreateNews}
+                    disabled={loading}
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    ) : null}
+                    {newsForm._id ? "Save Changes" : "Create News"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ── News List ── */}
+            <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+              {/* Table header */}
+              <div className="hidden sm:grid grid-cols-[1fr_110px_90px_80px_100px_auto] gap-4 px-5 py-3 border-b border-slate-100 bg-slate-50">
+                {[
+                  "Title",
+                  "Type",
+                  "Priority",
+                  "Status",
+                  "Created",
+                  "Actions",
+                ].map((h) => (
+                  <p
+                    key={h}
+                    className="text-xs font-bold text-slate-400 uppercase tracking-wide"
+                  >
+                    {h}
+                  </p>
+                ))}
+              </div>
+
+              {news.length === 0 && (
+                <div className="text-center py-12 text-slate-400">
+                  <p className="font-semibold text-slate-500">
+                    No news items yet
+                  </p>
+                  <p className="text-sm mt-1">
+                    Use the form above to create one.
+                  </p>
+                </div>
+              )}
+
+              <div className="divide-y divide-slate-50">
+                {news.map((n) => (
+                  <div
+                    key={n._id}
+                    className="grid grid-cols-1 sm:grid-cols-[1fr_110px_90px_80px_100px_auto] gap-2 sm:gap-4 px-5 py-4 items-center hover:bg-slate-50 transition-colors"
+                  >
+                    {/* Title + content */}
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-800 text-sm truncate">
+                        {n.title}
+                      </p>
+                      <p className="text-xs text-slate-400 truncate mt-0.5">
+                        {n.content}
+                      </p>
+                    </div>
+
+                    {/* Type */}
+                    <span
+                      className={`hidden sm:inline-flex w-fit text-[11px] font-bold px-2.5 py-1 rounded-full border uppercase tracking-wide
+              ${
+                n.type === "news"
+                  ? "bg-sky-50 text-sky-700 border-sky-200"
+                  : n.type === "notification"
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-emerald-50 text-emerald-700 border-emerald-200"
+              }`}
+                    >
+                      {n.type}
+                    </span>
+
+                    {/* Priority */}
+                    <span
+                      className={`hidden sm:inline-flex w-fit text-[11px] font-bold px-2.5 py-1 rounded-full border capitalize
+              ${
+                n.priority === "high"
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : n.priority === "medium"
+                    ? "bg-amber-50 text-amber-600 border-amber-200"
+                    : "bg-slate-50 text-slate-500 border-slate-200"
+              }`}
+                    >
+                      {n.priority}
+                    </span>
+
+                    {/* Active */}
+                    <button
+                      onClick={() => handleToggleNewsActive(n)}
+                      className="hidden sm:flex items-center gap-1.5"
+                    >
+                      <span
+                        className={`w-2 h-2 rounded-full ${n.isActive ? "bg-emerald-500" : "bg-slate-300"}`}
+                      />
+                      <span
+                        className={`text-xs font-semibold ${n.isActive ? "text-emerald-600" : "text-slate-400"}`}
+                      >
+                        {n.isActive ? "Live" : "Draft"}
+                      </span>
+                    </button>
+
+                    {/* Date */}
+                    <span className="hidden sm:block text-xs text-slate-400">
+                      {new Date(n.createdAt).toLocaleDateString("en-PK", {
+                        day: "numeric",
+                        month: "short",
+                        year: "2-digit",
+                      })}
+                    </span>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          setNewsForm({
+                            ...n,
+                            expiresAt: n.expiresAt
+                              ? new Date(n.expiresAt).toISOString().slice(0, 16)
+                              : "",
+                          })
+                        }
+                        className="p-2 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-all"
+                        title="Edit"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteNews(n._id)}
+                        className="p-2 rounded-lg border border-slate-200 hover:border-red-300 hover:bg-red-50 text-slate-500 hover:text-red-600 transition-all"
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== BOOKINGS TAB ===== */}
+        {activeTab === "Bookings" && (
+          <div className="space-y-3">
+            {loading && (
+              <p className="text-center text-slate-400 py-10">Loading...</p>
+            )}
+            {!loading && bookings.length === 0 && (
+              <p className="text-center text-slate-400 py-10">
+                No bookings yet
+              </p>
+            )}
+            {bookings.map((b) => (
               <div
                 key={b._id}
                 className="bg-white rounded-2xl border border-slate-200 p-4"
@@ -47,7 +2198,7 @@
                       {b.name}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {b.email} Â· {b.whatsapp}
+                      {b.email} · {b.whatsapp}
                     </p>
                     <p className="text-xs text-slate-500">Topic: {b.topic}</p>
                     {b.message && (
@@ -74,5 +2225,3 @@
     </>
   );
 }
-
-The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

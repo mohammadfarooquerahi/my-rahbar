@@ -3,7 +3,7 @@ const router = express.Router();
 const Alert = require("../models/Alert");
 const { protect } = require("../middleware/auth");
 
-// POST /api/alerts â€” create alert
+// POST /api/alerts — create alert
 router.post("/", protect, async (req, res) => {
   const { universityId, universityName, deadline } = req.body;
 
@@ -41,7 +41,7 @@ router.post("/", protect, async (req, res) => {
     });
 });
 
-// GET /api/alerts â€” get my alerts
+// GET /api/alerts — get my alerts
 router.get("/", protect, async (req, res) => {
   const alerts = await Alert.find({
     userId: req.user._id,
@@ -51,7 +51,7 @@ router.get("/", protect, async (req, res) => {
   res.json({ alerts });
 });
 
-// DELETE /api/alerts/:id â€” remove alert
+// DELETE /api/alerts/:id — remove alert
 router.delete("/:id", protect, async (req, res) => {
   await Alert.findOneAndUpdate(
     { _id: req.params.id, userId: req.user._id },

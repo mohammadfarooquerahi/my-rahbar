@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: false,
+      required: [true, "Name is required"],
       trim: true,
     },
     email: {
@@ -17,35 +17,14 @@ const userSchema = new mongoose.Schema(
     },
     whatsapp: {
       type: String,
-      required: false,
+      required: [true, "WhatsApp number is required"],
       trim: true,
     },
     password: {
       type: String,
-      required: false,
+      required: [true, "Password is required"],
       minlength: 6,
       select: false,
-    },
-    contactMethod: {
-      type: String,
-      enum: ["email", "whatsapp"],
-      default: "email",
-    },
-    termsAccepted: {
-      type: Boolean,
-      default: false,
-    },
-    googleId: {
-      type: String,
-      default: null,
-    },
-    resetPasswordToken: {
-      type: String,
-      default: null,
-    },
-    resetPasswordExpires: {
-      type: Date,
-      default: null,
     },
     role: {
       type: String,
@@ -53,7 +32,7 @@ const userSchema = new mongoose.Schema(
       default: "student",
     },
 
-    // Watchlist â€” array of university IDs
+    // Watchlist — array of university IDs
     watchlist: [
       {
         type: mongoose.Schema.Types.ObjectId,

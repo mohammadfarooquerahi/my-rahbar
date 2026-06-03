@@ -46,9 +46,77 @@ const universities = [
     ],
     aggregateFormula: { matric: 0.1, fsc: 0.4, test: 0.5 },
     testRequired: "NTS / Own Entry Test",
- 
-<truncated 2321 bytes>
-government",
+    admissionFee: 3500,
+    hostelAvailable: true,
+    hostelFee: 4500,
+    messFee: 6000,
+    scholarships: ["HEC Need-Based", "Vice Chancellor Merit Scholarship"],
+    requiredDocuments: [
+      "Matric Certificate",
+      "FSc Certificate",
+      "CNIC / B-Form",
+      "Domicile",
+      "4 Passport Photos",
+      "Character Certificate",
+    ],
+  },
+  {
+    name: "NED University of Engineering & Technology",
+    slug: "neduet-karachi",
+    shortName: "NEDUET",
+    type: "government",
+    city: "Karachi",
+    campuses: ["Main Campus (University Road)"],
+    established: 1921,
+    website: "https://neduet.edu.pk",
+    admissionOpen: true,
+    admissionDeadline: new Date("2025-07-31"),
+    overallRating: 4.2,
+    reviewCount: 215,
+    status: "approved",
+    departments: [
+      {
+        name: "BE Computer Systems",
+        category: "Engineering",
+        seats: { merit: 70, selfFinance: 30 },
+        semesterFee: 22000,
+        lastMerit: [{ year: 2024, closing: 83.5 }],
+      },
+      {
+        name: "BE Electrical",
+        category: "Engineering",
+        seats: { merit: 90, selfFinance: 30 },
+        semesterFee: 22000,
+        lastMerit: [{ year: 2024, closing: 80.2 }],
+      },
+      {
+        name: "BE Civil",
+        category: "Engineering",
+        seats: { merit: 80, selfFinance: 30 },
+        semesterFee: 22000,
+        lastMerit: [{ year: 2024, closing: 78.5 }],
+      },
+    ],
+    aggregateFormula: { matric: 0.1, fsc: 0.4, test: 0.5 },
+    testRequired: "ECAT / Own Entry Test",
+    admissionFee: 4000,
+    hostelAvailable: true,
+    hostelFee: 3500,
+    messFee: 5500,
+    scholarships: ["HEC Need-Based", "NED Merit Scholarship"],
+    requiredDocuments: [
+      "Matric Certificate",
+      "FSc Certificate",
+      "CNIC / B-Form",
+      "Domicile",
+      "4 Passport Photos",
+    ],
+  },
+  {
+    name: "Dow University of Health Sciences",
+    slug: "dow-university-karachi",
+    shortName: "DUHS",
+    type: "government",
     city: "Karachi",
     campuses: ["Main Campus (Baba-e-Urdu Road)", "OJHA Campus"],
     established: 2004,
@@ -104,7 +172,7 @@ const seed = async () => {
   await University.deleteMany({});
   await University.insertMany(universities);
   console.log(
-    "Seed complete â€” " + universities.length + " universities added.",
+    "Seed complete — " + universities.length + " universities added.",
   );
   process.exit(0);
 };

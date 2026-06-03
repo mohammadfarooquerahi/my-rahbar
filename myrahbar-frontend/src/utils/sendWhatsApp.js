@@ -5,7 +5,7 @@ const sendWhatsApp = async (to, message) => {
     const from = process.env.TWILIO_WHATSAPP_FROM;
 
     if (!sid || !token || sid === "your_twilio_account_sid") {
-      console.log("WhatsApp skipped â€” Twilio not configured");
+      console.log("WhatsApp skipped — Twilio not configured");
       console.log("Would send to:", to);
       console.log("Message:", message);
       return true;
