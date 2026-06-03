@@ -69,10 +69,6 @@ export default function App() {
             <Route path="/blog/:id" element={<BlogDetailPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/past-papers" element={<PastPapersPage />} />
-            <Route
-              path="/university/:slug"
-              element={<UniversityDetailPage />}
-            />
           </Routes>
         </Suspense>
       </main>

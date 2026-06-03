@@ -1,0 +1,598 @@
+{
+  "date": "2026-06-03",
+  "changes": [
+    {
+      "fileName": "myrahbar-backend\\package-lock.json",
+      "timestamp": "2026-06-03T13:35:58.280Z",
+      "changeType": "created",
+      "linesChanged": 2727,
+      "fileType": "json"
+    },
+    {
+      "fileName": "restore.js",
+      "timestamp": "2026-06-03T13:36:10.909Z",
+      "changeType": "deleted",
+      "linesChanged": 0,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\package-lock.json",
+      "timestamp": "2026-06-03T13:37:43.956Z",
+      "changeType": "created",
+      "linesChanged": 3042,
+      "fileType": "json"
+    },
+    {
+      "fileName": "restore_vscode.js",
+      "timestamp": "2026-06-03T13:41:27.991Z",
+      "changeType": "created",
+      "linesChanged": 78,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\utils\\seedData.js",
+      "timestamp": "2026-06-03T13:41:40.542Z",
+      "changeType": "modified",
+      "linesChanged": 181,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\utils\\seedData.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 181,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Footer.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 86,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "index..html",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "created",
+      "linesChanged": 10,
+      "fileType": "html"
+    },
+    {
+      "fileName": "myrahbar-backend\\.env",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 13,
+      "fileType": "unknown"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\PastPapersPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "created",
+      "linesChanged": 425,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\NewsPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "created",
+      "linesChanged": 306,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-backend\\config\\db.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 14,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\newsController.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 174,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\pastPaperController.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 109,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\authController.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 98,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\package.json",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 18,
+      "fileType": "json"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\auth.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 17,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\api\\axios.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 6,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\main.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 17,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\vite.config.js",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 14,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\adminController.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 105,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\universityController.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 114,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\middleware\\auth.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 42,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\ConsultingBooking.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 39,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\PastPaper.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 27,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\Alert.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 29,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\Review.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 49,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\University.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 82,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\admin.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 56,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\models\\User.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 84,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\ai.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 80,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\alerts.js",
+      "timestamp": "2026-06-03T13:41:40.764Z",
+      "changeType": "modified",
+      "linesChanged": 64,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\consult.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 47,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\merit.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 52,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\news.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 24,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\pastpapers.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 55,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\universities.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 23,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\watchlist.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 30,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\server.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 94,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\utils\\sendWhatsApp.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 36,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-backend\\utils\\sendEmail.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 36,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\AIChatWidget.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 206,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-backend\\utils\\alertCron.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 132,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Logo.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 60,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\university\\UniversityCard.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 860,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\App.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 84,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\index.css",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 239,
+      "fileType": "css"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Navbar.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 215,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\data\\universities.js",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 498,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\ComparePage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 303,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\CounselingPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 388,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\CareerMatchPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 241,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\FindUniversityPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 465,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\DocumentToolsPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 446,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\MeritCalculatorPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 386,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\ProfilePage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 533,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\SearchPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 234,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\UniversityDetailPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 965,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\WatchlistPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 252,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\auth\\LoginPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 177,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\auth\\RegisterPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 242,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\store\\index.js",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 66,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\utils\\merit.js",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 53,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\utils\\sendEmail.js",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 36,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\utils\\sendWhatsApp.js",
+      "timestamp": "2026-06-03T13:41:40.766Z",
+      "changeType": "modified",
+      "linesChanged": 77,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\HomePage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 647,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\AdminPage.jsx",
+      "timestamp": "2026-06-03T13:41:40.765Z",
+      "changeType": "modified",
+      "linesChanged": 2228,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Footer.jsx",
+      "timestamp": "2026-06-03T13:42:13.648Z",
+      "changeType": "modified",
+      "linesChanged": 130,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Footer.jsx",
+      "timestamp": "2026-06-03T13:42:43.259Z",
+      "changeType": "modified",
+      "linesChanged": 130,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-backend\\controllers\\blogController.js",
+      "timestamp": "2026-06-03T13:49:35.171Z",
+      "changeType": "modified",
+      "linesChanged": 112,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\App.css",
+      "timestamp": "2026-06-03T13:49:51.125Z",
+      "changeType": "modified",
+      "linesChanged": 180,
+      "fileType": "css"
+    },
+    {
+      "fileName": "myrahbar-backend\\routes\\ai.js",
+      "timestamp": "2026-06-03T13:54:45.622Z",
+      "changeType": "modified",
+      "linesChanged": 80,
+      "fileType": "js"
+    },
+    {
+      "fileName": "create_pages.js",
+      "timestamp": "2026-06-03T13:57:52.021Z",
+      "changeType": "created",
+      "linesChanged": 16,
+      "fileType": "js"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\AboutPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\BlogPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\BlogDetailPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\PrivacyPolicyPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\ContactPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\pages\\TermsPage.jsx",
+      "timestamp": "2026-06-03T13:58:02.802Z",
+      "changeType": "created",
+      "linesChanged": 8,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "create_pages.js",
+      "timestamp": "2026-06-03T13:58:03.774Z",
+      "changeType": "deleted",
+      "linesChanged": 0,
+      "fileType": "js"
+    },
+    {
+      "fileName": "",
+      "timestamp": "2026-06-03T13:58:03.794Z",
+      "changeType": "modified",
+      "linesChanged": 0,
+      "fileType": "unknown"
+    },
+    {
+      "fileName": "myrahbar-frontend\\src\\components\\common\\Footer.jsx",
+      "timestamp": "2026-06-03T13:59:44.553Z",
+      "changeType": "modified",
+      "linesChanged": 130,
+      "fileType": "jsx"
+    },
+    {
+      "fileName": "myrahbar-frontend\\package.json",
+      "timestamp": "2026-06-03T14:02:52.567Z",
+      "changeType": "modified",
+      "linesChanged": 36,
+      "fileType": "json"
+    },
+    {
+      "fileName": "myrahbar-frontend\\package-lock.json",
+      "timestamp": "2026-06-03T14:02:52.567Z",
+      "changeType": "modified",
+      "linesChanged": 3350,
+      "fileType": "json"
+    }
+  ],
+  "totalChanges": 84,
+  "startTime": "2026-06-03T13:35:28.807Z",
+  "endTime": "2026-06-03T14:02:52.650Z",
+  "projectName": "c:\\Users\\HP\\vscode\\myrahbar",
+  "branchName": "main"
+}
