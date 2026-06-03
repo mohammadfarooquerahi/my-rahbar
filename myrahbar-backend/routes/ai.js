@@ -1,5 +1,5 @@
-import express from "express";
-import Groq from "groq-sdk";
+const express = require("express");
+const Groq = require("groq-sdk");
 
 const router = express.Router();
 
@@ -76,4 +76,4 @@ router.post("/chat", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
