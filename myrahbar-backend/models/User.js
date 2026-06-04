@@ -5,8 +5,11 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+    },
+    fullName: {
+      type: String,
       trim: true,
+      default: "",
     },
     email: {
       type: String,
@@ -17,8 +20,8 @@ const userSchema = new mongoose.Schema(
     },
     whatsapp: {
       type: String,
-      required: [true, "WhatsApp number is required"],
       trim: true,
+      default: "",
     },
     password: {
       type: String,
@@ -40,11 +43,24 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // Student profile for AI matching
+    // Preferences
+    emailAlerts: {
+      type: Boolean,
+      default: true,
+    },
+
+    // Student profile for AI matching and tools
     profile: {
+      matricMarks: { type: Number, default: null },
+      matricTotal: { type: Number, default: 850 }, // default total for matric
       matricPercent: { type: Number, default: null },
+      matricGroup: { type: String, default: "" }, // Science, Arts, Computer Science
+      
+      fscMarks: { type: Number, default: null },
+      fscTotal: { type: Number, default: 1100 }, // default total for inter
       fscPercent: { type: Number, default: null },
-      fscSubjects: { type: String, default: "" },
+      fscGroup: { type: String, default: "" }, // Pre-Med, Pre-Eng, ICS, Commerce, Arts
+      
       interestedField: { type: String, default: "" },
       budget: {
         type: String,

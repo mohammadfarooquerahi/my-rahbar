@@ -53,10 +53,20 @@ export default function CounselingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
-    setSubmitted(true);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/consult/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || "Failed to submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isValid =
@@ -82,13 +92,23 @@ export default function CounselingPage() {
   ];
 
   return (
-    <>
+    <main>
       <Helmet>
         <title>Personal Counseling — 1-on-1 Admission Help | MyRahbar</title>
         <meta
           name="description"
           content="Book a personal counseling session with a MyRahbar expert. Get help with university selection, merit calculation, and admission process."
         />
+        <link rel="canonical" href="https://myrahbar.com/counseling" />
+        
+        <meta property="og:title" content="1-on-1 Admission Counseling | MyRahbar" />
+        <meta property="og:description" content="Talk to an expert and get clear answers about your admission, field, and universities." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://myrahbar.com/counseling" />
+        
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="1-on-1 Admission Counseling" />
+        <meta name="twitter:description" content="Talk to an expert and get clear answers about your admission, field, and universities." />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 py-10">
@@ -382,6 +402,6 @@ export default function CounselingPage() {
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 }

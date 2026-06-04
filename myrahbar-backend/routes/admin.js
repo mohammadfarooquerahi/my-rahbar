@@ -10,11 +10,22 @@ const {
   rejectReview,
   getAllBookings,
   getAllUsers,
+  getDashboardStats,
+  getErrorLogs,
+  uploadExcelFile,
 } = require("../controllers/adminController");
 const { protect, adminOnly } = require("../middleware/auth");
+const { uploadExcel } = require("../config/multer");
 
 router.use(protect);
 router.use(adminOnly);
+
+// Dashboard & Logs
+router.get("/dashboard", getDashboardStats);
+router.get("/error-logs", getErrorLogs);
+
+// Excel Upload
+router.post("/upload-excel", uploadExcel.single("file"), uploadExcelFile);
 
 // Universities
 router.get("/universities", getAllUnis);

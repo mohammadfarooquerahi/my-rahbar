@@ -97,7 +97,7 @@ const sendDeadlineAlert = async (alert, daysLeft) => {
           }
         </p>
 
-        
+        <a
           href="https://myrahbar.com"
           style="display: inline-block; background: #27AE60; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;"
         >

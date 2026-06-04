@@ -22,6 +22,7 @@ import {
   Target,
   CheckCircle,
   MapPin,
+  ChevronDown,
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 // import removed
@@ -73,7 +74,7 @@ export default function HomePage() {
   );
 
   const stats = [
-    { label: "Universities", value: "30+", icon: <BookOpen size={18} /> },
+    { label: "Universities", value: "All", icon: <BookOpen size={18} /> },
     { label: "Students Helped", value: "5,000+", icon: <Users size={18} /> },
     { label: "Departments", value: "150+", icon: <TrendingUp size={18} /> },
     { label: "Scholarships", value: "80+", icon: <Shield size={18} /> },
@@ -125,6 +126,15 @@ export default function HomePage() {
       bg: "#F0F4FF",
       tag: "New",
     },
+    {
+      icon: <FileText size={20} />,
+      title: "Past Papers",
+      desc: "Download official past papers and practice for entry tests",
+      to: "/past-papers",
+      color: "#EC4899",
+      bg: "#FDF2F8",
+      tag: "Hot",
+    },
   ];
 
   const howItWorks = [
@@ -163,14 +173,41 @@ export default function HomePage() {
   ];
 
   return (
-    <>
+    <main>
       <Helmet>
         <title>
-          MyRahbar — Find Your University in Karachi | Pakistan Admission Guide
+          MyRahbar | Pakistan's Smartest University Admission Platform
         </title>
         <meta
           name="description"
-          content="MyRahbar helps Pakistani students find the best universities in Karachi. Check merit, fees, scholarships, deadlines and apply smarter."
+          content="MyRahbar helps Pakistani students find the best universities in Karachi. Calculate merit, check fee structures, get deadline alerts, and apply smarter."
+        />
+        <link rel="canonical" href="https://myrahbar.com/" />
+
+        {/* OpenGraph Tags */}
+        <meta property="og:title" content="MyRahbar | Find Your University" />
+        <meta
+          property="og:description"
+          content="Calculate your merit and get matched to the perfect university in Karachi instantly."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://myrahbar.com/" />
+        <meta property="og:image" content="https://myrahbar.com/og-image.jpg" />
+        <meta property="og:site_name" content="MyRahbar" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="MyRahbar | Pakistan Admission Guide"
+        />
+        <meta
+          name="twitter:description"
+          content="Calculate your merit and get matched to the perfect university in Karachi instantly."
+        />
+        <meta
+          name="twitter:image"
+          content="https://myrahbar.com/og-image.jpg"
         />
       </Helmet>
 
@@ -256,81 +293,68 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Hero */}
+      {/* Premium Hero Section */}
       <section
-        className="relative overflow-hidden"
+        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24"
         style={{
           background:
-            "linear-gradient(135deg, #0F172A 0%, #1A2E4A 40%, #1E40AF 100%)",
+            "linear-gradient(135deg, #09090b 0%, #0f172a 50%, #1e1b4b 100%)",
+          fontFamily: "'Poppins', sans-serif",
         }}
       >
-        {/* Background shapes */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Subtle mesh gradient background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-20 blur-[100px] bg-blue-500" />
+          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-20 blur-[120px] bg-purple-600" />
+          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] bg-emerald-500" />
           <div
-            className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
-            style={{
-              background: "radial-gradient(circle, #F59E0B, transparent)",
-            }}
-          />
-          <div
-            className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10"
-            style={{
-              background: "radial-gradient(circle, #3B82F6, transparent)",
-            }}
-          />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-5"
+            className="absolute inset-0 opacity-[0.03]"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
-              backgroundSize: "40px 40px",
+              backgroundSize: "32px 32px",
             }}
           />
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 py-24 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-medium px-4 py-2 rounded-full mb-8 fade-up">
-            <Sparkles size={12} className="text-yellow-400" />
-            Pakistan's Smartest Admission Platform — Karachi Phase 1
+          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] text-blue-100 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
+            <Sparkles size={14} className="text-yellow-400 animate-pulse" />
+            Pakistan's Next-Gen Admission Platform
           </div>
 
           {/* Headline */}
-          <h1
-            className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 fade-up-1 leading-tight"
-            style={{ fontFamily: "Sora" }}
-          >
-            Stop Guessing.
-            <span className="block" style={{ color: "#FCD34D" }}>
-              Start Applying Smart.
+          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 fade-up-1 leading-[1.1] tracking-tight">
+            Elevate Your Future. <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+              Secure Your Admission.
             </span>
           </h1>
 
-          <p className="text-blue-200 text-xl mb-10 max-w-2xl mx-auto fade-up-2 leading-relaxed">
-            Merit calculator, deadline alerts, AI counselor, scholarship finder
-            — everything a Pakistani student needs in one place.
+          <p className="text-slate-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
+            Merit calculator, deadline alerts, AI counselor, and scholarship
+            finder — everything a Pakistani student needs to secure their
+            future.
           </p>
 
-          {/* Search */}
+          {/* Search Bar - Glassmorphism */}
           <form
             onSubmit={handleSearch}
-            className="fade-up-3 max-w-2xl mx-auto mb-6"
+            className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
           >
-            <div className="flex items-center bg-white rounded-2xl shadow-2xl overflow-hidden p-2 gap-2">
-              <Search size={18} className="text-slate-400 ml-2 shrink-0" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+            <div className="relative flex items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-2 gap-2 transition-all">
+              <Search size={22} className="text-blue-200 ml-3 shrink-0" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search university or department (MBBS, NED, BBA, Engineering...)"
-                className="flex-1 py-3 px-2 text-slate-800 outline-none text-sm bg-transparent"
+                placeholder="Search university or department (MBBS, NED, BBA...)"
+                className="flex-1 py-4 px-2 text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
               />
               <button
                 type="submit"
-                className="px-6 py-3 rounded-xl text-white text-sm font-bold btn-press shrink-0"
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--navy), var(--blue))",
-                }}
+                className="px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
               >
                 Search
               </button>
@@ -338,7 +362,7 @@ export default function HomePage() {
           </form>
 
           {/* Quick tags */}
-          <div className="fade-up-4 flex flex-wrap justify-center gap-2 mb-10">
+          <div className="fade-up-4 flex flex-wrap justify-center gap-2.5 mb-14">
             {[
               "MBBS",
               "Computer Science",
@@ -350,7 +374,7 @@ export default function HomePage() {
               <button
                 key={tag}
                 onClick={() => navigate("/search?q=" + tag)}
-                className="text-xs text-blue-200 hover:text-white bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-1.5 rounded-full transition-all"
+                className="text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full transition-all hover:scale-105"
               >
                 {tag}
               </button>
@@ -358,16 +382,15 @@ export default function HomePage() {
           </div>
 
           {/* Mini stats */}
-          <div className="fade-up-5 flex flex-wrap justify-center gap-6 text-center">
+          <div className="fade-up-5 flex flex-wrap justify-center gap-10 md:gap-16 text-center border-t border-white/10 pt-10">
             {stats.map((s, i) => (
-              <div key={i} className="text-white">
-                <p
-                  className="text-2xl font-black"
-                  style={{ fontFamily: "Sora", color: "#FCD34D" }}
-                >
+              <div key={i} className="text-white group">
+                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 group-hover:from-yellow-200 group-hover:to-yellow-500 transition-all duration-300">
                   {s.value}
                 </p>
-                <p className="text-xs text-blue-300 mt-0.5">{s.label}</p>
+                <p className="text-xs text-slate-400 mt-2 font-medium tracking-wide uppercase">
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
@@ -395,10 +418,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* {savedFull.slice(0, 3).map((uni) => (
-              <UniversityCard key={uni.id} uni={uni} />
-            ))} */}
-            {featured.map((uni) => (
+            {savedFull.slice(0, 3).map((uni) => (
               <UniversityCard key={uni.id} uni={uni} />
             ))}
           </div>
@@ -470,16 +490,16 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
                 <MapPin size={12} />
-                KARACHI UNIVERSITIES
+                PAKISTANI UNIVERSITIES
               </div>
               <h2
                 className="text-4xl font-black"
                 style={{ fontFamily: "Sora", color: "var(--navy)" }}
               >
-                30 Universities Covered
+                All Pakistani Universities
               </h2>
-              <p className="text-slate-500 mt-1">
-                Government and private — all in one place
+              <p className="text-slate-500 mt-1 max-w-lg">
+                All fields and departments from different Universities in Pakistan
               </p>
             </div>
             <Link
@@ -641,6 +661,46 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </>
+
+      {/* SEO FAQ Section */}
+      <section className="max-w-4xl mx-auto px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-black mb-4" style={{ fontFamily: "Sora", color: "var(--navy)" }}>
+            Frequently Asked Questions
+          </h2>
+          <p className="text-slate-500">Everything you need to know about university admissions in Pakistan.</p>
+        </div>
+        <div className="space-y-4">
+          {[
+            {
+              q: "How does the Merit Calculator work?",
+              a: "Our Merit Calculator uses the exact aggregate formulas provided by official university guidelines. You simply enter your Matric/O-Levels and Inter/A-Levels marks, along with any entry test scores, and we calculate your exact aggregate percentage instantly."
+            },
+            {
+              q: "Are the university deadlines accurate?",
+              a: "Yes! We constantly monitor official university websites, newspaper ads, and official social media channels to ensure our deadline alerts are 100% accurate and up-to-date."
+            },
+            {
+              q: "How do I get WhatsApp deadline alerts?",
+              a: "Simply create a free account, save your target universities to your Watchlist, and enable WhatsApp alerts in your profile. We'll send you a reminder 7 days and 1 day before the deadline."
+            },
+            {
+              q: "Is the AI Career Counselor free?",
+              a: "Yes, our AI counselor is completely free. It is trained on extensive data regarding Pakistani universities, career scopes, and market trends to help you make informed decisions."
+            }
+          ].map((faq, i) => (
+            <details key={i} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+              <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-slate-800 outline-none select-none">
+                {faq.q}
+                <ChevronDown className="shrink-0 transition duration-300 group-open:-rotate-180 text-blue-600" size={20} />
+              </summary>
+              <div className="px-6 pb-6 text-slate-600 leading-relaxed">
+                {faq.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }

@@ -2,6 +2,9 @@ const University = require("../models/University");
 const Review = require("../models/Review");
 const Booking = require("../models/ConsultingBooking");
 const User = require("../models/User");
+const ErrorLog = require("../models/ErrorLog");
+const xlsx = require("xlsx");
+const fs = require("fs");
 
 // GET all universities (any status)
 const getAllUnis = async (req, res) => {
@@ -92,6 +95,73 @@ const getAllUsers = async (req, res) => {
   res.json({ users });
 };
 
+// GET Dashboard Stats
+const getDashboardStats = async (req, res) => {
+  const [totalUsers, totalReviews, totalBookings, totalErrors] = await Promise.all([
+    User.countDocuments(),
+    Review.countDocuments(),
+    Booking.countDocuments(),
+    ErrorLog.countDocuments()
+  ]);
+
+  res.json({
+    totalUsers,
+    totalReviews,
+    totalBookings,
+    totalErrors
+  });
+};
+
+// GET Error Logs
+const getErrorLogs = async (req, res) => {
+  const logs = await ErrorLog.find().sort({ createdAt: -1 }).limit(50);
+  res.json(logs);
+};
+
+// POST Upload Excel
+const uploadExcelFile = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+    let count = 0;
+    for (const row of data) {
+      if (!row.name || !row.slug) continue;
+      
+      const uniData = {
+        name: row.name,
+        slug: row.slug.toLowerCase(),
+        shortName: row.shortName || "",
+        city: row.city || "Karachi",
+        type: row.type?.toLowerCase() === "private" ? "private" : "government",
+        status: "approved"
+      };
+
+      await University.findOneAndUpdate(
+        { slug: uniData.slug },
+        { $set: uniData },
+        { upsert: true, new: true }
+      );
+      count++;
+    }
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    res.json({ message: "Success", universitiesAdded: count });
+  } catch (err) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: "Error processing file: " + err.message });
+  }
+};
+
 module.exports = {
   getAllUnis,
   approveUni,
@@ -101,4 +171,7 @@ module.exports = {
   rejectReview,
   getAllBookings,
   getAllUsers,
+  getDashboardStats,
+  getErrorLogs,
+  uploadExcelFile,
 };

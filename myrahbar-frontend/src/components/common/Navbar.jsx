@@ -14,17 +14,44 @@ import {
   Briefcase,
   BookOpen,
   ChevronDown,
+  Sparkles,
+  Moon,
+  Sun,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useAuthStore, useWatchlistStore } from "../../store";
 import Logo from "./Logo";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchText, setSearch] = useState("");
+  const [isDark, setIsDark] = useState(false);
   const { isLoggedIn, user, logout } = useAuthStore();
   const { universities } = useWatchlistStore();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    const initialTheme = localStorage.getItem("theme");
+    if (initialTheme === "dark") {
+      setIsDark(true);
+      root.classList.add("dark");
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const root = window.document.documentElement;
+    if (isDark) {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -40,7 +67,7 @@ export default function Navbar() {
     { to: "/merit-calculator", icon: <Calculator size={14} />, label: "Merit" },
     { to: "/past-papers", icon: <FileText size={14} />, label: "Papers" },
     { to: "/news", icon: <BookOpen size={14} />, label: "News" },
-    { to: "/compare", icon: <BookOpen size={14} />, label: "Compare" },
+    { to: "/career-match", icon: <Sparkles size={14} />, label: "AI Chat" },
     { to: "/document-tools", icon: <FileText size={14} />, label: "Docs" },
     { to: "/counseling", icon: <Headphones size={14} />, label: "Consult" },
     // { to: "/career-guide", icon: <Briefcase size={14} />, label: "AI Chat" },
@@ -88,6 +115,13 @@ export default function Navbar() {
 
         {/* Right */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 text-slate-500 hover:text-slate-800 transition-colors"
+            title="Toggle Dark Mode"
+          >
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {isLoggedIn ? (
             <>
               <Link
@@ -109,10 +143,10 @@ export default function Navbar() {
                   className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
                   style={{ background: "var(--navy)" }}
                 >
-                  {user?.name?.slice(0, 1).toUpperCase()}
+                  {user?.fullName?.slice(0, 1).toUpperCase() || user?.name?.slice(0, 1).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-slate-700 hidden md:block">
-                  {user?.name?.split(" ")[0]}
+                <span className="text-sm font-medium text-slate-700 hidden md:block max-w-[100px] truncate">
+                  {(user?.fullName || user?.name || "User").split(" ")[0]}
                 </span>
               </Link>
             </>
@@ -132,7 +166,7 @@ export default function Navbar() {
                     "linear-gradient(135deg, var(--navy), var(--blue))",
                 }}
               >
-                Sign Up Free
+                Sign Up
               </Link>
             </>
           )}
@@ -192,7 +226,7 @@ export default function Navbar() {
                 className="flex-1 text-center py-2.5 text-sm font-semibold text-white rounded-xl"
                 style={{ background: "var(--navy)" }}
               >
-                Sign Up Free
+                Sign Up
               </Link>
             </div>
           )}

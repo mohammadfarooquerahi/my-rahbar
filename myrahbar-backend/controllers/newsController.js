@@ -71,7 +71,7 @@ const getAllNewsAdmin = async (req, res) => {
 ───────────────────────────────────────────── */
 const createNews = async (req, res) => {
   try {
-    const { title, content, type, priority, isActive, expiresAt } = req.body;
+    const { title, content, type, priority, isActive, expiresAt, referenceLink } = req.body;
 
     if (!title?.trim() || !content?.trim()) {
       return res
@@ -86,6 +86,7 @@ const createNews = async (req, res) => {
       priority: priority || "medium",
       isActive: isActive !== undefined ? isActive : true,
       expiresAt: expiresAt ? new Date(expiresAt) : null,
+      referenceLink: referenceLink ? referenceLink.trim() : "",
     });
 
     res.status(201).json(news);
@@ -104,7 +105,7 @@ const createNews = async (req, res) => {
 ───────────────────────────────────────────── */
 const updateNews = async (req, res) => {
   try {
-    const { title, content, type, priority, isActive, expiresAt } = req.body;
+    const { title, content, type, priority, isActive, expiresAt, referenceLink } = req.body;
 
     // Sanitise: only allow known fields to prevent mass-assignment
     const updates = {};
@@ -115,6 +116,7 @@ const updateNews = async (req, res) => {
     if (isActive !== undefined) updates.isActive = isActive;
     if (expiresAt !== undefined)
       updates.expiresAt = expiresAt ? new Date(expiresAt) : null;
+    if (referenceLink !== undefined) updates.referenceLink = referenceLink.trim();
 
     if (updates.title === "" || updates.content === "") {
       return res

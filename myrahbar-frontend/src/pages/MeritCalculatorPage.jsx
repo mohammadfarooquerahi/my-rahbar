@@ -24,6 +24,23 @@ export default function MeritCalculatorPage() {
   const [aggregate, setAggregate] = useState(null);
   const [status, setStatus] = useState(null);
 
+  // Mode: 'percent' = enter % directly, 'marks' = enter obtained/total
+  const [inputMode, setInputMode] = useState("percent");
+  const [matricObt, setMatricObt] = useState("");
+  const [matricTotal, setMatricTotal] = useState("1100");
+  const [fscObt, setFscObt] = useState("");
+  const [fscTotal, setFscTotal] = useState("1100");
+  const [testObt, setTestObt] = useState("");
+  const [testTotalMarks, setTestTotalMarks] = useState("100");
+
+  // Compute percentages from obtained/total when in marks mode
+  const calcPercent = (obtained, total) => {
+    const o = parseFloat(obtained);
+    const t = parseFloat(total);
+    if (!o || !t || t === 0) return "";
+    return ((o / t) * 100).toFixed(2);
+  };
+
   const selectedUni = KARACHI_UNIVERSITIES.find(
     (u) => u.slug === selectedUniSlug,
   );
@@ -34,14 +51,19 @@ export default function MeritCalculatorPage() {
 
   // Auto calculate whenever inputs change
   useEffect(() => {
-    if (!selectedUni || !matric || !fsc) {
+    // Resolve actual percent values based on mode
+    const effectiveMatric = inputMode === "marks" ? calcPercent(matricObt, matricTotal) : matric;
+    const effectiveFsc = inputMode === "marks" ? calcPercent(fscObt, fscTotal) : fsc;
+    const effectiveTest = inputMode === "marks" ? calcPercent(testObt, testTotalMarks) : testScore;
+
+    if (!selectedUni || !effectiveMatric || !effectiveFsc) {
       setAggregate(null);
       setStatus(null);
       return;
     }
 
     const formula = selectedUni.aggregateFormula;
-    const agg = calculateAggregate(matric, fsc, testScore, formula);
+    const agg = calculateAggregate(effectiveMatric, effectiveFsc, effectiveTest, formula);
     setAggregate(agg);
 
     if (selectedDept?.lastMerit?.length > 0) {
@@ -53,9 +75,9 @@ export default function MeritCalculatorPage() {
   }, [
     selectedUniSlug,
     selectedDeptName,
-    matric,
-    fsc,
-    testScore,
+    matric, fsc, testScore,
+    matricObt, matricTotal, fscObt, fscTotal, testObt, testTotalMarks,
+    inputMode,
     selectedUni,
     selectedDept,
   ]);
@@ -88,15 +110,23 @@ export default function MeritCalculatorPage() {
   };
 
   return (
-    <>
+    <main>
       <Helmet>
-        <title>
-          Merit Calculator — Check Your Admission Chances | MyRahbar
-        </title>
+        <title>Merit Calculator — Check Your Admission Chances | MyRahbar</title>
         <meta
           name="description"
           content="Calculate your aggregate percentage for any Karachi university. See if you meet the last closing merit and predict your admission chances."
         />
+        <link rel="canonical" href="https://myrahbar.com/merit-calculator" />
+        
+        <meta property="og:title" content="University Merit Calculator | MyRahbar" />
+        <meta property="og:description" content="Calculate your aggregate percentage and predict your admission chances for top universities in Karachi." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://myrahbar.com/merit-calculator" />
+        
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="University Merit Calculator" />
+        <meta name="twitter:description" content="Calculate your aggregate percentage and predict your admission chances for top universities in Karachi." />
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 py-10">
@@ -190,59 +220,102 @@ export default function MeritCalculatorPage() {
 
           {/* Step 3 — Enter marks */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              3. Enter Your Marks
-            </label>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  Matric %
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={matric}
-                  onChange={(e) => setMatric(e.target.value)}
-                  placeholder="e.g. 85"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
-                  style={{ fontFamily: "DM Mono" }}
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  FSc / Intermediate %
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={fsc}
-                  onChange={(e) => setFsc(e.target.value)}
-                  placeholder="e.g. 78"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
-                  style={{ fontFamily: "DM Mono" }}
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  Entry Test % (if required)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={testScore}
-                  onChange={(e) => setTest(e.target.value)}
-                  placeholder="e.g. 72"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400"
-                  style={{ fontFamily: "DM Mono" }}
-                />
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-semibold text-slate-700">
+                3. Enter Your Marks
+              </label>
+              {/* Mode toggle */}
+              <div className="flex items-center bg-slate-100 rounded-xl p-1 gap-1">
+                <button
+                  type="button"
+                  onClick={() => setInputMode("percent")}
+                  className={"px-3 py-1 text-xs font-semibold rounded-lg transition-all " + (inputMode === "percent" ? "bg-white text-blue-700 shadow" : "text-slate-500")}
+                >
+                  Enter %
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInputMode("marks")}
+                  className={"px-3 py-1 text-xs font-semibold rounded-lg transition-all " + (inputMode === "marks" ? "bg-white text-blue-700 shadow" : "text-slate-500")}
+                >
+                  Obtained / Total
+                </button>
               </div>
             </div>
+
+            {inputMode === "percent" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Matric %</label>
+                  <input type="number" min="0" max="100" value={matric} onChange={(e) => setMatric(e.target.value)} placeholder="e.g. 85" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">FSc / Intermediate %</label>
+                  <input type="number" min="0" max="100" value={fsc} onChange={(e) => setFsc(e.target.value)} placeholder="e.g. 78" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Entry Test % (if required)</label>
+                  <input type="number" min="0" max="100" value={testScore} onChange={(e) => setTest(e.target.value)} placeholder="e.g. 72" className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400" />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Matric row */}
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-3">Matric / O-Levels</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
+                      <input type="number" value={matricObt} onChange={(e) => setMatricObt(e.target.value)} placeholder="e.g. 900" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Total Marks</label>
+                      <input type="number" value={matricTotal} onChange={(e) => setMatricTotal(e.target.value)} placeholder="e.g. 1100" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Calculated %</label>
+                      <div className="border border-blue-200 bg-blue-50 rounded-xl px-3 py-2.5 text-sm font-bold text-blue-700">{calcPercent(matricObt, matricTotal) || "—"}{calcPercent(matricObt, matricTotal) ? "%" : ""}</div>
+                    </div>
+                  </div>
+                </div>
+                {/* FSc row */}
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-3">Intermediate / FSc / A-Levels</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
+                      <input type="number" value={fscObt} onChange={(e) => setFscObt(e.target.value)} placeholder="e.g. 950" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Total Marks</label>
+                      <input type="number" value={fscTotal} onChange={(e) => setFscTotal(e.target.value)} placeholder="e.g. 1100" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Calculated %</label>
+                      <div className="border border-blue-200 bg-blue-50 rounded-xl px-3 py-2.5 text-sm font-bold text-blue-700">{calcPercent(fscObt, fscTotal) || "—"}{calcPercent(fscObt, fscTotal) ? "%" : ""}</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Test row */}
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-3">Entry Test (if applicable)</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
+                      <input type="number" value={testObt} onChange={(e) => setTestObt(e.target.value)} placeholder="e.g. 72" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Total Marks</label>
+                      <input type="number" value={testTotalMarks} onChange={(e) => setTestTotalMarks(e.target.value)} placeholder="e.g. 100" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Calculated %</label>
+                      <div className="border border-blue-200 bg-blue-50 rounded-xl px-3 py-2.5 text-sm font-bold text-blue-700">{calcPercent(testObt, testTotalMarks) || "—"}{calcPercent(testObt, testTotalMarks) ? "%" : ""}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Result box */}
@@ -380,6 +453,6 @@ export default function MeritCalculatorPage() {
           </p>
         </div>
       </div>
-    </>
+    </main>
   );
 }

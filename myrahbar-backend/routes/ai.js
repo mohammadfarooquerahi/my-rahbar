@@ -57,7 +57,7 @@ router.post("/chat", async (req, res) => {
     // Groq API Call
     const chatCompletion = await groq.chat.completions.create({
       messages: formattedMessages,
-      model: "llama3-8b-8192", // Groq ka fast aur free model
+      model: "llama-3.1-8b-instant", // Groq ka fast aur free model
       max_tokens: 1000,
     });
 

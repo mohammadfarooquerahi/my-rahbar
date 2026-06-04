@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Mail, Lock, Eye, EyeOff, User, Phone, BookOpen } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, BookOpen } from "lucide-react";
 import { useAuthStore } from "../../store";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    name: "",
     email: "",
-    whatsapp: "",
     password: "",
   });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
@@ -33,29 +32,23 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Replace with real API call when backend is ready
-      // const res = await api.auth.register(form)
-      // setAuth(res.user, res.token)
-
-      // Demo register for now
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Registration failed.");
       setAuth(data.user, data.token);
       navigate("/");
-    } catch {
-      setError("Could not create account. Please try again.");
+    } catch (err) {
+      setError(err.message || "Could not create account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const isValid =
-    form.name && form.email && form.whatsapp && form.password.length >= 6;
+  const isValid = form.email && form.password.length >= 6 && agreed;
 
   return (
     <>
@@ -88,7 +81,7 @@ export default function RegisterPage() {
               Create your account
             </h1>
             <p className="text-slate-500 mt-1 text-sm">
-              Free account — get alerts, save universities, track merit
+              Get alerts, save universities, and track your merit — free.
             </p>
           </div>
 
@@ -101,31 +94,10 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User
-                    size={15}
-                    className="absolute left-3 top-3 text-slate-400"
-                  />
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => update("name", e.target.value)}
-                    placeholder="Your full name"
-                    required
-                    className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
-                  />
-                </div>
-              </div>
-
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Email
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail
@@ -141,30 +113,6 @@ export default function RegisterPage() {
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
                 </div>
-              </div>
-
-              {/* WhatsApp */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  WhatsApp Number
-                </label>
-                <div className="relative">
-                  <Phone
-                    size={15}
-                    className="absolute left-3 top-3 text-slate-400"
-                  />
-                  <input
-                    type="tel"
-                    value={form.whatsapp}
-                    onChange={(e) => update("whatsapp", e.target.value)}
-                    placeholder="03XX XXXXXXX"
-                    required
-                    className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
-                  />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Used only for deadline alerts — no spam
-                </p>
               </div>
 
               {/* Password */}
@@ -195,6 +143,22 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* Terms & Conditions checkbox */}
+              <label className="flex items-start gap-2 cursor-pointer text-sm text-slate-500">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="mt-0.5 accent-blue-600"
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-blue-600 underline">Terms of Service</Link>
+                  {" "}and{" "}
+                  <Link to="/privacy" className="text-blue-600 underline">Privacy Policy</Link>
+                </span>
+              </label>
+
               {/* Submit */}
               <button
                 type="submit"
@@ -208,18 +172,14 @@ export default function RegisterPage() {
                     Creating account...
                   </>
                 ) : (
-                  "Create Free Account"
+                  "Create Account"
                 )}
               </button>
 
               <p className="text-xs text-center text-slate-400">
-                By signing up you agree to our{" "}
-                <Link to="/terms" className="underline">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy" className="underline">
-                  Privacy Policy
+                Already have an account?{" "}
+                <Link to="/auth/login" className="text-blue-600 font-medium hover:underline">
+                  Login here
                 </Link>
               </p>
             </form>

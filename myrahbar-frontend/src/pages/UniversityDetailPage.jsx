@@ -45,6 +45,7 @@ export default function UniversityDetailPage() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
+  const [reviewsList, setReviewsList] = useState([]);
   const [papers, setPapers] = useState([]);
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -72,13 +73,20 @@ export default function UniversityDetailPage() {
       });
   }, [slug]);
 
-  // Fetch past papers when tab opened
+  // Fetch past papers and reviews when tabs opened
   useEffect(() => {
-    if (activeTab !== "Past Papers" || !uni) return;
-    fetch("/api/pastpapers?universityId=" + uni._id)
-      .then((res) => res.json())
-      .then((data) => setPapers(Array.isArray(data) ? data : []))
-      .catch(() => setPapers([]));
+    if (activeTab === "Past Papers" && uni) {
+      fetch("/api/pastpapers?universityId=" + uni._id)
+        .then((res) => res.json())
+        .then((data) => setPapers(Array.isArray(data) ? data : []))
+        .catch(() => setPapers([]));
+    }
+    if (activeTab === "Reviews" && uni) {
+      fetch("/api/universities/" + uni._id + "/reviews")
+        .then((res) => res.json())
+        .then((data) => setReviewsList(data.reviews || []))
+        .catch(() => setReviewsList([]));
+    }
   }, [activeTab, uni]);
 
   const submitReview = async () => {
@@ -216,16 +224,25 @@ export default function UniversityDetailPage() {
     encodeURIComponent("Hi, I want 10 years past papers for " + uni.name);
 
   return (
-    <>
+    <main>
       <Helmet>
         <title>{uni.name} — Admission, Merit, Fee | MyRahbar</title>
         <meta
           name="description"
-          content={
-            uni.name +
-            " admission details, merit, fee, scholarships. Updated 2025."
-          }
+          content={`${uni.name} admission details, merit calculation, fee structure, and scholarships. Get the latest 2025 updates on MyRahbar.`}
         />
+        <link rel="canonical" href={`https://myrahbar.com/university/${uni.slug}`} />
+        
+        {/* OpenGraph Tags */}
+        <meta property="og:title" content={`${uni.name} — Admission Guide`} />
+        <meta property="og:description" content={`Check out the merit, fee, and admission details for ${uni.name} on MyRahbar.`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://myrahbar.com/university/${uni.slug}`} />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={`${uni.name} — Admission Guide`} />
+        <meta name="twitter:description" content={`Check out the merit, fee, and admission details for ${uni.name} on MyRahbar.`} />
       </Helmet>
 
       {/* Breadcrumb */}
@@ -708,6 +725,38 @@ export default function UniversityDetailPage() {
                         Submit Review
                       </button>
                     </div>
+
+                    <div className="space-y-4 mt-8 border-t border-slate-100 pt-8">
+                      <h3 className="font-semibold text-slate-800 text-lg mb-4">Student Reviews</h3>
+                      {reviewsList.length === 0 ? (
+                        <div className="text-center py-10 bg-slate-50 rounded-2xl border border-slate-100">
+                          <MessageCircle size={32} className="mx-auto text-slate-300 mb-2" />
+                          <p className="text-sm font-medium text-slate-600">No reviews yet</p>
+                          <p className="text-xs text-slate-500">Be the first to share your experience!</p>
+                        </div>
+                      ) : (
+                        reviewsList.map((rev) => (
+                          <div key={rev._id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
+                                  {rev.userId?.name?.slice(0, 2) || "AN"}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-800">{rev.userId?.name || "Anonymous"}</p>
+                                  <p className="text-xs text-slate-500">{new Date(rev.createdAt).toLocaleDateString()}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center bg-amber-50 px-2.5 py-1 rounded-lg text-amber-500">
+                                <Star size={14} fill="currentColor" />
+                                <span className="text-sm font-bold ml-1">{rev.rating}.0</span>
+                              </div>
+                            </div>
+                            <p className="text-sm text-slate-700 leading-relaxed">{rev.text}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -837,10 +886,10 @@ export default function UniversityDetailPage() {
               </p>
 
               <a
-                href={uni.website || "#"}
+                href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center"
+                className="mt-4 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
                 style={{ background: "var(--green)" }}
               >
                 Apply Now →
@@ -959,6 +1008,6 @@ export default function UniversityDetailPage() {
           </div>
         </div>
       )}
-    </>
+    </main>
   );
 }

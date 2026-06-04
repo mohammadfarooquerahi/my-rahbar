@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import AIChatWidget from "./components/common/AIChatWidget";
@@ -27,7 +27,6 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 const PastPapersPage = lazy(() => import("./pages/PastPapersPage"));
-// const aiRoutes = require("./routes/ai");
 
 function PageLoader() {
   return (
@@ -38,6 +37,9 @@ function PageLoader() {
 }
 
 export default function App() {
+  const location = useLocation();
+  const hideFooter = location.pathname === "/career-match";
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -72,8 +74,9 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
       <AIChatWidget />
     </div>
   );
 }
+

@@ -12,6 +12,7 @@ import {
   Edit2,
   Save,
   Heart,
+  Bell,
 } from "lucide-react";
 import { useAuthStore, useWatchlistStore } from "../store";
 
@@ -33,17 +34,26 @@ export default function ProfilePage() {
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
-    name: user?.name || "",
+    fullName: user?.fullName || user?.name || "",
     email: user?.email || "",
     whatsapp: user?.whatsapp || "",
-    matricPercent: user?.matricPercent || "",
-    fscPercent: user?.fscPercent || "",
-    fscSubjects: user?.fscSubjects || "Pre-Engineering",
-    budget: user?.budget || "medium",
-    needsScholarship: user?.needsScholarship || false,
-    needsHostel: user?.needsHostel || false,
-    preferredSector: user?.preferredSector || "any",
-    interestedField: user?.interestedField || "",
+    emailAlerts: user?.emailAlerts !== undefined ? user.emailAlerts : true,
+    // Matric
+    matricMarks: user?.profile?.matricMarks || "",
+    matricTotal: user?.profile?.matricTotal || "1100",
+    matricPercent: user?.profile?.matricPercent || "",
+    matricGroup: user?.profile?.matricGroup || "",
+    // FSc
+    fscMarks: user?.profile?.fscMarks || "",
+    fscTotal: user?.profile?.fscTotal || "1100",
+    fscPercent: user?.profile?.fscPercent || "",
+    fscGroup: user?.profile?.fscGroup || "",
+    // Preferences
+    budget: user?.profile?.budget || "medium",
+    needsScholarship: user?.profile?.needsScholarship || false,
+    needsHostel: user?.profile?.needsHostel || false,
+    preferredSector: user?.profile?.preferredSector || "any",
+    interestedField: user?.profile?.interestedField || "",
   });
 
   // If not logged in redirect to login
@@ -95,7 +105,7 @@ export default function ProfilePage() {
 
   // Profile completeness
   const fields = [
-    form.name,
+    form.fullName,
     form.email,
     form.whatsapp,
     form.matricPercent,
@@ -196,44 +206,26 @@ export default function ProfilePage() {
             </h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  Full Name
-                </label>
+                <label className="block text-xs text-slate-500 mb-1">Full Name</label>
                 {editing ? (
                   <input
-                    value={form.name}
-                    onChange={(e) => update("name", e.target.value)}
+                    value={form.fullName}
+                    onChange={(e) => update("fullName", e.target.value)}
+                    placeholder="Your full name"
                     className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
                   />
                 ) : (
-                  <p className="text-sm font-medium text-slate-700">
-                    {form.name || "—"}
-                  </p>
+                  <p className="text-sm font-medium text-slate-700">{form.fullName || "—"}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  Email
-                </label>
-                {editing ? (
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => update("email", e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
-                  />
-                ) : (
-                  <p className="text-sm font-medium text-slate-700">
-                    {form.email || "—"}
-                  </p>
-                )}
+                <label className="block text-xs text-slate-500 mb-1">Email</label>
+                <p className="text-sm font-medium text-slate-500">{form.email || "—"}</p>
               </div>
 
               <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  WhatsApp Number
-                </label>
+                <label className="block text-xs text-slate-500 mb-1">WhatsApp Number</label>
                 {editing ? (
                   <input
                     type="tel"
@@ -243,10 +235,27 @@ export default function ProfilePage() {
                     className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
                   />
                 ) : (
-                  <p className="text-sm font-medium text-slate-700">
-                    {form.whatsapp || "—"}
-                  </p>
+                  <p className="text-sm font-medium text-slate-700">{form.whatsapp || "— (add for deadline alerts)"}</p>
                 )}
+              </div>
+
+              {/* Email Alerts toggle */}
+              <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Bell size={15} className="text-blue-500" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Email Deadline Alerts</p>
+                    <p className="text-xs text-slate-400">Get notified before admission deadlines</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => editing && update("emailAlerts", !form.emailAlerts)}
+                  className={"w-11 h-6 rounded-full transition-colors relative " + (form.emailAlerts ? "bg-blue-500" : "bg-slate-300")}
+                  disabled={!editing}
+                >
+                  <span className={"absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform " + (form.emailAlerts ? "translate-x-5" : "")} />
+                </button>
               </div>
             </div>
           </div>
@@ -263,76 +272,59 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">
-                    Matric %
-                  </label>
+                  <label className="block text-xs text-slate-500 mb-1">Matric Obtained</label>
                   {editing ? (
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={form.matricPercent}
-                      onChange={(e) => update("matricPercent", e.target.value)}
-                      placeholder="e.g. 85"
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
-                      style={{ fontFamily: "DM Mono" }}
-                    />
-                  ) : (
-                    <p
-                      className="text-sm font-medium text-slate-700"
-                      style={{ fontFamily: "DM Mono" }}
-                    >
-                      {form.matricPercent ? form.matricPercent + "%" : "—"}
-                    </p>
-                  )}
+                    <input type="number" value={form.matricMarks} onChange={(e) => update("matricMarks", e.target.value)} placeholder="e.g. 900" className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400" />
+                  ) : (<p className="text-sm font-medium text-slate-700">{form.matricMarks || "—"}</p>)}
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">
-                    FSc %
-                  </label>
+                  <label className="block text-xs text-slate-500 mb-1">Matric Total</label>
                   {editing ? (
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={form.fscPercent}
-                      onChange={(e) => update("fscPercent", e.target.value)}
-                      placeholder="e.g. 78"
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
-                      style={{ fontFamily: "DM Mono" }}
-                    />
-                  ) : (
-                    <p
-                      className="text-sm font-medium text-slate-700"
-                      style={{ fontFamily: "DM Mono" }}
-                    >
-                      {form.fscPercent ? form.fscPercent + "%" : "—"}
-                    </p>
-                  )}
+                    <input type="number" value={form.matricTotal} onChange={(e) => update("matricTotal", e.target.value)} placeholder="e.g. 1100" className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400" />
+                  ) : (<p className="text-sm font-medium text-slate-700">{form.matricTotal || "—"}</p>)}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-slate-500 mb-1">
-                  FSc Subjects
-                </label>
+                <label className="block text-xs text-slate-500 mb-1">Matric Group</label>
                 {editing ? (
-                  <select
-                    value={form.fscSubjects}
-                    onChange={(e) => update("fscSubjects", e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
-                  >
-                    <option>Pre-Engineering</option>
+                  <select value={form.matricGroup} onChange={(e) => update("matricGroup", e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400">
+                    <option value="">— Select —</option>
+                    <option>Science</option>
+                    <option>Arts</option>
+                    <option>Computer Science</option>
+                    <option>Commerce</option>
+                  </select>
+                ) : (<p className="text-sm font-medium text-slate-700">{form.matricGroup || "—"}</p>)}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Intermediate Obtained</label>
+                  {editing ? (
+                    <input type="number" value={form.fscMarks} onChange={(e) => update("fscMarks", e.target.value)} placeholder="e.g. 950" className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400" />
+                  ) : (<p className="text-sm font-medium text-slate-700">{form.fscMarks || "—"}</p>)}
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Intermediate Total</label>
+                  {editing ? (
+                    <input type="number" value={form.fscTotal} onChange={(e) => update("fscTotal", e.target.value)} placeholder="e.g. 1100" className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400" />
+                  ) : (<p className="text-sm font-medium text-slate-700">{form.fscTotal || "—"}</p>)}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">Intermediate Group</label>
+                {editing ? (
+                  <select value={form.fscGroup} onChange={(e) => update("fscGroup", e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400">
+                    <option value="">— Select —</option>
                     <option>Pre-Medical</option>
+                    <option>Pre-Engineering</option>
+                    <option>ICS</option>
                     <option>Commerce</option>
                     <option>Arts / Humanities</option>
-                    <option>Computer Science</option>
                   </select>
-                ) : (
-                  <p className="text-sm font-medium text-slate-700">
-                    {form.fscSubjects || "—"}
-                  </p>
-                )}
+                ) : (<p className="text-sm font-medium text-slate-700">{form.fscGroup || "—"}</p>)}
               </div>
 
               <div>

@@ -208,13 +208,23 @@ export default function FindUniversityPage() {
   };
 
   return (
-    <>
+    <main>
       <Helmet>
         <title>Find My University — Smart Matcher | MyRahbar</title>
         <meta
           name="description"
           content="Answer 10 questions and MyRahbar will match you to the best university in Karachi based on your budget, field, and goals."
         />
+        <link rel="canonical" href="https://myrahbar.com/find-university" />
+        
+        <meta property="og:title" content="Find Your Perfect University | MyRahbar" />
+        <meta property="og:description" content="Answer 10 simple questions and get matched to the best university for your profile instantly." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://myrahbar.com/find-university" />
+        
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Smart University Matcher" />
+        <meta name="twitter:description" content="Answer 10 simple questions and get matched to the best university for your profile instantly." />
       </Helmet>
 
       <div className="max-w-2xl mx-auto px-4 py-12">
@@ -459,6 +469,6 @@ export default function FindUniversityPage() {
           </div>
         )}
       </div>
-    </>
+    </main>
   );
 }

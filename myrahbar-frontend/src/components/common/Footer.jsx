@@ -20,13 +20,13 @@ export default function Footer() {
                 href="#"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
-                {/* <Instagram size={15} /> */}
+                <span className="font-bold text-[10px]">IG</span>
               </a>
               <a
                 href="#"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
-                {/* <Youtube size={15} /> */}
+                <span className="font-bold text-[10px]">YT</span>
               </a>
               <a
                 href="mailto:info@myrahbar.com"
@@ -69,7 +69,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               {[
                 ["Personal Counseling", "/counseling"],
-                ["AI Chat", "/career-guide"],
+                ["AI Chat", "/career-match"],
                 ["Blog & Articles", "/blog"],
                 ["About MyRahbar", "/about"],
                 ["Contact Us", "/contact"],
@@ -106,6 +106,10 @@ export default function Footer() {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mt-12 p-4 bg-white/5 rounded-2xl text-center text-xs text-slate-500">
+          <strong>Disclaimer:</strong> All information is gathered from official university sources, prospectus, and public advertisements. However, admission policies, fees, and deadlines are subject to change. MyRahbar is an independent platform and not officially affiliated with these universities. Always verify critical information from the official university website.
         </div>
 
         <div className="border-t border-white/5 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">

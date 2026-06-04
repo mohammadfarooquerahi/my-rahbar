@@ -115,16 +115,27 @@ function NewsCard({ item }) {
           {item.title}
         </h3>
 
-        {/* content preview */}
+        {/* content preview - strip HTML tags for plain text display */}
         {item.content && (
           <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
-            {item.content}
+            {item.content.replace(/<[^>]+>/g, "")}
           </p>
         )}
       </div>
 
       {/* CTA */}
-      {item.link && item.link !== "#" ? (
+      {item.referenceLink && item.referenceLink !== "#" ? (
+        <a
+          href={item.referenceLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 flex items-center gap-2 border border-slate-200 
+            hover:border-blue-300 hover:bg-blue-50 text-slate-600 hover:text-blue-700
+            font-semibold text-sm px-4 py-2.5 rounded-xl transition-all duration-150"
+        >
+          Read More <ExternalLink size={13} />
+        </a>
+      ) : item.link && item.link !== "#" ? (
         <a
           href={item.link}
           target="_blank"
@@ -135,14 +146,7 @@ function NewsCard({ item }) {
         >
           Read More <ExternalLink size={13} />
         </a>
-      ) : (
-        <div
-          className="shrink-0 flex items-center gap-2 bg-slate-50 
-          text-slate-400 text-sm px-4 py-2.5 rounded-xl border border-slate-100 cursor-default select-none"
-        >
-          <Info size={13} /> Reference
-        </div>
-      )}
+      ) : null}
     </article>
   );
 }

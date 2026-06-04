@@ -1,25 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Briefcase, Send, Bot, User, Sparkles } from "lucide-react";
-
-const SYSTEM_PROMPT = `You are a career counselor for Pakistani students.
-You help students choose the right degree, university, and career path in Pakistan.
-
-You know about:
-- Job market in Pakistan for different fields (IT, Engineering, Medicine, Business, Law, Arts)
-- Which degrees have best career prospects in Pakistan
-- Salary ranges in Pakistan for different professions
-- Which Karachi universities are best for which fields
-- Internship and entry level job advice for fresh graduates
-- HEC recognized degrees and their scope
-
-Keep answers short, friendly, and practical.
-Always give honest advice — if a field has limited jobs, say so.
-Use PKR for salaries. Focus on Pakistan job market.
-
-If someone asks anything unrelated to careers or education, say:
-"I am here to help with career and education guidance for Pakistani students only."
-`;
+import { Send, Bot, User, Sparkles } from "lucide-react";
 
 const STARTER_QUESTIONS = [
   "I finished FSc Pre-Medical. Should I go for MBBS or try CS?",
@@ -47,10 +28,16 @@ What is your question?`,
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
+
+  // Focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const send = async (text) => {
     const msg = text || input.trim();
@@ -86,6 +73,7 @@ What is your question?`,
       ]);
     } finally {
       setLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -97,58 +85,65 @@ What is your question?`,
           name="description"
           content="Get AI-powered career guidance for Pakistani students. Ask about degrees, job prospects, salaries and the best universities for your field."
         />
+        <link rel="canonical" href="https://myrahbar.com/career-match" />
+        <meta property="og:title" content="AI Career Counselor | MyRahbar" />
+        <meta property="og:description" content="Confused about your career? Chat with our AI counselor about degrees, scope, and admissions." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://myrahbar.com/career-match" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="AI Career Counselor" />
+        <meta name="twitter:description" content="Confused about your career? Chat with our AI counselor about degrees, scope, and admissions." />
       </Helmet>
 
-      <div className="max-w-3xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-            style={{ background: "#FEF2F2" }}
-          >
-            <Briefcase size={26} style={{ color: "#E74C3C" }} />
-          </div>
-          <h1
-            className="text-3xl font-bold mb-2"
-            style={{ fontFamily: "Sora", color: "var(--navy)" }}
-          >
-            AI Career Counselor
-          </h1>
-          <p className="text-slate-500">
-            Ask any question about careers, degrees, and job market in Pakistan
-          </p>
-        </div>
+      {/* Full-screen chat layout — fills viewport below navbar */}
+      <div
+        className="flex flex-col"
+        style={{ height: "calc(100vh - 64px)" }}
+      >
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto bg-slate-50">
+          <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
+            {/* Header — only shown at the top */}
+            {messages.length <= 1 && (
+              <div className="text-center py-4 fade-up">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+                >
+                  <Sparkles size={26} className="text-white" />
+                </div>
+                <h1
+                  className="text-2xl font-bold mb-1"
+                  style={{ fontFamily: "Outfit", color: "var(--navy)" }}
+                >
+                  AI Career Counselor
+                </h1>
+                <p className="text-slate-500 text-sm">
+                  Ask any question about careers, degrees, and job market in Pakistan
+                </p>
 
-        {/* Starter questions */}
-        <div className="mb-5">
-          <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">
-            Students usually ask:
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {STARTER_QUESTIONS.map((q) => (
-              <button
-                key={q}
-                onClick={() => send(q)}
-                className="text-xs bg-white border border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-700 px-3 py-1.5 rounded-xl transition-colors text-left"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-        </div>
+                {/* Starter questions */}
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  {STARTER_QUESTIONS.map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => send(q)}
+                      className="text-xs bg-white border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-700 hover:shadow-sm px-3 py-2 rounded-xl transition-all text-left"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* Chat window */}
-        <div
-          className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col"
-          style={{ height: "500px" }}
-        >
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50">
+            {/* Chat messages */}
             {messages.map((m, i) => (
               <div
                 key={i}
                 className={
-                  "flex gap-3 " + (m.role === "user" ? "flex-row-reverse" : "")
+                  "flex gap-3 fade-up " +
+                  (m.role === "user" ? "flex-row-reverse" : "")
                 }
               >
                 {/* Avatar */}
@@ -157,13 +152,13 @@ What is your question?`,
                     "w-8 h-8 rounded-full flex items-center justify-center shrink-0 " +
                     (m.role === "user"
                       ? "bg-blue-600 text-white"
-                      : "bg-white border border-slate-200")
+                      : "bg-white border border-slate-200 shadow-sm")
                   }
                 >
                   {m.role === "user" ? (
                     <User size={14} />
                   ) : (
-                    <Bot size={14} className="text-slate-600" />
+                    <Bot size={14} className="text-indigo-600" />
                   )}
                 </div>
 
@@ -173,7 +168,7 @@ What is your question?`,
                     "max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap " +
                     (m.role === "user"
                       ? "bg-blue-600 text-white rounded-tr-sm"
-                      : "bg-white text-slate-700 border border-slate-100 rounded-tl-sm")
+                      : "bg-white text-slate-700 border border-slate-100 shadow-sm rounded-tl-sm")
                   }
                 >
                   {m.content}
@@ -183,22 +178,22 @@ What is your question?`,
 
             {/* Typing indicator */}
             {loading && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center">
-                  <Bot size={14} className="text-slate-600" />
+              <div className="flex gap-3 fade-up">
+                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center">
+                  <Bot size={14} className="text-indigo-600" />
                 </div>
-                <div className="bg-white border border-slate-100 rounded-2xl rounded-tl-sm px-4 py-3">
-                  <div className="flex gap-1 items-center">
+                <div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-tl-sm px-4 py-3">
+                  <div className="flex gap-1.5 items-center">
                     <span
-                      className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0ms" }}
                     />
                     <span
-                      className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
                       style={{ animationDelay: "150ms" }}
                     />
                     <span
-                      className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
                       style={{ animationDelay: "300ms" }}
                     />
                   </div>
@@ -208,12 +203,15 @@ What is your question?`,
 
             <div ref={bottomRef} />
           </div>
+        </div>
 
-          {/* Input bar */}
-          <div className="p-4 bg-white border-t border-slate-200">
+        {/* Input bar — sticky at bottom */}
+        <div className="bg-white border-t border-slate-200 px-4 py-3">
+          <div className="max-w-3xl mx-auto">
             <div className="flex items-center gap-3 bg-slate-100 rounded-xl px-4 py-1">
-              <Sparkles size={15} className="text-slate-400 shrink-0" />
+              <Sparkles size={15} className="text-indigo-400 shrink-0" />
               <input
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
@@ -223,13 +221,13 @@ What is your question?`,
               <button
                 onClick={() => send()}
                 disabled={!input.trim() || loading}
-                className="p-1.5 rounded-lg text-white disabled:opacity-40 transition-opacity shrink-0"
-                style={{ background: "var(--navy)" }}
+                className="p-2 rounded-xl text-white disabled:opacity-40 transition-all hover:scale-105 shrink-0"
+                style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
               >
                 <Send size={14} />
               </button>
             </div>
-            <p className="text-xs text-center text-slate-400 mt-2">
+            <p className="text-xs text-center text-slate-400 mt-1.5">
               AI guidance only — always verify with official university sources
             </p>
           </div>

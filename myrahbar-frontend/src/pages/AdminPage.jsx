@@ -31,6 +31,7 @@ const TABS = [
   "Upload Excel",
   "Reviews",
   "Error Logs",
+  "Bookings",
   "Past Papers",
   "Blogs",
   "News",
@@ -301,6 +302,11 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/reviews", { headers });
         const data = await res.json();
         setReviews(data.reviews || []);
+      }
+      if (activeTab === "Bookings") {
+        const res = await fetch("/api/admin/bookings", { headers });
+        const data = await res.json();
+        setBookings(data.bookings || []);
       }
       if (activeTab === "Dashboard") {
         const res = await fetch("/api/admin/dashboard", { headers });
@@ -1794,13 +1800,14 @@ export default function AdminPage() {
                 />
                 <textarea
                   required
-                  placeholder="Content (HTML support)"
-                  className="border p-2 rounded-xl h-32"
+                  placeholder="Content — supports full HTML (e.g. <h2>, <p>, <strong>, <ul><li>...). Paste your formatted HTML here."
+                  className="border p-2 rounded-xl h-48 font-mono text-xs"
                   value={blogForm.content}
                   onChange={(e) =>
                     setBlogForm({ ...blogForm, content: e.target.value })
                   }
                 />
+                <p className="text-xs text-slate-400 -mt-2">💡 Tip: You can write plain text or paste full HTML including headings, lists, bold text etc.</p>
                 <input
                   type="file"
                   className="border p-1.5 rounded-xl"
@@ -2023,6 +2030,23 @@ export default function AdminPage() {
                       />
                     </button>
                   </div>
+                </div>
+
+                {/* Reference Link */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
+                    Reference Link <span className="font-normal text-slate-400 normal-case">(optional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://university.edu.pk/admissions"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newsForm.referenceLink || ""}
+                    onChange={(e) =>
+                      setNewsForm({ ...newsForm, referenceLink: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-slate-400 mt-1">Link to the official university page or source article.</p>
                 </div>
 
                 {/* Submit */}

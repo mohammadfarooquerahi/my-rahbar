@@ -9,6 +9,7 @@ const newsSchema = new mongoose.Schema(
     isActive: { type: Boolean, default: true },
     expiresAt: { type: Date },
     image: { type: String },
+    referenceLink: { type: String, default: "" },
   },
   { timestamps: true }
 );
