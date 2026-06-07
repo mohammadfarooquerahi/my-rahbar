@@ -163,7 +163,7 @@ export default function DocumentToolsPage() {
   return (
     <>
       <Helmet>
-        <title>Document Tools — Compress & Prepare Files | MyRahbar</title>
+        <title>Document Tools — Compress & Prepare Files | Rahbars</title>
         <meta
           name="description"
           content="Compress and resize your documents for university admission. Reduce JPG, PNG file size to meet university requirements."

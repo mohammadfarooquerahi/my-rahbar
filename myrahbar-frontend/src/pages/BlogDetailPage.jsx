@@ -58,7 +58,7 @@ export default function BlogDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{blog.title} | MyRahbar Blog</title>
+        <title>{blog.title} | Rahbars Blog</title>
         <meta name="description" content={blog.content?.replace(/<[^>]+>/g, "").slice(0, 150)} />
       </Helmet>
 

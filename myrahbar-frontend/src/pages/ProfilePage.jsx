@@ -118,7 +118,7 @@ export default function ProfilePage() {
   return (
     <>
       <Helmet>
-        <title>My Profile | MyRahbar</title>
+        <title>My Profile | Rahbars</title>
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 py-10">

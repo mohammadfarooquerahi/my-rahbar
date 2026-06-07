@@ -53,7 +53,7 @@ export default function RegisterPage() {
   return (
     <>
       <Helmet>
-        <title>Sign Up Free | MyRahbar</title>
+        <title>Sign Up Free | Rahbars</title>
       </Helmet>
 
       <div className="min-h-screen flex items-center justify-center px-4 py-12">

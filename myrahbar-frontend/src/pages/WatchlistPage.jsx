@@ -27,7 +27,7 @@ export default function WatchlistPage() {
   return (
     <>
       <Helmet>
-        <title>My Watchlist — Saved Universities | MyRahbar</title>
+        <title>My Watchlist — Saved Universities | Rahbars</title>
         <meta
           name="description"
           content="View your saved universities and departments. Get deadline alerts on WhatsApp and email."

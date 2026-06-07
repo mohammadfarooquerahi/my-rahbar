@@ -17,6 +17,8 @@ import {
   Sparkles,
   Moon,
   Sun,
+  Newspaper,
+  Rss,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useAuthStore, useWatchlistStore } from "../../store";
@@ -66,11 +68,9 @@ export default function Navbar() {
     { to: "/find-university", icon: <Search size={14} />, label: "Find Uni" },
     { to: "/merit-calculator", icon: <Calculator size={14} />, label: "Merit" },
     { to: "/past-papers", icon: <FileText size={14} />, label: "Papers" },
-    { to: "/news", icon: <BookOpen size={14} />, label: "News" },
     { to: "/career-match", icon: <Sparkles size={14} />, label: "AI Chat" },
     { to: "/document-tools", icon: <FileText size={14} />, label: "Docs" },
     { to: "/counseling", icon: <Headphones size={14} />, label: "Consult" },
-    // { to: "/career-guide", icon: <Briefcase size={14} />, label: "AI Chat" },
   ];
 
   const isActive = (to) => location.pathname === to;
@@ -125,8 +125,23 @@ export default function Navbar() {
           {isLoggedIn ? (
             <>
               <Link
+                to="/news"
+                className="p-2 text-slate-400 hover:text-blue-500 transition-colors"
+                title="News"
+              >
+                <Newspaper size={18} />
+              </Link>
+              <Link
+                to="/blog"
+                className="p-2 text-slate-400 hover:text-green-500 transition-colors"
+                title="Blog"
+              >
+                <Rss size={18} />
+              </Link>
+              <Link
                 to="/watchlist"
                 className="relative p-2 text-slate-400 hover:text-red-500 transition-colors"
+                title="Watchlist"
               >
                 <Heart size={18} />
                 {universities.length > 0 && (

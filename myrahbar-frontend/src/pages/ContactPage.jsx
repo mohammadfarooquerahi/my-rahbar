@@ -5,8 +5,8 @@ export default function ContactPage() {
   return (
     <>
       <Helmet>
-        <title>Contact Us | MyRahbar</title>
-        <meta name="description" content="Get in touch with the MyRahbar team for any queries regarding university admissions or career counseling." />
+        <title>Contact Us | Rahbars</title>
+        <meta name="description" content="Get in touch with the Rahbars team for any queries regarding university admissions or career counseling." />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">
@@ -34,8 +34,8 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-1">Email Us</h3>
                   <p className="text-slate-600 mb-2">Our friendly team is here to help.</p>
-                  <a href="mailto:support@myrahbar.com" className="text-blue-600 font-medium hover:underline">
-                    support@myrahbar.com
+                  <a href="mailto:rahbarsofficial@gmail.com" className="text-blue-600 font-medium hover:underline">
+                    rahbarsofficial@gmail.com
                   </a>
                 </div>
               </div>

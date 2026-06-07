@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-DGeXAQPT.js";var t=e();function n(){return(0,t.jsxs)(`div`,{className:`max-w-7xl mx-auto px-4 py-20 text-center`,children:[(0,t.jsx)(`h1`,{className:`text-3xl font-bold mb-6`,children:`Contact`}),(0,t.jsx)(`p`,{className:`text-slate-600`,children:`Content coming soon.`})]})}export{n as default};

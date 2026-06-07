@@ -6,8 +6,8 @@ export default function AboutPage() {
   return (
     <>
       <Helmet>
-        <title>About Us | MyRahbar</title>
-        <meta name="description" content="Learn about MyRahbar's mission to guide students towards their perfect university and career." />
+        <title>About Us | Rahbars</title>
+        <meta name="description" content="Learn about Rahbars's mission to guide students towards their perfect university and career." />
       </Helmet>
 
       {/* Hero Section */}
@@ -23,7 +23,7 @@ export default function AboutPage() {
             Empowering Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">Educational Journey</span>
           </h1>
           <p className="text-lg md:text-xl text-blue-100/80 leading-relaxed font-light">
-            MyRahbar is Pakistan's premier platform for university admissions, career guidance, and student resources. We leverage technology to simplify your academic future.
+            Rahbars is Pakistan's premier platform for university admissions, career guidance, and student resources. We leverage technology to simplify your academic future.
           </p>
         </div>
       </section>
@@ -81,7 +81,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto text-center">
           <GraduationCap size={48} className="mx-auto mb-6 text-blue-600" />
           <h2 className="text-3xl font-bold text-slate-800 mb-6" style={{ fontFamily: "Sora" }}>Ready to find your dream university?</h2>
-          <p className="text-slate-600 mb-8 text-lg">Join thousands of students who have already found their path with MyRahbar.</p>
+          <p className="text-slate-600 mb-8 text-lg">Join thousands of students who have already found their path with Rahbars.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/search" className="bg-blue-600 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
               Explore Universities

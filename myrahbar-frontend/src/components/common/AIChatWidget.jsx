@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 
-const SYSTEM = `You are MyRahbar AI, a helpful guide for Pakistani students.
+const SYSTEM = `You are Rahbars AI, a helpful guide for Pakistani students.
 You ONLY answer questions about:
 - Universities in Pakistan (especially Karachi)
 - Admission process, merit, aggregate calculation
@@ -22,7 +22,7 @@ export default function AIChatWidget() {
     {
       role: "assistant",
       content:
-        "Assalamu Alaikum! I am your MyRahbar AI guide. Ask me anything about university admissions, merit calculation, scholarships, or career guidance in Pakistan 🎓",
+        "Assalamu Alaikum! I am your Rahbars AI guide. Ask me anything about university admissions, merit calculation, scholarships, or career guidance in Pakistan 🎓",
     },
   ]);
   const bottomRef = useRef(null);

@@ -4,8 +4,8 @@ export default function PrivacyPolicyPage() {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy | MyRahbar</title>
-        <meta name="description" content="Privacy Policy for MyRahbar." />
+        <title>Privacy Policy | Rahbars</title>
+        <meta name="description" content="Privacy Policy for Rahbars." />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <article className="prose prose-slate max-w-none prose-headings:font-sora prose-headings:font-bold prose-p:text-slate-600">
           <p>
-            At MyRahbar, accessible from myrahbar.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by MyRahbar and how we use it.
+            At Rahbars, accessible from rahbars.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Rahbars and how we use it.
           </p>
 
           <h2>Information We Collect</h2>
@@ -48,17 +48,17 @@ export default function PrivacyPolicyPage() {
 
           <h2>Log Files</h2>
           <p>
-            MyRahbar follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable.
+            Rahbars follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable.
           </p>
 
           <h2>Cookies and Web Beacons</h2>
           <p>
-            Like any other website, MyRahbar uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.
+            Like any other website, Rahbars uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.
           </p>
 
           <h2>Contact Us</h2>
           <p>
-            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at support@myrahbar.com.
+            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at rahbarsofficial@gmail.com.
           </p>
         </article>
       </div>

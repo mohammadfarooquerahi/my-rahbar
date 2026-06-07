@@ -57,7 +57,7 @@ export default function ComparePage() {
   return (
     <>
       <Helmet>
-        <title>Compare Universities — Side by Side | MyRahbar</title>
+        <title>Compare Universities — Side by Side | Rahbars</title>
         <meta
           name="description"
           content="Compare up to 3 Karachi universities side by side. See fee, merit, hostel, scholarships and more at a glance."

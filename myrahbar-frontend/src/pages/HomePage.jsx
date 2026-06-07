@@ -74,7 +74,6 @@ export default function HomePage() {
   );
 
   const stats = [
-    { label: "Universities", value: "All", icon: <BookOpen size={18} /> },
     { label: "Students Helped", value: "5,000+", icon: <Users size={18} /> },
     { label: "Departments", value: "150+", icon: <TrendingUp size={18} /> },
     { label: "Scholarships", value: "80+", icon: <Shield size={18} /> },
@@ -176,30 +175,30 @@ export default function HomePage() {
     <main>
       <Helmet>
         <title>
-          MyRahbar | Pakistan's Smartest University Admission Platform
+          Rahbars | Pakistan's Smartest University Admission Platform
         </title>
         <meta
           name="description"
-          content="MyRahbar helps Pakistani students find the best universities in Karachi. Calculate merit, check fee structures, get deadline alerts, and apply smarter."
+          content="Rahbars helps Pakistani students find the best universities in Karachi. Calculate merit, check fee structures, get deadline alerts, and apply smarter."
         />
-        <link rel="canonical" href="https://myrahbar.com/" />
+        <link rel="canonical" href="https://rahbars.com/" />
 
         {/* OpenGraph Tags */}
-        <meta property="og:title" content="MyRahbar | Find Your University" />
+        <meta property="og:title" content="Rahbars | Find Your University" />
         <meta
           property="og:description"
           content="Calculate your merit and get matched to the perfect university in Karachi instantly."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://myrahbar.com/" />
-        <meta property="og:image" content="https://myrahbar.com/og-image.jpg" />
-        <meta property="og:site_name" content="MyRahbar" />
+        <meta property="og:url" content="https://rahbars.com/" />
+        <meta property="og:image" content="https://rahbars.com/og-image.jpg" />
+        <meta property="og:site_name" content="Rahbars" />
 
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="MyRahbar | Pakistan Admission Guide"
+          content="Rahbars | Pakistan Admission Guide"
         />
         <meta
           name="twitter:description"
@@ -207,7 +206,7 @@ export default function HomePage() {
         />
         <meta
           name="twitter:image"
-          content="https://myrahbar.com/og-image.jpg"
+          content="https://rahbars.com/og-image.jpg"
         />
       </Helmet>
 
@@ -365,10 +364,10 @@ export default function HomePage() {
           <div className="fade-up-4 flex flex-wrap justify-center gap-2.5 mb-14">
             {[
               "MBBS",
-              "Computer Science",
-              "BBA",
-              "Engineering",
-              "Architecture",
+              "BDS",
+              "CA",
+              "Software Engineering",
+              "DPT",
               "Pharm-D",
             ].map((tag) => (
               <button
@@ -499,7 +498,8 @@ export default function HomePage() {
                 All Pakistani Universities
               </h2>
               <p className="text-slate-500 mt-1 max-w-lg">
-                All fields and departments from different Universities in Pakistan
+                All fields and departments from different Universities in
+                Pakistan
               </p>
             </div>
             <Link
@@ -665,34 +665,45 @@ export default function HomePage() {
       {/* SEO FAQ Section */}
       <section className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-black mb-4" style={{ fontFamily: "Sora", color: "var(--navy)" }}>
+          <h2
+            className="text-3xl md:text-4xl font-black mb-4"
+            style={{ fontFamily: "Sora", color: "var(--navy)" }}
+          >
             Frequently Asked Questions
           </h2>
-          <p className="text-slate-500">Everything you need to know about university admissions in Pakistan.</p>
+          <p className="text-slate-500">
+            Everything you need to know about university admissions in Pakistan.
+          </p>
         </div>
         <div className="space-y-4">
           {[
             {
               q: "How does the Merit Calculator work?",
-              a: "Our Merit Calculator uses the exact aggregate formulas provided by official university guidelines. You simply enter your Matric/O-Levels and Inter/A-Levels marks, along with any entry test scores, and we calculate your exact aggregate percentage instantly."
+              a: "Our Merit Calculator uses the exact aggregate formulas provided by official university guidelines. You simply enter your Matric/O-Levels and Inter/A-Levels marks, along with any entry test scores, and we calculate your exact aggregate percentage instantly.",
             },
             {
               q: "Are the university deadlines accurate?",
-              a: "Yes! We constantly monitor official university websites, newspaper ads, and official social media channels to ensure our deadline alerts are 100% accurate and up-to-date."
+              a: "Yes! We constantly monitor official university websites, newspaper ads, and official social media channels to ensure our deadline alerts are 100% accurate and up-to-date.",
             },
             {
               q: "How do I get WhatsApp deadline alerts?",
-              a: "Simply create a free account, save your target universities to your Watchlist, and enable WhatsApp alerts in your profile. We'll send you a reminder 7 days and 1 day before the deadline."
+              a: "Simply create a free account, save your target universities to your Watchlist, and enable WhatsApp alerts in your profile. We'll send you a reminder 7 days and 1 day before the deadline.",
             },
             {
               q: "Is the AI Career Counselor free?",
-              a: "Yes, our AI counselor is completely free. It is trained on extensive data regarding Pakistani universities, career scopes, and market trends to help you make informed decisions."
-            }
+              a: "Yes, our AI counselor is completely free. It is trained on extensive data regarding Pakistani universities, career scopes, and market trends to help you make informed decisions.",
+            },
           ].map((faq, i) => (
-            <details key={i} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+            <details
+              key={i}
+              className="group bg-white border border-slate-200 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden"
+            >
               <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-slate-800 outline-none select-none">
                 {faq.q}
-                <ChevronDown className="shrink-0 transition duration-300 group-open:-rotate-180 text-blue-600" size={20} />
+                <ChevronDown
+                  className="shrink-0 transition duration-300 group-open:-rotate-180 text-blue-600"
+                  size={20}
+                />
               </summary>
               <div className="px-6 pb-6 text-slate-600 leading-relaxed">
                 {faq.a}

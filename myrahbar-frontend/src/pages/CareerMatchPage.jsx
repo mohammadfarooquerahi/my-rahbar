@@ -80,16 +80,16 @@ What is your question?`,
   return (
     <>
       <Helmet>
-        <title>AI Career Counselor — Find Your Path | MyRahbar</title>
+        <title>AI Career Counselor — Find Your Path | Rahbars</title>
         <meta
           name="description"
           content="Get AI-powered career guidance for Pakistani students. Ask about degrees, job prospects, salaries and the best universities for your field."
         />
-        <link rel="canonical" href="https://myrahbar.com/career-match" />
-        <meta property="og:title" content="AI Career Counselor | MyRahbar" />
+        <link rel="canonical" href="https://rahbars.com/career-match" />
+        <meta property="og:title" content="AI Career Counselor | Rahbars" />
         <meta property="og:description" content="Confused about your career? Chat with our AI counselor about degrees, scope, and admissions." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://myrahbar.com/career-match" />
+        <meta property="og:url" content="https://rahbars.com/career-match" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="AI Career Counselor" />
         <meta name="twitter:description" content="Confused about your career? Chat with our AI counselor about degrees, scope, and admissions." />

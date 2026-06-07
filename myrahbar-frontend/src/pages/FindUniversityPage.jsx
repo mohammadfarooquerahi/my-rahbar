@@ -210,17 +210,17 @@ export default function FindUniversityPage() {
   return (
     <main>
       <Helmet>
-        <title>Find My University — Smart Matcher | MyRahbar</title>
+        <title>Find My University — Smart Matcher | Rahbars</title>
         <meta
           name="description"
-          content="Answer 10 questions and MyRahbar will match you to the best university in Karachi based on your budget, field, and goals."
+          content="Answer 10 questions and Rahbars will match you to the best university in Karachi based on your budget, field, and goals."
         />
-        <link rel="canonical" href="https://myrahbar.com/find-university" />
+        <link rel="canonical" href="https://rahbars.com/find-university" />
         
-        <meta property="og:title" content="Find Your Perfect University | MyRahbar" />
+        <meta property="og:title" content="Find Your Perfect University | Rahbars" />
         <meta property="og:description" content="Answer 10 simple questions and get matched to the best university for your profile instantly." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://myrahbar.com/find-university" />
+        <meta property="og:url" content="https://rahbars.com/find-university" />
         
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Smart University Matcher" />

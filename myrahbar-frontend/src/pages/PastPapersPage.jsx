@@ -84,7 +84,7 @@ export default function PastPapersPage() {
   return (
     <>
       <Helmet>
-        <title>Past Papers — University Entry Test Papers | MyRahbar</title>
+        <title>Past Papers — University Entry Test Papers | Rahbars</title>
         <meta
           name="description"
           content="Download university entry test past papers for Karachi universities. Free papers available to download."

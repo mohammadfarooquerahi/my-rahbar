@@ -226,23 +226,23 @@ export default function UniversityDetailPage() {
   return (
     <main>
       <Helmet>
-        <title>{uni.name} — Admission, Merit, Fee | MyRahbar</title>
+        <title>{uni.name} — Admission, Merit, Fee | Rahbars</title>
         <meta
           name="description"
-          content={`${uni.name} admission details, merit calculation, fee structure, and scholarships. Get the latest 2025 updates on MyRahbar.`}
+          content={`${uni.name} admission details, merit calculation, fee structure, and scholarships. Get the latest 2025 updates on Rahbars.`}
         />
-        <link rel="canonical" href={`https://myrahbar.com/university/${uni.slug}`} />
+        <link rel="canonical" href={`https://rahbars.com/university/${uni.slug}`} />
         
         {/* OpenGraph Tags */}
         <meta property="og:title" content={`${uni.name} — Admission Guide`} />
-        <meta property="og:description" content={`Check out the merit, fee, and admission details for ${uni.name} on MyRahbar.`} />
+        <meta property="og:description" content={`Check out the merit, fee, and admission details for ${uni.name} on Rahbars.`} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://myrahbar.com/university/${uni.slug}`} />
+        <meta property="og:url" content={`https://rahbars.com/university/${uni.slug}`} />
         
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={`${uni.name} — Admission Guide`} />
-        <meta name="twitter:description" content={`Check out the merit, fee, and admission details for ${uni.name} on MyRahbar.`} />
+        <meta name="twitter:description" content={`Check out the merit, fee, and admission details for ${uni.name} on Rahbars.`} />
       </Helmet>
 
       {/* Breadcrumb */}

@@ -184,7 +184,7 @@ export default function NewsPage() {
   return (
     <>
       <Helmet>
-        <title>Latest Admission News | MyRahbar</title>
+        <title>Latest Admission News | Rahbars</title>
         <meta
           name="description"
           content="Stay updated with the latest admission news, notifications, and announcements from Pakistani universities."

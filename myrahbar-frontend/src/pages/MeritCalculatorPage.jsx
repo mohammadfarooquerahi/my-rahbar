@@ -112,17 +112,17 @@ export default function MeritCalculatorPage() {
   return (
     <main>
       <Helmet>
-        <title>Merit Calculator — Check Your Admission Chances | MyRahbar</title>
+        <title>Merit Calculator — Check Your Admission Chances | Rahbars</title>
         <meta
           name="description"
           content="Calculate your aggregate percentage for any Karachi university. See if you meet the last closing merit and predict your admission chances."
         />
-        <link rel="canonical" href="https://myrahbar.com/merit-calculator" />
+        <link rel="canonical" href="https://rahbars.com/merit-calculator" />
         
-        <meta property="og:title" content="University Merit Calculator | MyRahbar" />
+        <meta property="og:title" content="University Merit Calculator | Rahbars" />
         <meta property="og:description" content="Calculate your aggregate percentage and predict your admission chances for top universities in Karachi." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://myrahbar.com/merit-calculator" />
+        <meta property="og:url" content="https://rahbars.com/merit-calculator" />
         
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="University Merit Calculator" />

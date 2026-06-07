@@ -90,20 +90,20 @@ export default function SearchPage() {
   return (
     <main>
       <Helmet>
-        <title>{query ? query + " — Search Results" : "All Universities"} | MyRahbar</title>
+        <title>{query ? query + " — Search Results" : "All Universities"} | Rahbars</title>
         <meta
           name="description"
           content="Search all Karachi universities by name, department, or field to find the perfect fit for your higher education."
         />
-        <link rel="canonical" href="https://myrahbar.com/search" />
+        <link rel="canonical" href="https://rahbars.com/search" />
         
-        <meta property="og:title" content="Search Universities | MyRahbar" />
+        <meta property="og:title" content="Search Universities | Rahbars" />
         <meta property="og:description" content="Search all Karachi universities by name, department, or field to find the perfect fit for your higher education." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://myrahbar.com/search" />
+        <meta property="og:url" content="https://rahbars.com/search" />
         
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Search Universities | MyRahbar" />
+        <meta name="twitter:title" content="Search Universities | Rahbars" />
         <meta name="twitter:description" content="Search all Karachi universities by name, department, or field to find the perfect fit for your higher education." />
       </Helmet>
 

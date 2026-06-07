@@ -29,7 +29,7 @@ export default function Footer() {
                 <span className="font-bold text-[10px]">YT</span>
               </a>
               <a
-                href="mailto:info@myrahbar.com"
+                href="mailto:rahbarsofficial@gmail.com"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
                 <Mail size={15} />
@@ -71,7 +71,7 @@ export default function Footer() {
                 ["Personal Counseling", "/counseling"],
                 ["AI Chat", "/career-match"],
                 ["Blog & Articles", "/blog"],
-                ["About MyRahbar", "/about"],
+                ["About Rahbars", "/about"],
                 ["Contact Us", "/contact"],
               ].map(([l, t]) => (
                 <li key={t}>
@@ -109,12 +109,12 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 p-4 bg-white/5 rounded-2xl text-center text-xs text-slate-500">
-          <strong>Disclaimer:</strong> All information is gathered from official university sources, prospectus, and public advertisements. However, admission policies, fees, and deadlines are subject to change. MyRahbar is an independent platform and not officially affiliated with these universities. Always verify critical information from the official university website.
+          <strong>Disclaimer:</strong> All information is gathered from official university sources, prospectus, and public advertisements. However, admission policies, fees, and deadlines are subject to change. Rahbars is an independent platform and not officially affiliated with these universities. Always verify critical information from the official university website.
         </div>
 
         <div className="border-t border-white/5 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-          <p>© 2026 MyRahbar.com — All rights reserved.</p>
-          <p>Powered by MyRahbar.</p>
+          <p>© 2026 Rahbars.com — All rights reserved.</p>
+          <p>Powered by Rahbars.</p>
           <div className="flex gap-5">
             <Link to="/privacy" className="hover:text-white transition-colors">
               Privacy Policy
