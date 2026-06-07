@@ -74,6 +74,7 @@ export default function HomePage() {
   );
 
   const stats = [
+    { label: "Universities", value: "100+", icon: <BookOpen size={18} /> },
     { label: "Students Helped", value: "5,000+", icon: <Users size={18} /> },
     { label: "Departments", value: "150+", icon: <TrendingUp size={18} /> },
     { label: "Scholarships", value: "80+", icon: <Shield size={18} /> },
@@ -307,11 +308,11 @@ export default function HomePage() {
           <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-20 blur-[120px] bg-purple-600" />
           <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] bg-emerald-500" />
           <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-100"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
-              backgroundSize: "32px 32px",
+                "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
             }}
           />
         </div>
