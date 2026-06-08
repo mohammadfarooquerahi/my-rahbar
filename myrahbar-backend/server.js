@@ -24,7 +24,7 @@ const aiRoutes = require("./routes/ai.js");
 const blogRoutes = require("./routes/blogs.js");
 const pastPaperRoutes = require("./routes/pastpapers.js");
 const newsRoutes = require("./routes/news.js");
-const aiCollectRoutes = require("./routes/aiCollect");
+const aiCollectRoutes = require("./routes/aiCollect"); // 🌟 imported properly
 
 // Middleware Imports
 const errorTracker = require("./middleware/errorTracker.js");
@@ -60,8 +60,7 @@ app.use(cookieTracker);
 // Static file serving for uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Serve uploaded files as static
-// const path = require("path");
+// Serve uploaded files as static (Cleaned duplicate require)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Rate limiting — 100 requests per minute per IP
@@ -72,7 +71,9 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-// Routes
+// -------------------------
+// ROUTES CONFIGURATION
+// -------------------------
 app.use("/api/auth", authRoutes);
 app.use("/api/universities", universityRoutes);
 app.use("/api/merit", meritRoutes);
@@ -84,7 +85,9 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/pastpapers", pastPaperRoutes);
 app.use("/api/news", newsRoutes);
-app.use("/api/ai", aiCollectRoutes);
+
+// 🌟 FIXED: Changed base path from "/api/ai" to "/api/ai-collect" to avoid conflict
+app.use("/api/ai-collect", aiCollectRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

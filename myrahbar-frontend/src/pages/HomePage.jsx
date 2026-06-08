@@ -294,7 +294,8 @@ export default function HomePage() {
       <section
         className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24"
         style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)",
+          background:
+            "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)",
           fontFamily: "'Poppins', sans-serif",
         }}
       >
@@ -381,10 +382,26 @@ export default function HomePage() {
           <div className="fade-up-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {stats.map((s, i) => {
               const colors = [
-                { bg: "from-blue-500/20 to-blue-600/10", border: "border-blue-400/30", text: "from-blue-300 to-blue-100" },
-                { bg: "from-purple-500/20 to-purple-600/10", border: "border-purple-400/30", text: "from-purple-300 to-purple-100" },
-                { bg: "from-emerald-500/20 to-emerald-600/10", border: "border-emerald-400/30", text: "from-emerald-300 to-emerald-100" },
-                { bg: "from-amber-500/20 to-orange-600/10", border: "border-amber-400/30", text: "from-amber-300 to-amber-100" },
+                {
+                  bg: "from-blue-500/20 to-blue-600/10",
+                  border: "border-blue-400/30",
+                  text: "from-blue-300 to-blue-100",
+                },
+                {
+                  bg: "from-purple-500/20 to-purple-600/10",
+                  border: "border-purple-400/30",
+                  text: "from-purple-300 to-purple-100",
+                },
+                {
+                  bg: "from-emerald-500/20 to-emerald-600/10",
+                  border: "border-emerald-400/30",
+                  text: "from-emerald-300 to-emerald-100",
+                },
+                {
+                  bg: "from-amber-500/20 to-orange-600/10",
+                  border: "border-amber-400/30",
+                  text: "from-amber-300 to-amber-100",
+                },
               ];
               const c = colors[i % 4];
               return (
@@ -392,7 +409,9 @@ export default function HomePage() {
                   key={i}
                   className={`group bg-gradient-to-br ${c.bg} backdrop-blur-md rounded-2xl p-4 sm:p-6 border ${c.border} hover:scale-[1.03] transition-all duration-300`}
                 >
-                  <p className={`text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br ${c.text}`}>
+                  <p
+                    className={`text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br ${c.text}`}
+                  >
                     {s.value}
                   </p>
                   <p className="text-[10px] sm:text-xs text-slate-400 mt-1.5 font-bold tracking-wide uppercase">
@@ -479,7 +498,9 @@ export default function HomePage() {
               >
                 {t.title}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{t.desc}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                {t.desc}
+              </p>
               <div
                 className="flex items-center gap-1 mt-4 text-xs font-medium"
                 style={{ color: t.color }}
