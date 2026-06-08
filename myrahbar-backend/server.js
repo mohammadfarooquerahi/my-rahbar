@@ -24,6 +24,7 @@ const aiRoutes = require("./routes/ai.js");
 const blogRoutes = require("./routes/blogs.js");
 const pastPaperRoutes = require("./routes/pastpapers.js");
 const newsRoutes = require("./routes/news.js");
+const aiCollectRoutes = require("./routes/aiCollect");
 
 // Middleware Imports
 const errorTracker = require("./middleware/errorTracker.js");
@@ -42,10 +43,10 @@ app.use(helmet());
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", 
-      "https://rahbars.com", 
+      "http://localhost:5173",
+      "https://rahbars.com",
       "https://www.rahbars.com",
-      process.env.CLIENT_URL
+      process.env.CLIENT_URL,
     ].filter(Boolean),
     credentials: true,
   }),
@@ -83,6 +84,7 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/pastpapers", pastPaperRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/api/ai", aiCollectRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

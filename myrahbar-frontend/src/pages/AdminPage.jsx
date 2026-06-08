@@ -29,7 +29,7 @@ const TABS = [
   "Dashboard",
   "Universities",
   "Add University",
-  "AI Collect", // ← add this
+  "AI Collect",
   "Upload Excel",
   "Reviews",
   "Error Logs",
