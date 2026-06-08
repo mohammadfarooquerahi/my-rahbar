@@ -33,8 +33,8 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.message);
       setAuth(data.user, data.token);
       navigate("/");
-    } catch {
-      setError("Invalid email or password. Please try again.");
+    } catch (err) {
+      setError(err.message || "Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export default function LoginPage() {
                 className="font-bold text-xl"
                 style={{ fontFamily: "Sora", color: "var(--navy)" }}
               >
-                My<span style={{ color: "var(--green)" }}>Rahbar</span>
+                Rahbars<span style={{ color: "var(--green)" }}>.com</span>
               </span>
             </Link>
             <h1

@@ -6,7 +6,9 @@ import { useAuthStore } from "../../store";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
+    name: "",
     email: "",
+    whatsapp: "",
     password: "",
   });
   const [showPass, setShowPass] = useState(false);
@@ -48,7 +50,7 @@ export default function RegisterPage() {
     }
   };
 
-  const isValid = form.email && form.password.length >= 6 && agreed;
+  const isValid = form.name && form.email && form.whatsapp && form.password.length >= 6 && agreed;
 
   return (
     <>
@@ -71,7 +73,7 @@ export default function RegisterPage() {
                 className="font-bold text-xl"
                 style={{ fontFamily: "Sora", color: "var(--navy)" }}
               >
-                My<span style={{ color: "var(--green)" }}>Rahbar</span>
+                Rahbars<span style={{ color: "var(--green)" }}>.com</span>
               </span>
             </Link>
             <h1
@@ -94,6 +96,27 @@ export default function RegisterPage() {
                 </div>
               )}
 
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <BookOpen
+                    size={15}
+                    className="absolute left-3 top-3 text-slate-400"
+                  />
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => update("name", e.target.value)}
+                    placeholder="John Doe"
+                    required
+                    className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
+                  />
+                </div>
+              </div>
+
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -111,6 +134,24 @@ export default function RegisterPage() {
                     placeholder="your@email.com"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
+                  />
+                </div>
+              </div>
+
+              {/* WhatsApp */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  WhatsApp Number
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-slate-400 text-sm font-bold">+92</span>
+                  <input
+                    type="text"
+                    value={form.whatsapp}
+                    onChange={(e) => update("whatsapp", e.target.value)}
+                    placeholder="3001234567"
+                    required
+                    className="w-full border border-slate-200 rounded-xl pl-11 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
                 </div>
               </div>
