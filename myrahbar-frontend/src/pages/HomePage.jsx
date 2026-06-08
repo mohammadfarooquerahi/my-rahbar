@@ -290,34 +290,24 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Premium Hero Section */}
+      {/* Premium Hero Section — Always dark gradient for maximum impact */}
       <section
-        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24 bg-white dark:bg-bg transition-colors duration-300"
+        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24"
         style={{
+          background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)",
           fontFamily: "'Poppins', sans-serif",
         }}
       >
-        {/* Subtle mesh gradient background */}
+        {/* Animated mesh gradient blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-10 dark:opacity-20 blur-[100px] bg-blue-500" />
-          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-10 dark:opacity-20 blur-[120px] bg-purple-600" />
-          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 dark:opacity-10 blur-[100px] bg-emerald-500" />
-          
-          {/* Light mode grid */}
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-20 blur-[100px] bg-blue-500" />
+          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-20 blur-[120px] bg-purple-600" />
+          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] bg-emerald-500" />
           <div
-            className="absolute inset-0 opacity-100 dark:opacity-0"
+            className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
-          {/* Dark mode grid */}
-          <div
-            className="absolute inset-0 opacity-0 dark:opacity-100"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
+                "linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px)",
               backgroundSize: "40px 40px",
             }}
           />
@@ -325,42 +315,42 @@ export default function HomePage() {
 
         <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-blue-50/80 dark:bg-white/5 backdrop-blur-md border border-blue-200 dark:border-white/10 shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,0.05)] text-blue-700 dark:text-blue-100 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
-            <Sparkles size={14} className="text-yellow-500 dark:text-yellow-400 animate-pulse" />
-            Pakistan's Next-Gen Admission Platform
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 shadow-[0_0_15px_rgba(255,255,255,0.05)] text-blue-200 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
+            <Sparkles size={14} className="text-yellow-400 animate-pulse" />
+            Pakistan's #1 Admission Platform
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 fade-up-1 leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 fade-up-1 leading-[1.1] tracking-tight">
             Elevate Your Future. <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
               Secure Your Admission.
             </span>
           </h1>
 
-          <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
+          <p className="text-slate-300 text-base sm:text-lg md:text-xl mb-10 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
             Merit calculator, deadline alerts, AI counselor, and scholarship
             finder — everything a Pakistani student needs to secure their
             future.
           </p>
 
-          {/* Search Bar - Glassmorphism */}
+          {/* Search Bar */}
           <form
             onSubmit={handleSearch}
             className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 rounded-2xl blur opacity-40 dark:opacity-25 group-hover:opacity-60 transition duration-500"></div>
-            <div className="relative flex items-center bg-white dark:bg-[#18181b] backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-2 gap-2 transition-all">
-              <Search size={22} className="text-blue-600 dark:text-blue-400 ml-3 shrink-0" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+            <div className="relative flex items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-2 gap-2 transition-all">
+              <Search size={22} className="text-blue-300 ml-3 shrink-0" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search Uni or dept"
-                className="flex-1 py-4 px-2 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
+                placeholder="Search University or Department..."
+                className="flex-1 py-4 px-2 text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
               />
               <button
                 type="submit"
-                className="px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
+                className="px-6 sm:px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
               >
                 Search
               </button>
@@ -368,7 +358,7 @@ export default function HomePage() {
           </form>
 
           {/* Quick tags */}
-          <div className="fade-up-4 flex flex-wrap justify-center gap-2.5 mb-14">
+          <div className="fade-up-4 flex flex-wrap justify-center gap-2 sm:gap-2.5 mb-12">
             {[
               "MBBS",
               "BDS",
@@ -380,38 +370,37 @@ export default function HomePage() {
               <button
                 key={tag}
                 onClick={() => navigate("/search?q=" + tag)}
-                className="text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 px-4 py-2 rounded-full transition-all hover:scale-105"
+                className="text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/25 px-4 py-2 rounded-full transition-all hover:scale-105"
               >
                 {tag}
               </button>
             ))}
           </div>
 
-          {/* Mini stats */}
-          <div className="fade-up-5 grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-200 dark:border-white/10">
-            {stats.map((s, i) => (
-              <div 
-                key={i} 
-                className={`group bg-white dark:bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 ${
-                  i % 4 === 0 ? "hover:border-blue-300 dark:hover:border-blue-500" :
-                  i % 4 === 1 ? "hover:border-purple-300 dark:hover:border-purple-500" :
-                  i % 4 === 2 ? "hover:border-green-300 dark:hover:border-green-500" :
-                  "hover:border-orange-300 dark:hover:border-orange-500"
-                }`}
-              >
-                <p className={`text-3xl sm:text-4xl font-black text-transparent bg-clip-text transition-all duration-300 ${
-                  i % 4 === 0 ? "bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400" :
-                  i % 4 === 1 ? "bg-gradient-to-br from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400" :
-                  i % 4 === 2 ? "bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400" :
-                  "bg-gradient-to-br from-orange-500 to-red-500 dark:from-orange-400 dark:to-red-400"
-                }`}>
-                  {s.value}
-                </p>
-                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-2 font-bold tracking-wide uppercase">
-                  {s.label}
-                </p>
-              </div>
-            ))}
+          {/* Stats — Colorful Glass Boxes */}
+          <div className="fade-up-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            {stats.map((s, i) => {
+              const colors = [
+                { bg: "from-blue-500/20 to-blue-600/10", border: "border-blue-400/30", text: "from-blue-300 to-blue-100" },
+                { bg: "from-purple-500/20 to-purple-600/10", border: "border-purple-400/30", text: "from-purple-300 to-purple-100" },
+                { bg: "from-emerald-500/20 to-emerald-600/10", border: "border-emerald-400/30", text: "from-emerald-300 to-emerald-100" },
+                { bg: "from-amber-500/20 to-orange-600/10", border: "border-amber-400/30", text: "from-amber-300 to-amber-100" },
+              ];
+              const c = colors[i % 4];
+              return (
+                <div
+                  key={i}
+                  className={`group bg-gradient-to-br ${c.bg} backdrop-blur-md rounded-2xl p-4 sm:p-6 border ${c.border} hover:scale-[1.03] transition-all duration-300`}
+                >
+                  <p className={`text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br ${c.text}`}>
+                    {s.value}
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-slate-400 mt-1.5 font-bold tracking-wide uppercase">
+                    {s.label}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

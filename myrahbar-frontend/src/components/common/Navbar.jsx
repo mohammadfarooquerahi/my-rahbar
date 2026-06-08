@@ -76,7 +76,7 @@ export default function Navbar() {
   const isActive = (to) => location.pathname === to;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#09090b]/95 backdrop-blur-sm border-b border-slate-200 dark:border-[#27272a] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         <Logo size="md" />
 
@@ -197,7 +197,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-1 shadow-lg">
+        <div className="lg:hidden bg-white dark:bg-[#18181b] border-t border-slate-100 dark:border-[#27272a] px-4 py-3 space-y-1 shadow-lg">
           <form
             onSubmit={handleSearch}
             className="flex items-center bg-slate-100 rounded-xl px-3 gap-2 mb-3"

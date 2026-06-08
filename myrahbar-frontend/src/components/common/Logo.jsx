@@ -15,10 +15,9 @@ export default function Logo({ size = "md" }) {
         className={`${s.wrap} rounded-xl flex items-center justify-center relative overflow-hidden shrink-0`}
         style={{
           background:
-            "linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%)",
+            "linear-gradient(135deg, var(--blue) 0%, #6366f1 100%)",
         }}
       >
-        {/* M letter */}
         <span
           className="text-white font-black leading-none"
           style={{
@@ -26,9 +25,8 @@ export default function Logo({ size = "md" }) {
             fontSize: size === "sm" ? 14 : size === "md" ? 18 : 24,
           }}
         >
-          M
+          R
         </span>
-        {/* Yellow dot accent */}
         <div
           className={`absolute bottom-1 right-1 ${s.dot} rounded-full`}
           style={{ background: "var(--yellow)" }}
@@ -36,23 +34,19 @@ export default function Logo({ size = "md" }) {
       </div>
 
       {/* Text */}
-      <div className="flex items-baseline gap-0.5">
+      <div className="flex items-baseline gap-0">
         <span
-          className={`font-black ${s.text} leading-none`}
-          style={{ fontFamily: "Sora", color: "var(--navy)" }}
+          className={`font-black ${s.text} leading-none text-slate-900 dark:text-white`}
+          style={{ fontFamily: "Sora" }}
         >
-          My
+          Rahbars
         </span>
         <span
           className={`font-black ${s.text} leading-none`}
           style={{ fontFamily: "Sora", color: "var(--blue)" }}
         >
-          Rahbar
+          .com
         </span>
-        <span
-          className="w-1.5 h-1.5 rounded-full ml-0.5 mb-1"
-          style={{ background: "var(--yellow)", display: "inline-block" }}
-        />
       </div>
     </Link>
   );
