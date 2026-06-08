@@ -226,6 +226,22 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/news"
+            onClick={() => setMenuOpen(false)}
+            className={"flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium " + (isActive('/news') ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100")}
+          >
+            <Newspaper size={14} />
+            News
+          </Link>
+          <Link
+            to="/blog"
+            onClick={() => setMenuOpen(false)}
+            className={"flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium " + (isActive('/blog') ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100")}
+          >
+            <Rss size={14} />
+            Blog
+          </Link>
           {!isLoggedIn && (
             <div className="pt-2 border-t border-slate-100 flex gap-2">
               <Link

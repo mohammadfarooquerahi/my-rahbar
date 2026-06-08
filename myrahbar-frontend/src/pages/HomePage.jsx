@@ -388,13 +388,26 @@ export default function HomePage() {
           </div>
 
           {/* Mini stats */}
-          <div className="fade-up-5 flex flex-wrap justify-center gap-10 md:gap-16 text-center border-t border-slate-200 dark:border-white/10 pt-10">
+          <div className="fade-up-5 grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-200 dark:border-white/10">
             {stats.map((s, i) => (
-              <div key={i} className="group">
-                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 group-hover:from-blue-600 group-hover:to-purple-600 dark:group-hover:from-yellow-200 dark:group-hover:to-yellow-500 transition-all duration-300">
+              <div 
+                key={i} 
+                className={`group bg-white dark:bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 ${
+                  i % 4 === 0 ? "hover:border-blue-300 dark:hover:border-blue-500" :
+                  i % 4 === 1 ? "hover:border-purple-300 dark:hover:border-purple-500" :
+                  i % 4 === 2 ? "hover:border-green-300 dark:hover:border-green-500" :
+                  "hover:border-orange-300 dark:hover:border-orange-500"
+                }`}
+              >
+                <p className={`text-3xl sm:text-4xl font-black text-transparent bg-clip-text transition-all duration-300 ${
+                  i % 4 === 0 ? "bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400" :
+                  i % 4 === 1 ? "bg-gradient-to-br from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400" :
+                  i % 4 === 2 ? "bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400" :
+                  "bg-gradient-to-br from-orange-500 to-red-500 dark:from-orange-400 dark:to-red-400"
+                }`}>
                   {s.value}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium tracking-wide uppercase">
+                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-2 font-bold tracking-wide uppercase">
                   {s.label}
                 </p>
               </div>
