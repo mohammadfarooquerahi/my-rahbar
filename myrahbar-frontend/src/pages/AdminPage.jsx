@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
+import UniversityDataCollector from "./UniversityDataCollector";
 import {
   Shield,
   CheckCircle,
@@ -28,6 +29,7 @@ const TABS = [
   "Dashboard",
   "Universities",
   "Add University",
+  "AI Collect", // ← add this
   "Upload Excel",
   "Reviews",
   "Error Logs",
@@ -1807,7 +1809,10 @@ export default function AdminPage() {
                     setBlogForm({ ...blogForm, content: e.target.value })
                   }
                 />
-                <p className="text-xs text-slate-400 -mt-2">💡 Tip: You can write plain text or paste full HTML including headings, lists, bold text etc.</p>
+                <p className="text-xs text-slate-400 -mt-2">
+                  💡 Tip: You can write plain text or paste full HTML including
+                  headings, lists, bold text etc.
+                </p>
                 <input
                   type="file"
                   className="border p-1.5 rounded-xl"
@@ -2035,7 +2040,10 @@ export default function AdminPage() {
                 {/* Reference Link */}
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
-                    Reference Link <span className="font-normal text-slate-400 normal-case">(optional)</span>
+                    Reference Link{" "}
+                    <span className="font-normal text-slate-400 normal-case">
+                      (optional)
+                    </span>
                   </label>
                   <input
                     type="url"
@@ -2043,10 +2051,15 @@ export default function AdminPage() {
                     className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 bg-white outline-none focus:ring-2 focus:ring-blue-500"
                     value={newsForm.referenceLink || ""}
                     onChange={(e) =>
-                      setNewsForm({ ...newsForm, referenceLink: e.target.value })
+                      setNewsForm({
+                        ...newsForm,
+                        referenceLink: e.target.value,
+                      })
                     }
                   />
-                  <p className="text-xs text-slate-400 mt-1">Link to the official university page or source article.</p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Link to the official university page or source article.
+                  </p>
                 </div>
 
                 {/* Submit */}
@@ -2195,6 +2208,9 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {/* ===== AI COLLECT TAB ===== */}
+        {activeTab === "AI Collect" && <UniversityDataCollector />}
 
         {/* ===== BOOKINGS TAB ===== */}
         {activeTab === "Bookings" && (
