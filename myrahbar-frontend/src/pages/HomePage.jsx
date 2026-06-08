@@ -292,23 +292,32 @@ export default function HomePage() {
 
       {/* Premium Hero Section */}
       <section
-        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24"
+        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24 bg-white dark:bg-bg transition-colors duration-300"
         style={{
-          background:
-            "linear-gradient(135deg, #09090b 0%, #0f172a 50%, #1e1b4b 100%)",
           fontFamily: "'Poppins', sans-serif",
         }}
       >
         {/* Subtle mesh gradient background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-20 blur-[100px] bg-blue-500" />
-          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-20 blur-[120px] bg-purple-600" />
-          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] bg-emerald-500" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-10 dark:opacity-20 blur-[100px] bg-blue-500" />
+          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-10 dark:opacity-20 blur-[120px] bg-purple-600" />
+          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 dark:opacity-10 blur-[100px] bg-emerald-500" />
+          
+          {/* Light mode grid */}
           <div
-            className="absolute inset-0 opacity-100"
+            className="absolute inset-0 opacity-100 dark:opacity-0"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+                "linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
+          />
+          {/* Dark mode grid */}
+          <div
+            className="absolute inset-0 opacity-0 dark:opacity-100"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
               backgroundSize: "40px 40px",
             }}
           />
@@ -316,20 +325,20 @@ export default function HomePage() {
 
         <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] text-blue-100 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
-            <Sparkles size={14} className="text-yellow-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-blue-50/80 dark:bg-white/5 backdrop-blur-md border border-blue-200 dark:border-white/10 shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,0.05)] text-blue-700 dark:text-blue-100 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
+            <Sparkles size={14} className="text-yellow-500 dark:text-yellow-400 animate-pulse" />
             Pakistan's Next-Gen Admission Platform
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 fade-up-1 leading-[1.1] tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 fade-up-1 leading-[1.1] tracking-tight">
             Elevate Your Future. <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400">
               Secure Your Admission.
             </span>
           </h1>
 
-          <p className="text-slate-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
+          <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
             Merit calculator, deadline alerts, AI counselor, and scholarship
             finder — everything a Pakistani student needs to secure their
             future.
@@ -340,14 +349,14 @@ export default function HomePage() {
             onSubmit={handleSearch}
             className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
-            <div className="relative flex items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-2 gap-2 transition-all">
-              <Search size={22} className="text-blue-200 ml-3 shrink-0" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-500 rounded-2xl blur opacity-40 dark:opacity-25 group-hover:opacity-60 transition duration-500"></div>
+            <div className="relative flex items-center bg-white dark:bg-[#18181b] backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-2 gap-2 transition-all">
+              <Search size={22} className="text-blue-600 dark:text-blue-400 ml-3 shrink-0" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search Uni or dept"
-                className="flex-1 py-4 px-2 text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
+                className="flex-1 py-4 px-2 text-slate-900 dark:text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
               />
               <button
                 type="submit"
@@ -371,7 +380,7 @@ export default function HomePage() {
               <button
                 key={tag}
                 onClick={() => navigate("/search?q=" + tag)}
-                className="text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full transition-all hover:scale-105"
+                className="text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 px-4 py-2 rounded-full transition-all hover:scale-105"
               >
                 {tag}
               </button>
@@ -379,13 +388,13 @@ export default function HomePage() {
           </div>
 
           {/* Mini stats */}
-          <div className="fade-up-5 flex flex-wrap justify-center gap-10 md:gap-16 text-center border-t border-white/10 pt-10">
+          <div className="fade-up-5 flex flex-wrap justify-center gap-10 md:gap-16 text-center border-t border-slate-200 dark:border-white/10 pt-10">
             {stats.map((s, i) => (
-              <div key={i} className="text-white group">
-                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 group-hover:from-yellow-200 group-hover:to-yellow-500 transition-all duration-300">
+              <div key={i} className="group">
+                <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 group-hover:from-blue-600 group-hover:to-purple-600 dark:group-hover:from-yellow-200 dark:group-hover:to-yellow-500 transition-all duration-300">
                   {s.value}
                 </p>
-                <p className="text-xs text-slate-400 mt-2 font-medium tracking-wide uppercase">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium tracking-wide uppercase">
                   {s.label}
                 </p>
               </div>
@@ -446,7 +455,7 @@ export default function HomePage() {
             <Link
               key={i}
               to={t.to}
-              className="card-hover group relative bg-white rounded-2xl p-6 border border-slate-200 overflow-hidden"
+              className="card-hover group relative bg-white dark:bg-card rounded-2xl p-6 border border-slate-200 dark:border-border overflow-hidden"
             >
               {/* Tag */}
               <span
@@ -463,12 +472,12 @@ export default function HomePage() {
                 {t.icon}
               </div>
               <h3
-                className="font-bold text-slate-800 mb-2"
+                className="font-bold text-slate-800 dark:text-white mb-2"
                 style={{ fontFamily: "Sora" }}
               >
                 {t.title}
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">{t.desc}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{t.desc}</p>
               <div
                 className="flex items-center gap-1 mt-4 text-xs font-medium"
                 style={{ color: t.color }}
@@ -481,7 +490,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured universities */}
-      <section className="bg-white py-16">
+      <section className="bg-white dark:bg-card py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <div>

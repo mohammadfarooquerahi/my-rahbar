@@ -43,7 +43,7 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
+    <main className="min-h-screen bg-slate-50 dark:bg-bg pb-20 transition-colors duration-300">
       <Helmet>
         <title>Blog & Insights | Rahbars.com</title>
         <meta
@@ -53,15 +53,15 @@ export default function BlogPage() {
       </Helmet>
 
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 py-16 px-4">
+      <div className="bg-white dark:bg-card border-b border-slate-200 dark:border-border py-16 px-4 transition-colors duration-300">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 text-green-600 mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 mb-6">
             <Rss size={32} />
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-            Our <span className="text-green-600">Blog</span>
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+            Our <span className="text-green-600 dark:text-green-400">Blog</span>
           </h1>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
             Expert advice, admission updates, and student stories to help you navigate your academic journey in Pakistan.
           </p>
         </div>
@@ -75,10 +75,10 @@ export default function BlogPage() {
             ))}
           </div>
         ) : error ? (
-          <div className="max-w-2xl mx-auto text-center py-16 px-4 bg-white rounded-2xl border border-red-100 shadow-sm">
-            <AlertCircle size={48} className="mx-auto text-red-400 mb-4" />
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Oops! Something went wrong</h3>
-            <p className="text-slate-500 mb-6">{error}</p>
+          <div className="max-w-2xl mx-auto text-center py-16 px-4 bg-white dark:bg-card rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm">
+            <AlertCircle size={48} className="mx-auto text-red-400 dark:text-red-500 mb-4" />
+            <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">Oops! Something went wrong</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6">{error}</p>
             <button 
               onClick={() => window.location.reload()}
               className="bg-red-50 text-red-600 px-6 py-2 rounded-xl font-medium hover:bg-red-100 transition-colors"
@@ -87,10 +87,10 @@ export default function BlogPage() {
             </button>
           </div>
         ) : blogs.length === 0 ? (
-          <div className="text-center py-24 bg-white rounded-2xl border border-slate-100">
-            <Rss size={48} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="text-xl font-bold text-slate-700 mb-2">No Articles Yet</h3>
-            <p className="text-slate-500">We are working on bringing you the best content. Check back soon!</p>
+          <div className="text-center py-24 bg-white dark:bg-card rounded-2xl border border-slate-100 dark:border-border">
+            <Rss size={48} className="mx-auto text-slate-300 dark:text-slate-600 mb-4" />
+            <h3 className="text-xl font-bold text-slate-700 dark:text-white mb-2">No Articles Yet</h3>
+            <p className="text-slate-500 dark:text-slate-400">We are working on bringing you the best content. Check back soon!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -108,14 +108,14 @@ export default function BlogPage() {
                       onError={(e) => { e.target.src = "https://via.placeholder.com/600x400?text=Blog+Image" }}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-black/50 text-slate-400">
                       <Rss size={48} />
                     </div>
                   )}
                 </div>
                 
                 <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 font-medium">
+                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mb-4 font-medium">
                     <span className="flex items-center gap-1.5">
                       <Calendar size={14} />
                       {new Date(blog.createdAt).toLocaleDateString("en-US", {
@@ -132,17 +132,17 @@ export default function BlogPage() {
                     )}
                   </div>
                   
-                  <h2 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors leading-tight">
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors leading-tight">
                     {blog.title}
                   </h2>
                   
-                  <p className="text-slate-600 text-sm mb-6 line-clamp-3 leading-relaxed flex-1">
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-6 line-clamp-3 leading-relaxed flex-1">
                     {blog.excerpt || blog.content?.replace(/<[^>]*>?/gm, '').substring(0, 150) + "..."}
                   </p>
                   
                   <Link 
                     to={`/blog/${blog.slug}`}
-                    className="inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-green-50 text-slate-700 hover:text-green-700 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors mt-auto border border-slate-100 hover:border-green-200 w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 bg-slate-50 dark:bg-white/5 hover:bg-green-50 dark:hover:bg-green-500/10 text-slate-700 dark:text-slate-200 hover:text-green-700 dark:hover:text-green-400 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors mt-auto border border-slate-100 dark:border-white/10 hover:border-green-200 dark:hover:border-green-500/30 w-full sm:w-auto"
                   >
                     Read Article
                     <ArrowRight size={16} />

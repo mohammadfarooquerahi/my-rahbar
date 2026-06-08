@@ -40,13 +40,13 @@ export default function UniversityCard({ uni }) {
   const topCategory = categories.length > 0 ? categories[0] : "General";
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col card-hover transition-transform hover:-translate-y-1 hover:shadow-lg">
+    <div className="bg-white dark:bg-card rounded-2xl border border-slate-200 dark:border-border overflow-hidden flex flex-col card-hover transition-transform hover:-translate-y-1 hover:shadow-lg">
       <div className="p-5 flex-1 relative">
         <button
           onClick={toggleWatch}
-          className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:scale-110 transition-transform z-10"
+          className="absolute top-4 right-4 p-2 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-full shadow-sm hover:scale-110 transition-transform z-10"
         >
-          <Heart size={16} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} />
+          <Heart size={16} className={watched ? "text-red-500" : "text-slate-400 dark:text-slate-500"} fill={watched ? "currentColor" : "none"} />
         </button>
 
         <div className="flex items-start gap-4 mb-4">
@@ -80,7 +80,7 @@ export default function UniversityCard({ uni }) {
               </span>
             </div>
             <h3
-              className="font-bold text-slate-800 line-clamp-1 mt-1"
+              className="font-bold text-slate-800 dark:text-white line-clamp-1 mt-1"
               style={{ fontFamily: "Sora", color: "var(--navy)" }}
               title={uni.name}
             >
@@ -89,11 +89,11 @@ export default function UniversityCard({ uni }) {
           </div>
         </div>
 
-        <p className="text-sm text-slate-500 mb-4 line-clamp-2" title={uni.name}>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2" title={uni.name}>
           {uni.name}
         </p>
 
-        <div className="flex flex-col gap-2 text-xs text-slate-500 mb-4">
+        <div className="flex flex-col gap-2 text-xs text-slate-500 dark:text-slate-400 mb-4">
           <div className="flex flex-wrap items-center gap-4">
             <span className="flex items-center gap-1">
               <MapPin size={13} /> {uni.city || "Karachi"}
@@ -125,10 +125,10 @@ export default function UniversityCard({ uni }) {
         </div>
       </div>
 
-      <div className="p-3 bg-slate-50 border-t border-slate-100">
+      <div className="p-3 bg-slate-50 dark:bg-bg border-t border-slate-100 dark:border-border">
         <Link
           to={`/university/${uni.slug}`}
-          className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-slate-200 text-sm font-semibold text-slate-700 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition-colors"
+          className="flex items-center justify-center gap-2 w-full py-2 bg-white dark:bg-card border border-slate-200 dark:border-border text-sm font-semibold text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-bg hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           View Details <ArrowRight size={14} />
         </Link>
