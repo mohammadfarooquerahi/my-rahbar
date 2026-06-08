@@ -102,7 +102,7 @@ export default function BlogPage() {
                 <div className="relative h-56 overflow-hidden bg-slate-100">
                   {blog.featuredImage ? (
                     <img 
-                      src={`/${blog.featuredImage}`} 
+                      src={blog.featuredImage.startsWith('/') ? blog.featuredImage : `/${blog.featuredImage}`} 
                       alt={blog.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => { e.target.src = "https://via.placeholder.com/600x400?text=Blog+Image" }}

@@ -205,10 +205,7 @@ export default function HomePage() {
           name="twitter:description"
           content="Calculate your merit and get matched to the perfect university in Karachi instantly."
         />
-        <meta
-          name="twitter:image"
-          content="https://rahbars.com/og-image.jpg"
-        />
+        <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
       {/* Ticker - slow, shows features */}
@@ -349,7 +346,7 @@ export default function HomePage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search university or department (MBBS, NED, BBA...)"
+                placeholder="Search Uni or dept"
                 className="flex-1 py-4 px-2 text-white placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
               />
               <button

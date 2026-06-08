@@ -75,9 +75,10 @@ export default function BlogDetailPage() {
         {/* Featured image */}
         {blog.featuredImage && (
           <img
-            src={blog.featuredImage}
+            src={blog.featuredImage.startsWith('/') ? blog.featuredImage : `/${blog.featuredImage}`}
             alt={blog.title}
             className="w-full h-64 object-cover rounded-2xl mb-8"
+            onError={(e) => { e.target.src = "https://via.placeholder.com/800x400?text=Blog+Image" }}
           />
         )}
 

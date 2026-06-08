@@ -35,7 +35,7 @@ export default function Footer() {
                 <Mail size={15} />
               </a>
               <a
-                href="https://wa.me/923001234567"
+                href="https://wa.me/923455589079"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
               >
                 <MessageCircle size={15} />
@@ -88,11 +88,11 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4 text-sm">Contact</h4>
             <div className="space-y-3 text-sm">
               <a
-                href="mailto:farooqrahi828@gmail.com"
+                href="mailto:rahbarsofficial@gmail.com"
                 className="flex items-center gap-2 hover:text-white transition-colors"
               >
                 <Mail size={13} />
-                farooqrahi828@gmail.com
+                rahbarsofficial@gmail.com
               </a>
               <a
                 href="https://wa.me/923455589079"
