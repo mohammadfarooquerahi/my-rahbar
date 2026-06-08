@@ -112,18 +112,58 @@ export default function UniversityDataCollector() {
   const submitToBackend = async () => {
     setStep("submitting");
     try {
+      // Map AI flat format to backend University model format
+      const payload = {
+        name: formData.name,
+        slug: formData.slug,
+        shortName: formData.shortName,
+        type: (formData.type || "government").toLowerCase(),
+        city: formData.city || "Karachi",
+        established: formData.establishedYear || null,
+        website: formData.officialWebsite || "",
+        testRequired: formData.entryTest || "Own Entry Test",
+        admissionFee: Number(formData.admissionFee) || 0,
+        admissionOpen: !!formData.admissionOpen,
+        admissionDeadline: formData.admissionDeadline || null,
+        hostelAvailable: !!formData.hostelAvailable,
+        aggregateFormula: {
+          matric: Number(formData.matricWeight) || 0.1,
+          fsc: Number(formData.fscWeight) || 0.4,
+          test: Number(formData.testWeight) || 0.5,
+        },
+        scholarships: Array.isArray(formData.scholarships) ? formData.scholarships : [],
+        requiredDocuments: Array.isArray(formData.requiredDocuments) ? formData.requiredDocuments : [],
+        departments: (formData.departments || []).map((d) => ({
+          name: d.name,
+          category: d.category || "CS",
+          semesterFee: Number(d.semesterFee) || 0,
+          seats: {
+            merit: Number(d.meritSeats) || 0,
+            selfFinance: Number(d.selfFinanceSeats) || 0,
+            other: 0,
+          },
+          lastMerit: d.lastMerit
+            ? [{ year: 2024, closingPercentage: Number(d.lastMerit), quota: "merit" }]
+            : [],
+        })),
+        status: "pending",
+      };
+
       const res = await fetch("/api/universities", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ ...formData, status: "pending" }),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Submit failed");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Submit failed");
+      }
       setStep("done");
     } catch (e) {
-      setSubmitStatus("❌ Failed to submit. Check your connection or login.");
+      setSubmitStatus("❌ " + (e.message || "Failed to submit. Check your connection or login."));
       setStep("review");
     }
   };

@@ -10,18 +10,18 @@ router.post("/collect-university", async (req, res) => {
     return res.status(400).json({ message: "University name required" });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `You are a professional university data researcher for Pakistan. 
-Perform a live web search to find the official, real, and current data for "${universityName}" in Pakistan.
-Verify the details from HEC, official websites, and recent prospectus.
+Find the official, real, and current data for "${universityName}" in Pakistan.
+Verify details from HEC records, official university websites, and recent prospectus.
 
-Return the response strictly matching this JSON structure:
+Return ONLY valid JSON (no markdown, no backticks) matching this exact structure:
 {
   "name": "full official university name",
   "shortName": "abbreviation like MUET or UoK",
   "slug": "lowercase-with-dashes",
-  "type": "Government",
+  "type": "government or private",
   "city": "city name",
   "establishedYear": 1900,
   "officialWebsite": "https://website.edu.pk",
@@ -47,28 +47,38 @@ Return the response strictly matching this JSON structure:
   ]
 }
 
-Fill ALL fields with real data. Make sure the weights sum up to exactly 1.00. Include major departments.`;
+IMPORTANT RULES:
+- Fill ALL fields with REAL data from the actual university.
+- Include ALL major departments (minimum 10 departments if available).
+- Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
+- type must be lowercase "government" or "private"
+- Weights must sum to exactly 1.00
+- Fees should be in PKR
+- Return ONLY the JSON object, nothing else.`;
 
-    // 🌟 FIXED: Added tools for web search & forced JSON output schema
-    const result = await model.generateContent({
-      contents: prompt,
-      tools: [{ googleSearch: {} }], // Live data nikalne ke liye search grounding enable ki
-      generationConfig: {
-        responseMimeType: "application/json", // Model direct pure JSON hi return karega
-      },
-    });
-
+    const result = await model.generateContent(prompt);
     const text = result.response.text();
-    console.log("Gemini raw response:", text);
+    console.log("Gemini raw response length:", text.length);
 
-    // AI is now strictly returning JSON, directly parse it safely
-    const data = JSON.parse(text);
+    // Clean the response - remove markdown code blocks if present
+    let cleanText = text.trim();
+    if (cleanText.startsWith("```json")) {
+      cleanText = cleanText.slice(7);
+    } else if (cleanText.startsWith("```")) {
+      cleanText = cleanText.slice(3);
+    }
+    if (cleanText.endsWith("```")) {
+      cleanText = cleanText.slice(0, -3);
+    }
+    cleanText = cleanText.trim();
+
+    const data = JSON.parse(cleanText);
     res.json(data);
   } catch (err) {
     console.error("AI Collect Error:", err.message);
     res
       .status(500)
-      .json({ message: "Internal Server Error during data collection" });
+      .json({ message: "AI data collection failed: " + err.message });
   }
 });
 
