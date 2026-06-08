@@ -12,53 +12,67 @@ router.post("/collect-university", async (req, res) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `Research "${universityName}" university in Pakistan using your knowledge and return ONLY valid JSON, no markdown, no backticks, no explanation.
+    const prompt = `You are a data researcher for Pakistani universities. 
+Give me detailed information about "${universityName}" in Pakistan.
+Respond with ONLY a raw JSON object. No markdown. No backticks. No explanation. Just the JSON.
 
-Return exactly this structure:
 {
-  "name": "Full official name",
-  "shortName": "e.g. MUET",
-  "slug": "muet-jamshoro",
+  "name": "full official university name",
+  "shortName": "abbreviation like MUET or UoK",
+  "slug": "lowercase-with-dashes",
   "type": "Government",
-  "city": "Jamshoro",
-  "establishedYear": 1963,
-  "officialWebsite": "https://muet.edu.pk",
-  "entryTest": "ECAT",
-  "admissionFee": 3000,
+  "city": "city name",
+  "establishedYear": 1900,
+  "officialWebsite": "https://website.edu.pk",
+  "entryTest": "NTS or ECAT or Own Test or None",
+  "admissionFee": 3500,
   "admissionOpen": true,
   "hostelAvailable": true,
   "matricWeight": 0.10,
   "fscWeight": 0.40,
   "testWeight": 0.50,
-  "scholarships": ["HEC Need-Based", "Merit Scholarship"],
-  "requiredDocuments": ["Matric Certificate", "FSc Certificate", "CNIC", "Domicile", "4 Photos"],
-  "description": "2-3 sentence description of the university",
+  "scholarships": ["HEC Need-Based Scholarship", "Merit Scholarship"],
+  "requiredDocuments": ["Matric Certificate", "FSc Certificate", "CNIC", "Domicile", "4 Passport Photos"],
+  "description": "Write 2 sentences about this university",
   "departments": [
     {
-      "name": "BE Computer Systems",
-      "category": "Engineering",
-      "semesterFee": 28000,
-      "lastMerit": 72.5,
+      "name": "BS Computer Science",
+      "category": "CS",
+      "semesterFee": 25000,
+      "lastMerit": 75.5,
       "meritSeats": 60,
-      "selfFinanceSeats": 30
+      "selfFinanceSeats": 40
     }
   ]
 }
 
-Include ALL departments this university offers. Use real accurate data.`;
+Fill ALL fields with real data. Include every department this university offers.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch)
-      return res.status(500).json({ message: "Could not parse response" });
+    // Log raw response to see what Gemini returns
+    console.log("Gemini raw response:", text);
+
+    // Clean response - remove markdown if Gemini adds it
+    const cleaned = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.log("No JSON found in:", cleaned);
+      return res
+        .status(500)
+        .json({ message: "AI did not return valid data", raw: cleaned });
+    }
 
     const data = JSON.parse(jsonMatch[0]);
     res.json(data);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed: " + err.message });
+    console.error("AI Collect Error:", err.message);
+    res.status(500).json({ message: err.message });
   }
 });
 
