@@ -46,7 +46,7 @@ export default function UniversityDataCollector() {
     if (!searchQuery.trim()) return;
     setStep("loading");
     setError("");
-    setLoadingStep(0);
+    loadingStep && setLoadingStep(0);
 
     // Animate loading steps
     for (let i = 0; i < LOADING_STEPS.length; i++) {
@@ -56,8 +56,8 @@ export default function UniversityDataCollector() {
     }
 
     try {
-      // 🌟 FIXED: Ab yeh direct external Anthropic call ke bajaye aapke Node.js backend ko hit karega
-      const res = await fetch("/api/collect-university", {
+      // 🌟 FIXED: Path changed to /api/ai-collect/collect-university to match backend config
+      const res = await fetch("/api/ai-collect/collect-university", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ universityName: searchQuery }),
