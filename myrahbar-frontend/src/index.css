@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #0f172a;
+  --navy: #c8d9ff;
   --navy-light: #1e293b;
   --blue: #2563eb;
   --blue-light: #3b82f6;
@@ -39,7 +39,9 @@
 }
 
 .dark .box-glow:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15), 0 0 40px rgba(59, 130, 246, 0.05);
+  box-shadow:
+    0 0 20px rgba(59, 130, 246, 0.15),
+    0 0 40px rgba(59, 130, 246, 0.05);
   border-color: rgba(59, 130, 246, 0.3);
 }
 

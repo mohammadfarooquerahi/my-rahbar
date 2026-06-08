@@ -52,70 +52,25 @@ export default function UniversityDataCollector() {
     for (let i = 0; i < LOADING_STEPS.length; i++) {
       setLoadingMsg(LOADING_STEPS[i]);
       setLoadingStep(i + 1);
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 600));
     }
 
     try {
-      const prompt = `You are a university data researcher for Pakistan. Research "${searchQuery}" university and return ONLY a valid JSON object with NO markdown, NO backticks, NO extra text. Use official HEC records, university website, and latest prospectus data.
-
-Return this exact JSON structure:
-{
-  "name": "Full official university name",
-  "shortName": "e.g. UoK",
-  "slug": "url-friendly-slug-with-dashes",
-  "type": "Government or Private or Semi-Government",
-  "city": "City name",
-  "establishedYear": 1950,
-  "officialWebsite": "https://...",
-  "entryTest": "NTS / ECAT / Own Test / None",
-  "admissionDeadline": "",
-  "admissionFee": 3500,
-  "admissionOpen": true,
-  "hostelAvailable": true,
-  "matricWeight": 0.10,
-  "fscWeight": 0.40,
-  "testWeight": 0.50,
-  "scholarships": ["HEC Need-Based", "Merit Scholarship"],
-  "requiredDocuments": ["Matric Certificate", "FSc Certificate", "CNIC", "Domicile", "4 Photos"],
-  "description": "2-3 sentence description of the university",
-  "departments": [
-    {
-      "name": "BS Computer Science",
-      "category": "CS",
-      "semesterFee": 25000,
-      "lastMerit": 75.5,
-      "meritSeats": 60,
-      "selfFinanceSeats": 40
-    }
-  ]
-}
-
-Include ALL major departments offered. Use real data from official sources. Weights must add up to 1.0.`;
-
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // 🌟 FIXED: Ab yeh direct external Anthropic call ke bajaye aapke Node.js backend ko hit karega
+      const res = await fetch("/api/collect-university", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 4000,
-          tools: [{ type: "web_search_20250305", name: "web_search" }],
-          messages: [{ role: "user", content: prompt }],
-        }),
+        body: JSON.stringify({ universityName: searchQuery }),
       });
 
-      const data = await res.json();
-      const text = data.content
-        ?.filter((b) => b.type === "text")
-        .map((b) => b.text)
-        .join("");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Failed to fetch from server");
+      }
 
-      // Extract JSON from response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("Could not parse university data");
+      const parsed = await res.json();
 
-      const parsed = JSON.parse(jsonMatch[0]);
-
-      // Normalize
+      // Normalize fields if missing
       parsed.departments = (parsed.departments || []).map((d) => ({
         name: d.name || "",
         category: d.category || "CS",
@@ -128,6 +83,7 @@ Include ALL major departments offered. Use real data from official sources. Weig
       setFormData(parsed);
       setStep("review");
     } catch (e) {
+      console.error("Frontend Collection Error:", e);
       setError("Failed to collect data. Try a more specific university name.");
       setStep("search");
     }
