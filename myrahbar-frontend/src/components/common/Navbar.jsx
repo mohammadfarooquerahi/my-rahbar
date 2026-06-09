@@ -203,9 +203,10 @@ export default function Navbar() {
 
           <button
             onClick={() => setMenuOpen(true)}
-            className="lg:hidden p-1.5 md:p-2 text-slate-700 hover:bg-slate-100 rounded-lg ml-1"
+            className="lg:hidden flex items-center justify-center p-2 text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 rounded-xl ml-1 shadow-sm transition-colors"
+            aria-label="Open Menu"
           >
-            <Menu size={26} />
+            <Menu size={24} />
           </button>
         </div>
       </div>
