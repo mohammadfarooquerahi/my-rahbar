@@ -69,147 +69,148 @@ export default function Navbar() {
 
   const isActive = (to) => location.pathname === to;
 
-  return (
-    <nav className="sticky top-0 z-50 bg-white backdrop-blur-md border-b border-slate-200 shadow-sm text-slate-900">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <Logo size="md" />
+    <>
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm text-slate-900">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+          <Logo size="lg" />
 
-        {/* Search - desktop */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden md:flex flex-1 max-w-sm items-center bg-slate-100 hover:bg-slate-200 rounded-xl px-3 gap-2 transition-colors"
-        >
-          <Search size={14} className="text-slate-500 shrink-0" />
-          <input
-            value={searchText}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search university or department..."
-            className="flex-1 bg-transparent py-2 text-sm outline-none text-slate-800 placeholder:text-slate-500"
-          />
-        </form>
+          {/* Search - desktop */}
+          <form
+            onSubmit={handleSearch}
+            className="hidden md:flex flex-1 max-w-sm items-center bg-slate-100 hover:bg-slate-200 rounded-xl px-3 gap-2 transition-colors"
+          >
+            <Search size={14} className="text-slate-500 shrink-0" />
+            <input
+              value={searchText}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search university or department..."
+              className="flex-1 bg-transparent py-2 text-sm outline-none text-slate-800 placeholder:text-slate-500"
+            />
+          </form>
 
-        {/* Nav links - desktop */}
-        <div className="hidden lg:flex items-center gap-1">
-          {mainLinks.map((l) => (
+          {/* Nav links - desktop */}
+          <div className="hidden lg:flex items-center gap-1">
+            {mainLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all " +
+                  (isActive(l.to)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-700 hover:text-black hover:bg-slate-100")
+                }
+              >
+                {l.icon}
+                {l.label}
+              </Link>
+            ))}
+
+            {/* More Dropdown */}
+            <div className="relative ml-1" ref={dropdownRef}>
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  moreOpen || moreLinks.some(l => isActive(l.to))
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-700 hover:text-black hover:bg-slate-100"
+                }`}
+              >
+                More <ChevronDown size={14} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {moreOpen && (
+                <div className="absolute top-full right-0 mt-2 w-40 bg-white border border-slate-200 shadow-xl rounded-xl py-2 flex flex-col z-50">
+                  {moreLinks.map((l) => (
+                    <Link
+                      key={l.to}
+                      to={l.to}
+                      onClick={() => setMoreOpen(false)}
+                      className={
+                        "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors " +
+                        (isActive(l.to) ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-100 hover:text-black")
+                      }
+                    >
+                      {l.icon}
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="flex items-center gap-1 md:gap-2">
+            {/* AI Chat Mobile Icon */}
             <Link
-              key={l.to}
-              to={l.to}
-              className={
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all " +
-                (isActive(l.to)
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-700 hover:text-black hover:bg-slate-100")
-              }
+              to="/career-match"
+              className="lg:hidden p-2 text-blue-600 hover:text-blue-800 transition-colors"
+              title="AI Chat"
             >
-              {l.icon}
-              {l.label}
+              <Sparkles size={20} />
             </Link>
-          ))}
 
-          {/* More Dropdown */}
-          <div className="relative ml-1" ref={dropdownRef}>
-            <button
-              onClick={() => setMoreOpen(!moreOpen)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                moreOpen || moreLinks.some(l => isActive(l.to))
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-slate-700 hover:text-black hover:bg-slate-100"
-              }`}
-            >
-              More <ChevronDown size={14} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {moreOpen && (
-              <div className="absolute top-full right-0 mt-2 w-40 bg-white border border-slate-200 shadow-xl rounded-xl py-2 flex flex-col z-50">
-                {moreLinks.map((l) => (
-                  <Link
-                    key={l.to}
-                    to={l.to}
-                    onClick={() => setMoreOpen(false)}
-                    className={
-                      "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors " +
-                      (isActive(l.to) ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-100 hover:text-black")
-                    }
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to="/watchlist"
+                  className="relative p-2 text-slate-500 hover:text-red-500 transition-colors hidden sm:block"
+                  title="Watchlist"
+                >
+                  <Heart size={20} />
+                  {universities.length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                      {universities.length}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-2 py-1 md:px-3 md:py-1.5 rounded-xl transition-colors"
+                  title="Profile"
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    style={{ background: "var(--navy)" }}
                   >
-                    {l.icon}
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
+                    {user?.fullName?.slice(0, 1).toUpperCase() || user?.name?.slice(0, 1).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-800 hidden md:block max-w-[100px] truncate">
+                    {(user?.fullName || user?.name || "User").split(" ")[0]}
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/auth/login"
+                  className="text-sm font-semibold text-slate-700 hover:text-black px-2 py-1.5 hidden md:block"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="text-xs md:text-sm font-bold text-white px-3 py-2 rounded-xl btn-press transition-all shadow-md hidden sm:block"
+                  style={{
+                    background: "linear-gradient(135deg, var(--navy), var(--blue))",
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
+
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="lg:hidden flex items-center justify-center p-2 text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 rounded-xl ml-1 shadow-sm transition-colors"
+              aria-label="Open Menu"
+            >
+              <Menu size={24} />
+            </button>
           </div>
         </div>
-
-        {/* Right */}
-        <div className="flex items-center gap-1 md:gap-2">
-          {/* AI Chat Mobile Icon */}
-          <Link
-            to="/career-match"
-            className="lg:hidden p-2 text-blue-600 hover:text-blue-800 transition-colors"
-            title="AI Chat"
-          >
-            <Sparkles size={20} />
-          </Link>
-
-          {isLoggedIn ? (
-            <>
-              <Link
-                to="/watchlist"
-                className="relative p-2 text-slate-500 hover:text-red-500 transition-colors hidden sm:block"
-                title="Watchlist"
-              >
-                <Heart size={20} />
-                {universities.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                    {universities.length}
-                  </span>
-                )}
-              </Link>
-              <Link
-                to="/profile"
-                className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-2 py-1 md:px-3 md:py-1.5 rounded-xl transition-colors"
-                title="Profile"
-              >
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                  style={{ background: "var(--navy)" }}
-                >
-                  {user?.fullName?.slice(0, 1).toUpperCase() || user?.name?.slice(0, 1).toUpperCase()}
-                </div>
-                <span className="text-sm font-semibold text-slate-800 hidden md:block max-w-[100px] truncate">
-                  {(user?.fullName || user?.name || "User").split(" ")[0]}
-                </span>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/auth/login"
-                className="text-sm font-semibold text-slate-700 hover:text-black px-2 py-1.5 hidden md:block"
-              >
-                Login
-              </Link>
-              <Link
-                to="/auth/register"
-                className="text-xs md:text-sm font-bold text-white px-3 py-2 rounded-xl btn-press transition-all shadow-md"
-                style={{
-                  background: "linear-gradient(135deg, var(--navy), var(--blue))",
-                }}
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
-
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="lg:hidden flex items-center justify-center p-2 text-blue-600 bg-blue-50 border border-blue-100 hover:bg-blue-100 rounded-xl ml-1 shadow-sm transition-colors"
-            aria-label="Open Menu"
-          >
-            <Menu size={24} />
-          </button>
-        </div>
-      </div>
+      </nav>
 
       {/* Mobile Drawer Overlay */}
       {menuOpen && (
@@ -313,6 +314,6 @@ export default function Navbar() {
           </div>
         )}
       </div>
-    </nav>
+    </>
   );
 }
