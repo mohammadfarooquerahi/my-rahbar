@@ -166,6 +166,29 @@ html {
   border-radius: 8px;
 }
 
+/* Moving multi-color hero gradient */
+@keyframes gradient-move {
+  0%   { background-position: 0% 50%; }
+  25%  { background-position: 50% 0%; }
+  50%  { background-position: 100% 50%; }
+  75%  { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+.hero-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    #dbeafe 0%,
+    #ede9fe 20%,
+    #fce7f3 40%,
+    #d1fae5 60%,
+    #fef3c7 80%,
+    #dbeafe 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-move 8s ease infinite;
+}
+
+
 /* Premium hover cards */
 .card-hover {
   transition:

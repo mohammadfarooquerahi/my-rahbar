@@ -298,7 +298,7 @@ export default function HomePage() {
 
       {/* Premium Hero Section */}
       <section
-        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24 bg-white"
+        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24 hero-gradient-bg"
         style={{
           fontFamily: "'Poppins', sans-serif",
         }}
@@ -322,9 +322,9 @@ export default function HomePage() {
 
         <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-blue-600 text-white text-xs font-semibold px-5 py-2 rounded-full mb-8 fade-up shadow-md shadow-blue-200">
-            <span className="text-lg">🎓</span>
-            Pakistan's #1 University Admission Guide — Free for All Students
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-full mb-8 fade-up shadow-lg shadow-violet-200/60">
+            <span className="text-base">⚡</span>
+            Next-Gen Admission Platform — 100% Free for Every Student
           </div>
 
           {/* Headline */}
@@ -336,13 +336,10 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <p className="text-slate-600 text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto fade-up-2 leading-relaxed">
+          <p className="text-slate-700 text-base sm:text-lg md:text-xl mb-10 max-w-2xl mx-auto fade-up-2 leading-relaxed">
             Rahbars helps Pakistani students find, compare, and get admitted to their ideal university.
             Calculate your aggregate, check merit lists, download past papers, and get
             expert counseling — all in one place, completely free.
-          </p>
-          <p className="text-slate-400 text-sm mb-10 fade-up-2">
-            Trusted by <strong className="text-slate-600">5,000+ students</strong> across Pakistan · Updated daily from official sources
           </p>
 
           {/* Search Bar - Glassmorphism */}
