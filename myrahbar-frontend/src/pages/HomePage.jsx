@@ -97,7 +97,7 @@ export default function HomePage() {
       to: "/merit-calculator",
       color: "var(--green)",
       bg: "#F0FDF4",
-      tag: "Free Tool",
+      tag: "Tool",
     },
     {
       icon: <FileText size={20} />,
@@ -106,7 +106,7 @@ export default function HomePage() {
       to: "/document-tools",
       color: "var(--orange)",
       bg: "#FFF7ED",
-      tag: "Free Tool",
+      tag: "Tool",
     },
     {
       icon: <Headphones size={20} />,
@@ -467,7 +467,7 @@ export default function HomePage() {
           </h2>
           <p className="text-slate-500 max-w-xl mx-auto">
             From finding the right university to getting admitted — all tools in
-            one place, completely free.
+            one place to help you succeed.
           </p>
         </div>
 
@@ -476,8 +476,13 @@ export default function HomePage() {
             <Link
               key={i}
               to={t.to}
-              className="card-hover group relative bg-white dark:bg-card rounded-2xl p-6 border border-slate-200 dark:border-border overflow-hidden"
+              className="card-hover group relative bg-white rounded-2xl p-6 border border-slate-200 hover:border-transparent overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
             >
+              {/* Animated Gradient Background on Hover */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"
+                style={{ background: `linear-gradient(135deg, transparent, ${t.color})` }}
+              />
               {/* Tag */}
               <span
                 className="absolute top-4 right-4 text-xs font-semibold px-2 py-0.5 rounded-full"
@@ -502,10 +507,10 @@ export default function HomePage() {
                 {t.desc}
               </p>
               <div
-                className="flex items-center gap-1 mt-4 text-xs font-medium"
-                style={{ color: t.color }}
+                className="flex items-center gap-1 mt-6 text-sm font-bold w-fit px-4 py-2 rounded-xl transition-all duration-300 group-hover:translate-x-1"
+                style={{ backgroundColor: t.bg, color: t.color }}
               >
-                Try it free <ChevronRight size={13} />
+                Try {t.title} <ChevronRight size={15} />
               </div>
             </Link>
           ))}
@@ -616,7 +621,7 @@ export default function HomePage() {
             }}
           >
             <Target size={18} />
-            Find My University Now — Free
+            Find My University Now
             <ArrowRight size={18} />
           </Link>
           <p className="text-slate-400 text-sm mt-3">

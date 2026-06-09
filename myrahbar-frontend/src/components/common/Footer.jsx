@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, Instagram, Facebook, Linkedin, Twitter } from "lucide-react";
 import Logo from "./Logo";
 
 export default function Footer() {
@@ -9,36 +9,55 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
           {/* Brand — 2 cols */}
           <div className="md:col-span-2">
-            <Logo size="md" />
+            <Logo size="lg" />
             <p className="text-sm text-slate-500 leading-relaxed mt-4 max-w-xs">
               Pakistan's smartest university admission platform. Helping Karachi
               students find their perfect university with AI, merit tools and
               real data.
             </p>
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-6">
               <a
-                href="#"
-                className="p-2 bg-white hover:bg-slate-100 text-slate-600 rounded-xl shadow-sm border border-slate-200 transition-colors"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1"
+                title="Facebook"
               >
-                <span className="font-bold text-[10px]">IG</span>
+                <Facebook size={18} />
               </a>
               <a
-                href="#"
-                className="p-2 bg-white hover:bg-slate-100 text-slate-600 rounded-xl shadow-sm border border-slate-200 transition-colors"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2.5 bg-pink-50 hover:bg-pink-600 text-pink-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1"
+                title="Instagram"
               >
-                <span className="font-bold text-[10px]">YT</span>
+                <Instagram size={18} />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1"
+                title="LinkedIn"
+              >
+                <Linkedin size={18} />
               </a>
               <a
                 href="mailto:rahbarsofficial@gmail.com"
-                className="p-2 bg-white hover:bg-slate-100 text-slate-600 rounded-xl shadow-sm border border-slate-200 transition-colors"
+                className="p-2.5 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1"
+                title="Email Us"
               >
-                <Mail size={15} />
+                <Mail size={18} />
               </a>
               <a
                 href="https://wa.me/923455589079"
-                className="p-2 bg-white hover:bg-slate-100 text-slate-600 rounded-xl shadow-sm border border-slate-200 transition-colors"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1"
+                title="WhatsApp"
               >
-                <MessageCircle size={15} />
+                <MessageCircle size={18} />
               </a>
             </div>
           </div>

@@ -141,12 +141,21 @@ export default function Navbar() {
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* AI Chat Mobile Icon */}
+          <Link
+            to="/career-match"
+            className="lg:hidden p-2 text-blue-600 hover:text-blue-800 transition-colors"
+            title="AI Chat"
+          >
+            <Sparkles size={20} />
+          </Link>
+
           {isLoggedIn ? (
             <>
               <Link
                 to="/watchlist"
-                className="relative p-2 text-slate-500 hover:text-red-500 transition-colors"
+                className="relative p-2 text-slate-500 hover:text-red-500 transition-colors hidden sm:block"
                 title="Watchlist"
               >
                 <Heart size={20} />
@@ -158,7 +167,8 @@ export default function Navbar() {
               </Link>
               <Link
                 to="/profile"
-                className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors"
+                className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-2 py-1 md:px-3 md:py-1.5 rounded-xl transition-colors"
+                title="Profile"
               >
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
@@ -175,13 +185,13 @@ export default function Navbar() {
             <>
               <Link
                 to="/auth/login"
-                className="text-sm font-semibold text-slate-700 hover:text-black px-3 py-1.5 hidden md:block"
+                className="text-sm font-semibold text-slate-700 hover:text-black px-2 py-1.5 hidden md:block"
               >
                 Login
               </Link>
               <Link
                 to="/auth/register"
-                className="text-sm font-bold text-white px-4 py-2 rounded-xl btn-press transition-all shadow-md"
+                className="text-xs md:text-sm font-bold text-white px-3 py-2 rounded-xl btn-press transition-all shadow-md"
                 style={{
                   background: "linear-gradient(135deg, var(--navy), var(--blue))",
                 }}
@@ -193,9 +203,9 @@ export default function Navbar() {
 
           <button
             onClick={() => setMenuOpen(true)}
-            className="lg:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-lg"
+            className="lg:hidden p-1.5 md:p-2 text-slate-700 hover:bg-slate-100 rounded-lg ml-1"
           >
-            <Menu size={24} />
+            <Menu size={26} />
           </button>
         </div>
       </div>

@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 export default function Logo({ size = "md" }) {
   const sizes = {
-    sm: "h-6",
-    md: "h-8",
-    lg: "h-12",
+    sm: "h-8",
+    md: "h-9 md:h-11",
+    lg: "h-14 md:h-16",
   };
   const heightClass = sizes[size] || sizes.md;
 

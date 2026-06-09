@@ -3,6 +3,15 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import AIChatWidget from "./components/common/AIChatWidget";
+import { useEffect } from "react";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 // Lazy load every page so one broken page can't crash others
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -42,6 +51,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-1">
         <Suspense fallback={<PageLoader />}>
