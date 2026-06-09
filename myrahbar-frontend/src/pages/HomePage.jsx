@@ -452,8 +452,8 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Tools grid */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
+      {/* Tools & Features grid */}
+      <section className="py-16" style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 50%, #f0f0ff 100%)" }}>
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
             <Target size={12} />
@@ -471,49 +471,57 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {tools.map((t, i) => (
-            <Link
-              key={i}
-              to={t.to}
-              className="card-hover group relative bg-white rounded-2xl p-6 border border-slate-200 hover:border-transparent overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
-            >
-              {/* Animated Gradient Background on Hover */}
-              <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"
-                style={{ background: `linear-gradient(135deg, transparent, ${t.color})` }}
-              />
-              {/* Tag */}
-              <span
-                className="absolute top-4 right-4 text-xs font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: t.bg, color: t.color }}
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {tools.map((t, i) => (
+              <Link
+                key={i}
+                to={t.to}
+                className="card-hover group relative bg-white rounded-2xl p-6 border-2 border-white/80 hover:border-transparent overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
               >
-                {t.tag}
-              </span>
+                {/* Animated Gradient Background on Hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none rounded-2xl"
+                  style={{ background: `linear-gradient(135deg, transparent, ${t.color})` }}
+                />
+                {/* Tag badge */}
+                <span
+                  className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-full"
+                  style={{ background: t.bg, color: t.color }}
+                >
+                  {t.tag}
+                </span>
 
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-                style={{ background: t.bg, color: t.color }}
-              >
-                {t.icon}
-              </div>
-              <h3
-                className="font-bold text-slate-800 dark:text-white mb-2"
-                style={{ fontFamily: "Sora" }}
-              >
-                {t.title}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                {t.desc}
-              </p>
-              <div
-                className="flex items-center gap-1 mt-6 text-sm font-bold w-fit px-4 py-2 rounded-xl transition-all duration-300 group-hover:translate-x-1"
-                style={{ backgroundColor: t.bg, color: t.color }}
-              >
-                Try {t.title} <ChevronRight size={15} />
-              </div>
-            </Link>
-          ))}
+                {/* Icon with title */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
+                    style={{ background: t.bg, color: t.color }}
+                  >
+                    {t.icon}
+                  </div>
+                  <h3
+                    className="font-bold text-slate-800 text-base leading-tight"
+                    style={{ fontFamily: "Sora" }}
+                  >
+                    {t.title}
+                  </h3>
+                </div>
+
+                <p className="text-sm text-slate-500 leading-relaxed mb-5">
+                  {t.desc}
+                </p>
+
+                {/* CTA */}
+                <div
+                  className="flex items-center gap-1.5 text-sm font-bold w-fit px-4 py-2 rounded-xl transition-all duration-300 group-hover:translate-x-1 group-hover:shadow-md"
+                  style={{ backgroundColor: t.bg, color: t.color }}
+                >
+                  Try Now <ChevronRight size={15} />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

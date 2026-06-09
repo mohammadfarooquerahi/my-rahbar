@@ -110,7 +110,7 @@ export default function RegisterPage() {
                     type="text"
                     value={form.name}
                     onChange={(e) => update("name", e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Muhammad Ali Raza"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
@@ -131,7 +131,7 @@ export default function RegisterPage() {
                     type="email"
                     value={form.email}
                     onChange={(e) => update("email", e.target.value)}
-                    placeholder="your@email.com"
+                    placeholder="ali.raza@gmail.com"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
@@ -149,7 +149,7 @@ export default function RegisterPage() {
                     type="text"
                     value={form.whatsapp}
                     onChange={(e) => update("whatsapp", e.target.value)}
-                    placeholder="3001234567"
+                    placeholder="03001234567"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-11 pr-4 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
@@ -170,7 +170,7 @@ export default function RegisterPage() {
                     type={showPass ? "text" : "password"}
                     value={form.password}
                     onChange={(e) => update("password", e.target.value)}
-                    placeholder="Minimum 6 characters"
+                    placeholder="Kam az kam 6 characters"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-10 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
