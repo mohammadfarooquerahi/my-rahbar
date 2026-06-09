@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthStore } from "../store";
 
 const CATEGORIES = [
   "CS",
@@ -24,6 +25,7 @@ const initialDept = {
 };
 
 export default function UniversityDataCollector() {
+  const { token } = useAuthStore();
   const [step, setStep] = useState("search"); // search | loading | review | submitting | done
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingMsg, setLoadingMsg] = useState("");
@@ -149,11 +151,10 @@ export default function UniversityDataCollector() {
         status: "pending",
       };
 
-      const res = await fetch("/api/universities", {
+      const res = await fetch("/api/ai-collect/submit-university", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(payload),
       });

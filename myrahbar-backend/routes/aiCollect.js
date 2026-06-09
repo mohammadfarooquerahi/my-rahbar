@@ -72,13 +72,33 @@ IMPORTANT RULES:
     }
     cleanText = cleanText.trim();
 
-    const data = JSON.parse(cleanText);
+  const data = JSON.parse(cleanText);
     res.json(data);
   } catch (err) {
     console.error("AI Collect Error:", err.message);
     res
       .status(500)
       .json({ message: "AI data collection failed: " + err.message });
+  }
+});
+
+// Submit university to DB (from AI collector tool — admin use)
+router.post("/submit-university", async (req, res) => {
+  try {
+    const University = require("../models/University");
+    const payload = req.body;
+    
+    // Ensure status is pending so admin can review
+    payload.status = payload.status || "pending";
+    
+    const uni = await University.create(payload);
+    res.status(201).json(uni);
+  } catch (err) {
+    console.error("Submit university error:", err.message);
+    if (err.code === 11000) {
+      return res.status(400).json({ message: "A university with this slug already exists." });
+    }
+    res.status(400).json({ message: err.message });
   }
 });
 
