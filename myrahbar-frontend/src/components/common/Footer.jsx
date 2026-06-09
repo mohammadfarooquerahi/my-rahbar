@@ -32,7 +32,7 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="md:col-span-2">
-            <Logo size="lg" />
+            <Logo size="lg" showName={true} />
             <p className="text-sm text-slate-500 leading-relaxed mt-4 max-w-xs">
               Pakistan's smartest university admission platform. Helping Karachi
               students find their perfect university with AI, merit tools and

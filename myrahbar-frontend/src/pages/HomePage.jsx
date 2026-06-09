@@ -89,24 +89,27 @@ export default function HomePage() {
       color: "var(--blue)",
       bg: "#EFF6FF",
       tag: "Most Used",
+      cta: "Find University",
     },
     {
       icon: <Calculator size={20} />,
-      title: "Merit Calculator",
+      title: "Aggregate Calculator",
       desc: "Enter your marks — see if you qualify instantly",
       to: "/merit-calculator",
       color: "var(--green)",
       bg: "#F0FDF4",
       tag: "Tool",
+      cta: "Calculate Aggregate",
     },
     {
       icon: <FileText size={20} />,
-      title: "Document Tools",
+      title: "Document Compressor",
       desc: "Compress documents to exact university size requirements",
       to: "/document-tools",
       color: "var(--orange)",
       bg: "#FFF7ED",
       tag: "Tool",
+      cta: "Compress Now",
     },
     {
       icon: <Headphones size={20} />,
@@ -116,15 +119,17 @@ export default function HomePage() {
       color: "#8B5CF6",
       bg: "#F5F3FF",
       tag: "Expert Help",
+      cta: "Book Now",
     },
     {
       icon: <BookOpen size={20} />,
-      title: "Compare Unis",
+      title: "Compare Universities",
       desc: "Side by side comparison of fee, merit and facilities",
       to: "/compare",
       color: "var(--navy)",
       bg: "#F0F4FF",
       tag: "New",
+      cta: "Compare University",
     },
     {
       icon: <FileText size={20} />,
@@ -134,6 +139,7 @@ export default function HomePage() {
       color: "#EC4899",
       bg: "#FDF2F8",
       tag: "Hot",
+      cta: "Check Now",
     },
   ];
 
@@ -517,7 +523,7 @@ export default function HomePage() {
                   className="flex items-center gap-1.5 text-sm font-bold w-fit px-4 py-2 rounded-xl transition-all duration-300 group-hover:translate-x-1 group-hover:shadow-md"
                   style={{ backgroundColor: t.bg, color: t.color }}
                 >
-                  Try Now <ChevronRight size={15} />
+                  {t.cta} <ChevronRight size={15} />
                 </div>
               </Link>
             ))}
@@ -547,9 +553,9 @@ export default function HomePage() {
             </div>
             <Link
               to="/search"
-              className="hidden md:flex items-center gap-2 text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors"
+              className="hidden md:flex items-center gap-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl transition-colors shadow-md"
             >
-              View All <ArrowRight size={14} />
+              See All Universities <ArrowRight size={14} />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -557,12 +563,12 @@ export default function HomePage() {
               <UniversityCard key={uni.id} uni={uni} />
             ))}
           </div>
-          <div className="text-center mt-6 md:hidden">
+          <div className="text-center mt-8 md:hidden">
             <Link
               to="/search"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700"
+              className="inline-flex items-center gap-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl shadow-md"
             >
-              See all 30 universities <ArrowRight size={14} />
+              See All Universities <ArrowRight size={14} />
             </Link>
           </div>
         </div>

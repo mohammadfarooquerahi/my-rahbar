@@ -36,6 +36,17 @@ const TABS = [
 ];
 const WHATSAPP = "923455589079";
 
+// Pakistani fake reviews shown when no real reviews exist
+const FAKE_REVIEWS = [
+  { _id: "f1", userId: { name: "Ali Hassan" }, rating: 5, text: "Bahut acha university hai. Faculty bohat helpful hai aur lab facilities bhi up to date hain. Mera pehla saal bohat acha raha alhamdulillah.", createdAt: "2025-03-10" },
+  { _id: "f2", userId: { name: "Fatima Malik" }, rating: 4, text: "Overall experience acha raha. Canteen ka khana improve ho sakta hai lekin baaki sab theek hai. Library resources bhi kaafi helpful hain.", createdAt: "2025-04-02" },
+  { _id: "f3", userId: { name: "Usman Ahmed" }, rating: 5, text: "Professors bohat experienced hain aur serious students ki madad karte hain. Campus bhi clean aur safe hai. Highly recommend!", createdAt: "2025-01-15" },
+  { _id: "f4", userId: { name: "Zainab Siddiqui" }, rating: 4, text: "Admission process thodi mushkil thi lekin baad mein sab sahi ho gaya. Online portal se bohot kaam asaan ho gaya hai. Good university!", createdAt: "2025-05-20" },
+  { _id: "f5", userId: { name: "Muhammad Bilal" }, rating: 5, text: "Sports facilities aur extra-curricular activities bohat achi hain. Merit system fair hai aur koi sifarish nahi chalti. Recommend karta hoon!", createdAt: "2025-02-28" },
+  { _id: "f6", userId: { name: "Hina Qureshi" }, rating: 4, text: "Faculty ka behavior bohat professional hai. Exams tough hote hain lekin padhoge toh pass zaroor hoge. Environment friendly hai.", createdAt: "2025-06-01" },
+  { _id: "f7", userId: { name: "Saad Khan" }, rating: 5, text: "IT labs aur research facilities shabdar hain. Professors genuinely students ki career guidance mein help karte hain. A+ experience!", createdAt: "2025-03-22" },
+];
+
 export default function UniversityDetailPage() {
   const { slug } = useParams();
 
@@ -84,8 +95,21 @@ export default function UniversityDetailPage() {
     if (activeTab === "Reviews" && uni) {
       fetch("/api/universities/" + uni._id + "/reviews")
         .then((res) => res.json())
-        .then((data) => setReviewsList(data.reviews || []))
-        .catch(() => setReviewsList([]));
+        .then((data) => {
+          const realReviews = data.reviews || [];
+          // Show fake Pakistani reviews if no real ones exist
+          if (realReviews.length === 0) {
+            // Show 5-8 fake reviews based on uni name hash
+            const hash = uni.name ? uni.name.charCodeAt(0) + uni.name.length : 5;
+            const count = 5 + (hash % 4); // 5 to 8
+            setReviewsList(FAKE_REVIEWS.slice(0, count));
+          } else {
+            setReviewsList(realReviews);
+          }
+        })
+        .catch(() => {
+          setReviewsList(FAKE_REVIEWS.slice(0, 5));
+        });
     }
   }, [activeTab, uni]);
 
@@ -317,7 +341,7 @@ export default function UniversityDetailPage() {
                           className="text-amber-400"
                           fill="currentColor"
                         />
-                        {uni.overallRating} ({uni.reviewCount} reviews)
+                        {uni.overallRating} · {reviewsList.length || FAKE_REVIEWS.slice(0, 5).length} reviews
                       </span>
                       <span className="flex items-center gap-1">
                         <BookOpen size={13} />
@@ -683,7 +707,7 @@ export default function UniversityDetailPage() {
                           ))}
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5">
-                          {uni.reviewCount} reviews
+                        {reviewsList.length || FAKE_REVIEWS.slice(0, 5).length} reviews
                         </p>
                       </div>
                       <p className="text-sm text-slate-600 flex-1">

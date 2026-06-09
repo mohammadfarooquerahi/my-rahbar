@@ -14,6 +14,10 @@ import {
   Rss,
   ChevronDown,
   User,
+  BarChart2,
+  BookOpen,
+  Bell,
+  MessageSquare,
 } from "lucide-react";
 import { useAuthStore, useWatchlistStore } from "../../store";
 import Logo from "./Logo";
@@ -69,17 +73,18 @@ export default function Navbar() {
 
   const mainLinks = [
     { to: "/", icon: <Home size={18} />, label: "Home" },
-    { to: "/find-university", icon: <Search size={18} />, label: "Find Uni" },
-    { to: "/merit-calculator", icon: <Calculator size={18} />, label: "Merit" },
-    { to: "/past-papers", icon: <FileText size={18} />, label: "Papers" },
+    { to: "/find-university", icon: <Search size={18} />, label: "Find University" },
+    { to: "/merit-calculator", icon: <Calculator size={18} />, label: "Aggregate Calculator" },
+    { to: "/past-papers", icon: <FileText size={18} />, label: "Past Papers" },
     { to: "/career-match", icon: <Sparkles size={18} />, label: "AI Chat" },
-    { to: "/document-tools", icon: <FileText size={18} />, label: "Docs" },
+    { to: "/document-tools", icon: <FileText size={18} />, label: "Document Tools" },
   ];
 
   const moreLinks = [
-    { to: "/counseling", icon: <Headphones size={18} />, label: "Consult" },
-    { to: "/blog", icon: <Rss size={18} />, label: "Blog" },
-    { to: "/news", icon: <Newspaper size={18} />, label: "News" },
+    { to: "/compare", icon: <BarChart2 size={18} />, label: "Compare Universities" },
+    { to: "/counseling", icon: <Headphones size={18} />, label: "Consult Expert" },
+    { to: "/blog", icon: <BookOpen size={18} />, label: "Blog & Articles" },
+    { to: "/news", icon: <Bell size={18} />, label: "Admission News" },
   ];
 
   const isActive = (to) => location.pathname === to;
@@ -165,13 +170,14 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-1">
-            {/* AI Chat icon — mobile only */}
+            {/* AI Chat icon — mobile only — beautiful chat bubble */}
             <Link
               to="/career-match"
-              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
-              title="AI Chat"
+              className="lg:hidden relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white hover:opacity-90 active:scale-95 transition-all shadow-md shadow-indigo-200"
+              title="AI Career Chat"
             >
-              <Sparkles size={18} />
+              <MessageSquare size={17} fill="white" strokeWidth={1.5} />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
             </Link>
 
             {isLoggedIn ? (

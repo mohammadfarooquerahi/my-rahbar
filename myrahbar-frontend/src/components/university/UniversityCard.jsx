@@ -22,8 +22,8 @@ function getFakeRating(name) {
 
 function getFakeReviewCount(name) {
   const h = hashString(name + "_reviews");
-  // Review count between 120 and 890
-  return 120 + (h % 771);
+  // Review count between 5 and 10
+  return 5 + (h % 6);
 }
 
 function formatDeadlineDate(dateStr) {
@@ -165,14 +165,16 @@ export default function UniversityCard({ uni }) {
 
         {/* Rating + Reviews */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg">
-            <Star size={14} className="text-amber-400" fill="currentColor" />
-            <span className="text-sm font-bold">{rating}</span>
+          <div className="flex items-center gap-0.5">
+            {[1,2,3,4,5].map(s => (
+              <Star key={s} size={13}
+                className={s <= Math.round(parseFloat(rating)) ? "text-amber-400" : "text-slate-200"}
+                fill={s <= Math.round(parseFloat(rating)) ? "currentColor" : "currentColor"}
+              />
+            ))}
           </div>
-          <span className="flex items-center gap-1 text-xs text-slate-400">
-            <Users size={12} />
-            {reviewCount} reviews
-          </span>
+          <span className="text-xs font-bold text-amber-600">{rating}</span>
+          <span className="text-xs text-slate-400">({reviewCount} reviews)</span>
         </div>
 
         {/* Info Rows */}

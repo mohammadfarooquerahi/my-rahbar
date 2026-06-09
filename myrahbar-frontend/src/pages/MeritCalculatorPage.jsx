@@ -14,6 +14,20 @@ import { calculateAggregate, getMeritStatus } from "../utils/merit";
 export default function MeritCalculatorPage() {
   const [searchParams] = useSearchParams();
 
+  // Live universities from API, fallback to static data
+  const [allUniversities, setAllUniversities] = useState(KARACHI_UNIVERSITIES);
+  useEffect(() => {
+    fetch("/api/universities")
+      .then((r) => r.json())
+      .then((data) => {
+        const unis = data.universities || [];
+        if (unis.length > 0) {
+          setAllUniversities(unis.map((u) => ({ ...u, id: u._id || u.id })));
+        }
+      })
+      .catch(() => {}); // fallback stays as KARACHI_UNIVERSITIES
+  }, []);
+
   const [selectedUniSlug, setSelectedUniSlug] = useState(
     searchParams.get("uni") || "",
   );
@@ -41,11 +55,11 @@ export default function MeritCalculatorPage() {
     return ((o / t) * 100).toFixed(2);
   };
 
-  const selectedUni = KARACHI_UNIVERSITIES.find(
+  const selectedUni = allUniversities.find(
     (u) => u.slug === selectedUniSlug,
   );
 
-  const selectedDept = selectedUni?.departments.find(
+  const selectedDept = selectedUni?.departments?.find(
     (d) => d.name === selectedDeptName,
   );
 
@@ -142,7 +156,7 @@ export default function MeritCalculatorPage() {
             className="text-3xl font-bold mb-2"
             style={{ fontFamily: "Sora", color: "var(--navy)" }}
           >
-            Merit Calculator
+            Aggregate Calculator
           </h1>
           <p className="text-slate-500">
             Enter your results — see your aggregate and admission chances
@@ -163,9 +177,9 @@ export default function MeritCalculatorPage() {
               }}
               className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none bg-white text-slate-700 focus:border-blue-400"
             >
-              <option value="">— Choose a university —</option>
-              {KARACHI_UNIVERSITIES.map((u) => (
-                <option key={u.id} value={u.slug}>
+              <option value="">— University chunein —</option>
+              {allUniversities.map((u) => (
+                <option key={u.id || u._id || u.slug} value={u.slug}>
                   {u.name}
                 </option>
               ))}
