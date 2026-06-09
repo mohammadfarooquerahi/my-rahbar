@@ -322,9 +322,9 @@ export default function HomePage() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 mb-6 fade-up-1 leading-[1.1] tracking-tight">
-            Elevate Your Future. <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 mb-6 fade-up-1 leading-[1.08] tracking-tight">
+            Elevate Your Future. <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600">
               Secure Your Admission.
             </span>
           </h1>
