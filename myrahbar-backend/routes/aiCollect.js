@@ -10,7 +10,8 @@ router.post("/collect-university", async (req, res) => {
     return res.status(400).json({ message: "University name required" });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    // Fallback to 1.5-flash in case 2.0 is not available on this key
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `You are a professional university data researcher for Pakistan. 
 Find the official, real, and current data for "${universityName}" in Pakistan.
