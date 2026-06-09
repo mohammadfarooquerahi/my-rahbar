@@ -214,10 +214,10 @@ export default function HomePage() {
         <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
-      {/* Ticker - slow, shows features */}
+      {/* Ticker - deadline & features bar */}
       <div
-        className="text-white text-xs py-2.5 overflow-hidden"
-        style={{ background: "var(--navy)" }}
+        className="text-blue-800 text-xs py-2 overflow-hidden border-b border-blue-100"
+        style={{ background: "#EFF6FF" }}
       >
         <div className="ticker-wrap">
           <div className="ticker">
@@ -253,11 +253,11 @@ export default function HomePage() {
             ].map((item, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-2 mr-12 text-slate-200"
+                className="inline-flex items-center gap-2 mr-12 text-blue-700"
               >
                 <span>{item.icon}</span>
-                <span>{item.text}</span>
-                <span className="text-slate-500 ml-4">•</span>
+                <span className="font-medium">{item.text}</span>
+                <span className="text-blue-300 ml-4">•</span>
               </span>
             ))}
             {/* Repeat for seamless loop */}
@@ -285,11 +285,11 @@ export default function HomePage() {
             ].map((item, i) => (
               <span
                 key={"r" + i}
-                className="inline-flex items-center gap-2 mr-12 text-slate-200"
+                className="inline-flex items-center gap-2 mr-12 text-blue-700"
               >
                 <span>{item.icon}</span>
-                <span>{item.text}</span>
-                <span className="text-slate-500 ml-4">•</span>
+                <span className="font-medium">{item.text}</span>
+                <span className="text-blue-300 ml-4">•</span>
               </span>
             ))}
           </div>
@@ -322,23 +322,27 @@ export default function HomePage() {
 
         <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-blue-50/80 backdrop-blur-md border border-blue-200 shadow-sm text-blue-700 text-xs font-medium px-5 py-2.5 rounded-full mb-8 fade-up">
-            <Sparkles size={14} className="text-yellow-500 animate-pulse" />
-            Pakistan's #1 Admission Platform
+          <div className="inline-flex items-center gap-2 bg-blue-600 text-white text-xs font-semibold px-5 py-2 rounded-full mb-8 fade-up shadow-md shadow-blue-200">
+            <span className="text-lg">🎓</span>
+            Pakistan's #1 University Admission Guide — Free for All Students
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 mb-6 fade-up-1 leading-[1.08] tracking-tight">
-            Elevate Your Future. <br className="hidden sm:block" />
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 mb-5 fade-up-1 leading-[1.08] tracking-tight">
+            Your Gateway to the
+            <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600">
-              Secure Your Admission.
+              Right University.
             </span>
           </h1>
 
-          <p className="text-slate-600 text-base sm:text-lg md:text-xl mb-10 max-w-2xl mx-auto fade-up-2 leading-relaxed font-light">
-            Merit calculator, deadline alerts, AI counselor, and scholarship
-            finder — everything a Pakistani student needs to secure their
-            future.
+          <p className="text-slate-600 text-base sm:text-lg md:text-xl mb-4 max-w-2xl mx-auto fade-up-2 leading-relaxed">
+            Rahbars helps Pakistani students find, compare, and get admitted to their ideal university.
+            Calculate your aggregate, check merit lists, download past papers, and get
+            expert counseling — all in one place, completely free.
+          </p>
+          <p className="text-slate-400 text-sm mb-10 fade-up-2">
+            Trusted by <strong className="text-slate-600">5,000+ students</strong> across Pakistan · Updated daily from official sources
           </p>
 
           {/* Search Bar - Glassmorphism */}

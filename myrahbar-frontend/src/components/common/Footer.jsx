@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Mail, MessageCircle } from "lucide-react";
-import Logo from "./Logo";
 
 const FacebookIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -32,12 +31,26 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="md:col-span-2">
-            <Logo size="lg" showName={true} />
-            <p className="text-sm text-slate-500 leading-relaxed mt-4 max-w-xs">
-              Pakistan's smartest university admission platform. Helping Karachi
-              students find their perfect university with AI, merit tools and
-              real data.
+            {/* Full logo + brand name */}
+            <a href="/" className="inline-flex items-center gap-3 group mb-2">
+              <img
+                src="/logo-full.png"
+                alt="Rahbars Logo"
+                className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+              <div>
+                <p className="text-xl font-black text-slate-800 leading-none" style={{ fontFamily: "Sora" }}>
+                  Rahbars
+                </p>
+                <p className="text-xs text-blue-600 font-semibold mt-0.5 tracking-wide">University Admission Guide</p>
+              </div>
+            </a>
+            <p className="text-sm text-slate-500 leading-relaxed mt-3 max-w-xs">
+              Pakistan's smartest university admission platform. Helping students
+              across Pakistan find their perfect university with AI tools, merit
+              calculator, and real data — completely free.
             </p>
+
             <div className="flex gap-3 mt-6">
               <a href="https://facebook.com" target="_blank" rel="noreferrer"
                 className="p-2.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1" title="Facebook">
