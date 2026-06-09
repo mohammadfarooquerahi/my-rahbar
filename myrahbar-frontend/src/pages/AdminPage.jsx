@@ -1337,12 +1337,37 @@ export default function AdminPage() {
                               : ""}
                           </p>
                         </div>
-                        <button
-                          onClick={() => removeDept(i)}
-                          className="p-1 text-slate-400 hover:text-red-500"
-                        >
-                          <X size={14} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              // Populate form with this dept's data and remove from list
+                              setDeptForm({
+                                name: d.name,
+                                category: d.category,
+                                semesterFee: d.semesterFee,
+                                lastMerit: d.lastMerit?.[0]?.closing || "",
+                                meritSeats: d.seats?.merit || 0,
+                                selfFinanceSeats: d.seats?.selfFinance || 0,
+                              });
+                              removeDept(i);
+                            }}
+                            className="p-1 text-slate-400 hover:text-blue-500"
+                            title="Edit department"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeDept(i);
+                            }}
+                            className="p-1 text-slate-400 hover:text-red-500"
+                            title="Remove department"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

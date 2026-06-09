@@ -77,7 +77,7 @@ export default function PastPapersPage() {
     WHATSAPP +
     "?text=" +
     encodeURIComponent(
-      "Hi, I want to buy 10 years past papers for " +
+      "Hi, I want to buy 5 years past papers for " +
         (selectedUni?.name || "a university"),
     );
 
@@ -107,7 +107,7 @@ export default function PastPapersPage() {
             University Past Papers
           </h1>
           <p className="text-slate-500 text-base max-w-xl mx-auto">
-            Free entry test past papers for Karachi universities. 10 year
+            1 year free entry test past papers for Karachi universities. 5 year
             packages available via WhatsApp.
           </p>
         </div>
@@ -310,7 +310,7 @@ export default function PastPapersPage() {
                                   {paper.downloadCount || 0} downloads
                                 </span>
                                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-medium">
-                                  FREE
+                                  1 Year Free
                                 </span>
                               </div>
                             </div>
@@ -339,7 +339,7 @@ export default function PastPapersPage() {
                   </div>
                 )}
 
-                {/* 10 years premium banner */}
+                {/* 5 years premium banner */}
                 <div className="mt-8 bg-slate-900 rounded-2xl p-7 text-white relative overflow-hidden">
                   <div className="absolute -right-8 -top-8 opacity-5">
                     <Lock size={120} />
@@ -347,16 +347,16 @@ export default function PastPapersPage() {
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
                     <div>
                       <div className="bg-yellow-400 text-slate-900 text-xs font-bold px-3 py-1 rounded-full w-max mb-3">
-                        PREMIUM PACKAGE
+                        5 YEAR PACKAGE
                       </div>
                       <h3
                         className="text-xl font-bold mb-1"
                         style={{ fontFamily: "Sora" }}
                       >
-                        Get 10 Years Past Papers
+                        Get 5 Years Past Papers
                       </h3>
                       <p className="text-slate-300 text-sm">
-                        Complete 2014–2024 solved papers with answer keys. Fast
+                        Complete 2020–2024 solved papers with answer keys. Fast
                         delivery via WhatsApp.
                       </p>
                     </div>
