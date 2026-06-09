@@ -4,15 +4,66 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-router.post("/collect-university", async (req, res) => {
-  const { universityName } = req.body;
-  if (!universityName)
-    return res.status(400).json({ message: "University name required" });
+// Fallback model chain — if one is overloaded or quota-limited, try the next
+const MODEL_CHAIN = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite",
+];
 
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+// Retry helper with model fallback
+async function generateWithRetry(prompt, maxRetries = 3) {
+  let lastError = null;
 
-    const prompt = `You are a professional university data researcher for Pakistan. 
+  for (const modelName of MODEL_CHAIN) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Trying model: ${modelName} (attempt ${attempt}/${maxRetries})`);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        console.log(`Success with model: ${modelName}`);
+        return text;
+      } catch (err) {
+        lastError = err;
+        const status = err.status || err.httpStatusCode || 0;
+        const msg = err.message || "";
+        console.error(`Model ${modelName} attempt ${attempt} failed: ${msg}`);
+
+        // If 503 (overloaded) or 429 (quota), try next model immediately
+        if (status === 503 || status === 429 || msg.includes("503") || msg.includes("429") || msg.includes("quota") || msg.includes("overloaded") || msg.includes("high demand")) {
+          // Wait a bit before retry (exponential backoff)
+          if (attempt < maxRetries) {
+            await new Promise(r => setTimeout(r, 1000 * attempt));
+            continue;
+          }
+          // Move to next model
+          break;
+        }
+
+        // If 404 (model not found), skip to next model immediately
+        if (status === 404 || msg.includes("404") || msg.includes("not found")) {
+          break;
+        }
+
+        // If 400 (bad key), no point retrying any model
+        if (status === 400 || msg.includes("API key not valid")) {
+          throw err;
+        }
+
+        // Other errors — retry with backoff
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, 1000 * attempt));
+        }
+      }
+    }
+  }
+
+  throw lastError || new Error("All AI models failed. Please try again later.");
+}
+
+const PROMPT_TEMPLATE = (universityName) => `You are a professional university data researcher for Pakistan. 
 Find the official, real, and current data for "${universityName}" in Pakistan.
 Verify details from HEC records, official university websites, and recent prospectus.
 
@@ -56,9 +107,15 @@ IMPORTANT RULES:
 - Fees should be in PKR
 - Return ONLY the JSON object, nothing else.`;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    console.log("Gemini raw response length:", text.length);
+// Collect university data via AI
+router.post("/collect-university", async (req, res) => {
+  const { universityName } = req.body;
+  if (!universityName)
+    return res.status(400).json({ message: "University name required" });
+
+  try {
+    const prompt = PROMPT_TEMPLATE(universityName);
+    const text = await generateWithRetry(prompt);
 
     // Clean the response - remove markdown code blocks if present
     let cleanText = text.trim();
@@ -72,13 +129,24 @@ IMPORTANT RULES:
     }
     cleanText = cleanText.trim();
 
-  const data = JSON.parse(cleanText);
+    const data = JSON.parse(cleanText);
     res.json(data);
   } catch (err) {
     console.error("AI Collect Error:", err.message);
-    res
-      .status(500)
-      .json({ message: "AI data collection failed: " + err.message });
+
+    // Give user-friendly error messages
+    const msg = err.message || "";
+    if (msg.includes("API key not valid")) {
+      return res.status(500).json({ message: "Gemini API key is invalid. Please update it in Railway environment variables." });
+    }
+    if (msg.includes("quota") || msg.includes("429")) {
+      return res.status(500).json({ message: "API quota exceeded. Please wait a few minutes and try again." });
+    }
+    if (msg.includes("503") || msg.includes("overloaded") || msg.includes("high demand")) {
+      return res.status(500).json({ message: "AI servers are busy right now. Please wait 30 seconds and try again." });
+    }
+
+    res.status(500).json({ message: "AI data collection failed: " + err.message });
   }
 });
 

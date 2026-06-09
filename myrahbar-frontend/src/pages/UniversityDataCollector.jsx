@@ -86,7 +86,7 @@ export default function UniversityDataCollector() {
       setStep("review");
     } catch (e) {
       console.error("Frontend Collection Error:", e);
-      setError("Failed to collect data. Try a more specific university name.");
+      setError(e.message || "Failed to collect data. Try a more specific university name.");
       setStep("search");
     }
   };
