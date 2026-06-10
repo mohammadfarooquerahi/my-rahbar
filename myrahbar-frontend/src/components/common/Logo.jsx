@@ -30,25 +30,23 @@ export default function Logo({ size = "md", layout = "horizontal" }) {
         className={`${heightClass} w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0`}
       />
       <div className={`flex flex-col ${isVertical ? "items-center mt-1" : "items-start justify-center"} shrink-0`}>
-        {/* 'rahbars' matching the image style: lowercase, dark blue, wide, rounded feel */}
+        {/* 'Rahbars' matching the image style: Capital R, dark royal blue, wide, rounded feel */}
         <span 
-          className={`font-black text-[#0f286b] ${fontClass}`}
+          className={`font-black text-[#1545A5] ${fontClass}`}
           style={{ 
             fontFamily: "'Varela Round', 'Nunito', 'Sora', sans-serif", 
             lineHeight: "1",
             letterSpacing: "0.02em"
           }}
         >
-          rahbars
+          Rahbars
         </span>
-        {/* Tagline matching the image: very small, uppercase, wide tracking, with dashes */}
+        {/* Tagline matching the image: very small, uppercase, wide tracking, no dashes, same blue color */}
         <span 
-          className="font-bold text-blue-700 tracking-[0.25em] whitespace-nowrap mt-1 flex items-center"
+          className="font-bold text-[#1545A5] tracking-[0.25em] whitespace-nowrap mt-1"
           style={{ fontSize: size === "sm" ? "0.4rem" : size === "md" ? "0.45rem" : "0.6rem" }}
         >
-          <span className="text-blue-400 mr-1 opacity-70">—</span>
           LEARN. GROW. SUCCEED.
-          <span className="text-blue-400 ml-1 opacity-70">—</span>
         </span>
       </div>
     </Link>
