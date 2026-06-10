@@ -2,37 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Core Pages -->
   <url>
-    <loc>https://myrahbar.com/</loc>
+    <loc>https://rahbars.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/search</loc>
+    <loc>https://rahbars.com/search</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/find-university</loc>
+    <loc>https://rahbars.com/find-university</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/merit-calculator</loc>
+    <loc>https://rahbars.com/merit-calculator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/career-match</loc>
+    <loc>https://rahbars.com/compare</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/past-papers</loc>
+    <loc>https://rahbars.com/blog</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rahbars.com/career-match</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rahbars.com/past-papers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://myrahbar.com/counseling</loc>
+    <loc>https://rahbars.com/document-tools</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rahbars.com/counseling</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

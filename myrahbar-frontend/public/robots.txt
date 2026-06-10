@@ -8,4 +8,4 @@ Disallow: /register
 Disallow: /profile
 Disallow: /api/
 
-Sitemap: https://myrahbar.com/sitemap.xml
+Sitemap: https://rahbars.com/sitemap.xml
