@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, MessageCircle } from "lucide-react";
+import Logo from "./Logo";
 
 const FacebookIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -31,20 +32,10 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="md:col-span-2">
-            {/* Full logo + brand name */}
-            <a href="/" className="inline-flex items-center gap-3 group mb-2">
-              <img
-                src="/logo-full.png"
-                alt="Rahbars Logo"
-                className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-              />
-              <div>
-                <p className="text-xl font-black text-slate-800 leading-none" style={{ fontFamily: "Sora" }}>
-                  Rahbars
-                </p>
-                <p className="text-xs text-blue-600 font-semibold mt-0.5 tracking-wide">University Admission Guide</p>
-              </div>
-            </a>
+            {/* Full logo + brand name using shared Logo component */}
+            <div className="mb-4">
+              <Logo size="lg" layout="horizontal" />
+            </div>
             <p className="text-sm text-slate-500 leading-relaxed mt-3 max-w-xs">
               Pakistan's smartest university admission platform. Helping students
               across Pakistan find their perfect university with AI tools, merit
