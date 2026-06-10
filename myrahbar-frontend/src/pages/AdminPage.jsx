@@ -2496,7 +2496,7 @@ export default function AdminPage() {
 
         {/* ─── AI BLOG GENERATOR TAB ─── */}
         {activeTab === "AI Blog Generator" && (
-          <AIBlogGenerator token={localStorage.getItem("token")} />
+          <AIBlogGenerator token={token} />
         )}
 
       </div>
