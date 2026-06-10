@@ -78,7 +78,7 @@ export default function App() {
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogDetailPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/past-papers" element={<PastPapersPage />} />
           </Routes>

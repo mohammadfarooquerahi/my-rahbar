@@ -17,38 +17,73 @@ const CATEGORIES = [
 ];
 
 const CAT_COLORS = {
-  "Admission Guide":  { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200"   },
-  "Merit & Aggregate":{ bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
-  "Entry Tests":      { bg: "bg-red-50",    text: "text-red-700",    border: "border-red-200"    },
-  "Scholarships":     { bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200" },
-  "University Reviews":{ bg: "bg-green-50", text: "text-green-700",  border: "border-green-200"  },
-  "Career Guide":     { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+  "Admission Guide":   { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200"   },
+  "Merit & Aggregate": { bg: "bg-indigo-50",  text: "text-indigo-700", border: "border-indigo-200" },
+  "Entry Tests":       { bg: "bg-red-50",     text: "text-red-700",    border: "border-red-200"    },
+  "Scholarships":      { bg: "bg-yellow-50",  text: "text-yellow-700", border: "border-yellow-200" },
+  "University Reviews":{ bg: "bg-green-50",   text: "text-green-700",  border: "border-green-200"  },
+  "Career Guide":      { bg: "bg-purple-50",  text: "text-purple-700", border: "border-purple-200" },
+  "Guide":             { bg: "bg-blue-50",    text: "text-blue-700",   border: "border-blue-200"   },
 };
+
+// Real Unsplash images per category (reliable, education-related)
+const CAT_IMAGES = {
+  "Admission Guide":   "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=80&auto=format&fit=crop",
+  "Merit & Aggregate": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80&auto=format&fit=crop",
+  "Entry Tests":       "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=600&q=80&auto=format&fit=crop",
+  "Scholarships":      "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80&auto=format&fit=crop",
+  "University Reviews":"https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=80&auto=format&fit=crop",
+  "Career Guide":      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80&auto=format&fit=crop",
+  "Guide":             "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80&auto=format&fit=crop",
+  "default":           "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80&auto=format&fit=crop",
+};
+
+// Strip HTML tags and return plain text
+function stripHtml(html = "") {
+  return html.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ").trim();
+}
+
+// Get cover image for a blog
+function getCoverImage(blog) {
+  if (blog.featuredImage) {
+    return blog.featuredImage.startsWith("http") ? blog.featuredImage : `/${blog.featuredImage}`;
+  }
+  return CAT_IMAGES[blog.category] || CAT_IMAGES["default"];
+}
 
 function BlogCard({ blog, featured = false }) {
   const cat = CAT_COLORS[blog.category] || { bg: "bg-slate-50", text: "text-slate-700", border: "border-slate-200" };
   const date = new Date(blog.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" });
+  const excerpt = stripHtml(blog.excerpt || blog.content || "").substring(0, featured ? 200 : 120);
+  const coverImg = getCoverImage(blog);
+
+  const blogLink = `/blog/${blog.slug || blog._id}`;
 
   if (featured) {
     return (
-      <Link to={`/blog/${blog.slug}`} className="group block bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 md:col-span-2">
+      <Link to={blogLink} className="group block bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 md:col-span-2">
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 h-56 md:h-auto min-h-[220px] flex-shrink-0" style={{ background: blog.coverColor || "#EFF6FF" }}>
-            <div className="w-full h-full flex items-center justify-center">
-              <BookOpen size={64} className="opacity-20 text-slate-600" />
-            </div>
+          {/* Image */}
+          <div className="md:w-2/5 h-56 md:h-auto min-h-[240px] flex-shrink-0 overflow-hidden">
+            <img
+              src={coverImg}
+              alt={blog.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              onError={e => { e.target.src = CAT_IMAGES["default"]; }}
+            />
           </div>
+          {/* Content */}
           <div className="p-8 flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-4">
               <span className={`text-xs font-bold px-3 py-1 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
                 {blog.category}
               </span>
-              <span className="text-xs text-slate-400 font-medium">FEATURED</span>
+              <span className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full">⭐ FEATURED</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-3 leading-tight group-hover:text-blue-600 transition-colors" style={{ fontFamily: "Sora" }}>
               {blog.title}
             </h2>
-            <p className="text-slate-500 text-sm leading-relaxed mb-5 line-clamp-3">{blog.excerpt}</p>
+            <p className="text-slate-500 text-sm leading-relaxed mb-5 line-clamp-3">{excerpt}</p>
             <div className="flex items-center gap-4 text-xs text-slate-400">
               <span className="flex items-center gap-1"><Clock size={12} /> {blog.readTime || 5} min read</span>
               <span>{date}</span>
@@ -64,9 +99,16 @@ function BlogCard({ blog, featured = false }) {
 
   return (
     <Link to={`/blog/${blog.slug}`} className="group flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className="h-40 flex items-center justify-center flex-shrink-0" style={{ background: blog.coverColor || "#EFF6FF" }}>
-        <BookOpen size={40} className="opacity-20 text-slate-600" />
+      {/* Card Image */}
+      <div className="h-44 flex-shrink-0 overflow-hidden">
+        <img
+          src={coverImg}
+          alt={blog.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={e => { e.target.src = CAT_IMAGES["default"]; }}
+        />
       </div>
+      {/* Card Body */}
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-center gap-2 mb-3">
           <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${cat.bg} ${cat.text} ${cat.border}`}>
@@ -79,7 +121,7 @@ function BlogCard({ blog, featured = false }) {
         <h2 className="font-bold text-slate-800 leading-snug mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors text-sm" style={{ fontFamily: "Sora" }}>
           {blog.title}
         </h2>
-        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4 flex-1">{blog.excerpt}</p>
+        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4 flex-1">{excerpt}</p>
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
           <span className="text-[10px] text-slate-400">{date}</span>
           <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 group-hover:gap-2 transition-all">
@@ -94,7 +136,7 @@ function BlogCard({ blog, featured = false }) {
 function SkeletonCard() {
   return (
     <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden animate-pulse">
-      <div className="h-40 bg-slate-100 w-full" />
+      <div className="h-44 bg-slate-100 w-full" />
       <div className="p-5">
         <div className="h-3 w-20 bg-slate-100 rounded mb-3" />
         <div className="h-5 w-4/5 bg-slate-200 rounded mb-2" />
@@ -106,7 +148,7 @@ function SkeletonCard() {
 }
 
 export default function BlogPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
@@ -151,23 +193,16 @@ export default function BlogPage() {
         <meta name="description" content="Expert guides on university admission in Pakistan 2025. Learn about aggregate calculation, MDCAT, ECAT, scholarships, merit lists, and top universities. Free advice for every student." />
         <meta name="keywords" content="university admission pakistan 2025, aggregate calculator, MDCAT guide, merit calculator, university scholarships pakistan, NED FAST NUST LUMS admission" />
         <meta property="og:title" content="University Admission Blog — Pakistan 2025 | Rahbars" />
-        <meta property="og:description" content="Expert guides, admission tips, and university reviews for Pakistani students. Completely free." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://rahbars.com/blog" />
         <link rel="canonical" href="https://rahbars.com/blog" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Blog",
-          "name": "Rahbars — University Admission Blog",
-          "description": "Expert guides on university admissions in Pakistan for students",
+          "name": "Rahbars — University Admission Blog Pakistan",
           "url": "https://rahbars.com/blog",
-          "publisher": {
-            "@type": "Organization",
-            "name": "Rahbars",
-            "url": "https://rahbars.com"
-          },
-          "inLanguage": "en-PK",
-          "about": { "@type": "Thing", "name": "University Admissions in Pakistan" }
+          "publisher": { "@type": "Organization", "name": "Rahbars", "url": "https://rahbars.com" },
+          "inLanguage": "en-PK"
         })}</script>
       </Helmet>
 
@@ -192,7 +227,7 @@ export default function BlogPage() {
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search MDCAT, Scholarship, NED, NUST..."
-              className="w-full pl-11 pr-4 py-4 rounded-2xl text-slate-900 text-sm font-medium outline-none bg-white shadow-lg placeholder:text-slate-400"
+              className="w-full pl-11 pr-10 py-4 rounded-2xl text-slate-900 text-sm font-medium outline-none bg-white shadow-lg placeholder:text-slate-400"
             />
             {query && (
               <button onClick={() => setQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -203,7 +238,7 @@ export default function BlogPage() {
         </div>
       </div>
 
-      {/* Category Filters */}
+      {/* Sticky Category Filters */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
@@ -227,17 +262,16 @@ export default function BlogPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Results count */}
         {!loading && (
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-slate-500">
               {query && <span>Results for "<strong className="text-slate-700">{query}</strong>" — </span>}
-              <strong className="text-slate-700">{blogs.length}</strong> articles
+              <strong className="text-slate-700">{blogs.length}</strong> article{blogs.length !== 1 ? "s" : ""}
               {category !== "All" && <span> in <strong className="text-blue-600">{category}</strong></span>}
             </p>
             {(query || category !== "All") && (
               <button onClick={() => { setQuery(""); setCategory("All"); }} className="text-xs text-slate-400 hover:text-red-500 flex items-center gap-1">
-                <X size={12} /> Clear filters
+                <X size={12} /> Clear
               </button>
             )}
           </div>
@@ -258,8 +292,8 @@ export default function BlogPage() {
           </div>
         ) : (
           <>
-            {/* Featured + Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {/* Featured card spans 2 cols */}
               {featured && !query && category === "All" && (
                 <BlogCard blog={featured} featured={true} />
               )}
@@ -271,31 +305,20 @@ export default function BlogPage() {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-10">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl text-slate-600 hover:border-blue-300 disabled:opacity-40"
-                >
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                  className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl text-slate-600 hover:border-blue-300 disabled:opacity-40">
                   Previous
                 </button>
                 {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
+                  <button key={i} onClick={() => setCurrentPage(i + 1)}
                     className={`w-9 h-9 text-sm font-bold rounded-xl border transition-all ${
-                      currentPage === i + 1
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "border-slate-200 text-slate-600 hover:border-blue-300"
-                    }`}
-                  >
+                      currentPage === i + 1 ? "bg-blue-600 text-white border-blue-600" : "border-slate-200 text-slate-600 hover:border-blue-300"
+                    }`}>
                     {i + 1}
                   </button>
                 ))}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl text-slate-600 hover:border-blue-300 disabled:opacity-40"
-                >
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl text-slate-600 hover:border-blue-300 disabled:opacity-40">
                   Next
                 </button>
               </div>
@@ -303,18 +326,15 @@ export default function BlogPage() {
           </>
         )}
 
-        {/* SEO Keywords Block */}
+        {/* SEO Keywords */}
         <div className="mt-16 bg-white rounded-2xl border border-slate-200 p-6">
           <h2 className="text-sm font-bold text-slate-600 mb-3 flex items-center gap-2"><Tag size={14} /> Popular Topics</h2>
           <div className="flex flex-wrap gap-2">
             {["MDCAT 2025","ECAT Guide","Aggregate Calculator","NED University","FAST-NUCES","NUST Admission",
               "HEC Scholarship","Pharm-D","MBBS vs DPT","Merit List","Closing Merit","University Fee Pakistan",
               "LUMS Admission","Karachi University","Gap Year FSc","Arts Students Admission"].map(kw => (
-              <button
-                key={kw}
-                onClick={() => setQuery(kw)}
-                className="text-xs text-slate-600 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3 py-1.5 rounded-full transition-all"
-              >
+              <button key={kw} onClick={() => setQuery(kw)}
+                className="text-xs text-slate-600 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3 py-1.5 rounded-full transition-all">
                 {kw}
               </button>
             ))}
