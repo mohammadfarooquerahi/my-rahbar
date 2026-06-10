@@ -177,15 +177,15 @@ html {
 .hero-gradient-bg {
   background: linear-gradient(
     135deg,
-    #dbeafe 0%,
-    #ede9fe 20%,
-    #fce7f3 40%,
-    #d1fae5 60%,
-    #fef3c7 80%,
-    #dbeafe 100%
+    rgba(219, 234, 254, 0.5) 0%,
+    rgba(237, 233, 254, 0.5) 20%,
+    rgba(252, 231, 243, 0.5) 40%,
+    rgba(209, 250, 229, 0.5) 60%,
+    rgba(254, 243, 199, 0.5) 80%,
+    rgba(219, 234, 254, 0.5) 100%
   );
   background-size: 400% 400%;
-  animation: gradient-move 8s ease infinite;
+  animation: gradient-move 24s ease infinite;
 }
 
 
