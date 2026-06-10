@@ -1169,9 +1169,8 @@ const aiGenerateBlog = async (req, res) => {
   const { title, category, keywords, additionalContext } = req.body;
   if (!title) return res.status(400).json({ message: "Title is required" });
 
-  const { GoogleGenerativeAI } = require("@google/generative-ai");
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const Groq = require("groq-sdk");
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
   const prompt = `You are an expert Pakistani educational content writer for Rahbars.com — Pakistan's #1 free university admission guide.
 
@@ -1191,9 +1190,9 @@ IMPORTANT REQUIREMENTS:
 7. End with a strong conclusion encouraging students to use Rahbars tools
 8. Make the content factually accurate for Pakistan 2025
 
-Return ONLY a JSON object with these exact fields (no markdown, no code blocks):
+Return ONLY a valid JSON object with these exact fields (absolutely no markdown, no code blocks, no extra text outside the JSON):
 {
-  "content": "<full HTML article content>",
+  "content": "<full HTML article content here>",
   "excerpt": "One compelling sentence summary (max 160 chars)",
   "seoTitle": "SEO optimized title (max 60 chars)",
   "seoDescription": "Meta description (max 155 chars)",
@@ -1209,22 +1208,31 @@ Return ONLY a JSON object with these exact fields (no markdown, no code blocks):
   ]
 }`;
 
-  const result = await model.generateContent(prompt);
-  let text = result.response.text().trim();
+  const completion = await groq.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.7,
+    max_tokens: 4096,
+  });
+
+  let text = completion.choices[0]?.message?.content?.trim() || "";
 
   // Strip markdown code blocks if present
   text = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  // Extract JSON if there's extra text around it
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (jsonMatch) text = jsonMatch[0];
 
   let parsed;
   try {
     parsed = JSON.parse(text);
   } catch (e) {
-    // If JSON parse fails, try to extract content manually
-    return res.status(500).json({ message: "AI response parsing failed. Please try again.", raw: text.substring(0, 500) });
+    return res.status(500).json({ message: "AI response parsing failed. Please try again.", raw: text.substring(0, 300) });
   }
 
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     generated: {
       title,
       category: category || "Admission Guide",
