@@ -297,7 +297,36 @@ export default function BlogPage() {
               {featured && !query && category === "All" && (
                 <BlogCard blog={featured} featured={true} />
               )}
-              {(query || category !== "All" ? blogs : rest).map(blog => (
+              
+              {/* First 2 standard blogs */}
+              {(query || category !== "All" ? blogs : rest).slice(0, 2).map(blog => (
+                <BlogCard key={blog._id} blog={blog} />
+              ))}
+
+              {/* INLINE CTA BANNER */}
+              {(query || category !== "All" ? blogs : rest).length > 0 && (
+                <div className="sm:col-span-2 lg:col-span-3 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 my-4">
+                  <div className="absolute top-[-50%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative z-10 max-w-xl text-center sm:text-left">
+                    <div className="inline-flex items-center gap-2 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+                      <Target size={12} /> Free Tools
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black mb-2" style={{ fontFamily: "Sora" }}>Calculate Your Aggregate instantly</h3>
+                    <p className="text-blue-100 text-sm sm:text-base leading-relaxed">Stop guessing your chances. Use our AI tools to calculate your exact aggregate and find the perfect university for your marks.</p>
+                  </div>
+                  <div className="relative z-10 flex flex-col gap-3 w-full sm:w-auto shrink-0">
+                    <Link to="/merit-calculator" className="w-full sm:w-auto px-8 py-3.5 bg-white text-blue-700 font-bold rounded-xl text-center shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
+                      <Calculator size={18} /> Merit Calculator
+                    </Link>
+                    <Link to="/find-university" className="w-full sm:w-auto px-8 py-3.5 bg-indigo-900/50 hover:bg-indigo-900/80 border border-white/20 text-white font-bold rounded-xl text-center transition-all flex items-center justify-center gap-2">
+                      <Search size={18} /> Find University
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* Remaining standard blogs */}
+              {(query || category !== "All" ? blogs : rest).slice(2).map(blog => (
                 <BlogCard key={blog._id} blog={blog} />
               ))}
             </div>
