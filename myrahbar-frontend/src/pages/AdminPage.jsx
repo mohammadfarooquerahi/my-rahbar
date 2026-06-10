@@ -97,11 +97,11 @@ export default function AdminPage() {
     file: null,
   });
   const [blogForm, setBlogForm] = useState({
-    title: "",
-    content: "",
-    category: "Guide",
-    file: null,
+    title: "", content: "", excerpt: "", category: "Admission Guide",
+    tags: "", keywords: "", seoTitle: "", seoDescription: "",
+    status: "published", coverColor: "#EFF6FF", readTime: 5, file: null,
   });
+  const [editingBlog, setEditingBlog] = useState(null);
   const [newsForm, setNewsForm] = useState({
     title: "",
     content: "",
@@ -157,25 +157,76 @@ export default function AdminPage() {
     const formData = new FormData();
     formData.append("title", blogForm.title);
     formData.append("content", blogForm.content);
+    formData.append("excerpt", blogForm.excerpt || blogForm.content.replace(/<[^>]*>/g,'').substring(0,160));
     formData.append("category", blogForm.category);
-    formData.append("status", "published");
+    formData.append("tags", blogForm.tags);
+    formData.append("keywords", blogForm.keywords);
+    formData.append("seoTitle", blogForm.seoTitle || blogForm.title);
+    formData.append("seoDescription", blogForm.seoDescription || blogForm.excerpt);
+    formData.append("status", blogForm.status);
+    formData.append("coverColor", blogForm.coverColor);
+    formData.append("readTime", blogForm.readTime);
     if (blogForm.file) formData.append("featuredImage", blogForm.file);
     setLoading(true);
     try {
-      const res = await fetch("/api/blogs", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + token },
-        body: formData,
-      });
+      const url = editingBlog ? `/api/blogs/${editingBlog._id}` : "/api/blogs";
+      const method = editingBlog ? "PUT" : "POST";
+      const res = await fetch(url, { method, headers: { Authorization: "Bearer " + token }, body: formData });
       if (!res.ok) throw new Error((await res.json()).message);
-      showMsg("Blog created");
-      setBlogForm({ title: "", content: "", category: "Guide", file: null });
+      showMsg(editingBlog ? "Blog updated!" : "Blog created!");
+      setBlogForm({ title: "", content: "", excerpt: "", category: "Admission Guide", tags: "", keywords: "", seoTitle: "", seoDescription: "", status: "published", coverColor: "#EFF6FF", readTime: 5, file: null });
+      setEditingBlog(null);
       loadData();
-    } catch (err) {
-      showMsg(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { showMsg(err.message); }
+    finally { setLoading(false); }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (!window.confirm("Delete this blog? This cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/blogs/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token } });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg("Blog deleted");
+      loadData();
+    } catch (err) { showMsg(err.message); }
+  };
+
+  const handleToggleBlogStatus = async (blog) => {
+    const newStatus = blog.status === "published" ? "draft" : "published";
+    try {
+      const formData = new FormData();
+      formData.append("status", newStatus);
+      const res = await fetch(`/api/blogs/${blog._id}`, { method: "PUT", headers: { Authorization: "Bearer " + token }, body: formData });
+      if (!res.ok) throw new Error((await res.json()).message);
+      showMsg(`Blog ${newStatus === "published" ? "published" : "set to draft"}`);
+      loadData();
+    } catch (err) { showMsg(err.message); }
+  };
+
+  const handleSeedBlogs = async () => {
+    if (!window.confirm("Seed 20 educational blogs? Existing seeded blogs will be replaced.")) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/blogs/seed", { method: "POST", headers: { Authorization: "Bearer " + token } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showMsg(`✅ Seeded ${data.blogs?.length || 20} blogs successfully!`);
+      loadData();
+    } catch (err) { showMsg(err.message); }
+    finally { setLoading(false); }
+  };
+
+  const startEditBlog = (blog) => {
+    setEditingBlog(blog);
+    setBlogForm({
+      title: blog.title, content: blog.content, excerpt: blog.excerpt || "",
+      category: blog.category, tags: (blog.tags || []).join(", "),
+      keywords: (blog.keywords || []).join(", "),
+      seoTitle: blog.seoTitle || "", seoDescription: blog.seoDescription || "",
+      status: blog.status, coverColor: blog.coverColor || "#EFF6FF",
+      readTime: blog.readTime || 5, file: null,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCreateNews = async () => {
@@ -1813,57 +1864,204 @@ export default function AdminPage() {
         {/* ===== BLOGS TAB ===== */}
         {activeTab === "Blogs" && (
           <div className="space-y-6">
+            {/* Stats + Seed */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white border border-slate-100 rounded-2xl px-5 py-4">
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Total Blogs</p>
+                <p className="text-3xl font-black text-blue-600">{blogs.length}</p>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl px-5 py-4">
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Published</p>
+                <p className="text-3xl font-black text-emerald-600">{blogs.filter(b => b.status === "published").length}</p>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl px-5 py-4">
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Drafts</p>
+                <p className="text-3xl font-black text-amber-600">{blogs.filter(b => b.status === "draft").length}</p>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl px-5 py-4">
+                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Total Views</p>
+                <p className="text-3xl font-black text-purple-600">{blogs.reduce((a, b) => a + (b.views || 0), 0)}</p>
+              </div>
+            </div>
+
+            {/* Seed Button */}
+            <div className="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-5 text-white flex items-center justify-between">
+              <div>
+                <p className="font-bold text-base mb-1">🚀 Seed 20 Educational Blogs</p>
+                <p className="text-indigo-200 text-xs">Auto-generate 20 SEO-optimized articles about Pakistan university admissions</p>
+              </div>
+              <button onClick={handleSeedBlogs} disabled={loading}
+                className="bg-white text-indigo-700 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-indigo-50 transition-colors shrink-0 ml-4">
+                {loading ? "Seeding..." : "Seed Blogs"}
+              </button>
+            </div>
+
+            {/* Create / Edit Form */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h2 className="text-lg font-bold mb-4">Create Blog</h2>
-              <form onSubmit={handleUploadBlog} className="grid gap-4">
-                <input
-                  required
-                  placeholder="Title"
-                  className="border p-2 rounded-xl"
-                  value={blogForm.title}
-                  onChange={(e) =>
-                    setBlogForm({ ...blogForm, title: e.target.value })
-                  }
-                />
-                <textarea
-                  required
-                  placeholder="Content — supports full HTML (e.g. <h2>, <p>, <strong>, <ul><li>...). Paste your formatted HTML here."
-                  className="border p-2 rounded-xl h-48 font-mono text-xs"
-                  value={blogForm.content}
-                  onChange={(e) =>
-                    setBlogForm({ ...blogForm, content: e.target.value })
-                  }
-                />
-                <p className="text-xs text-slate-400 -mt-2">
-                  💡 Tip: You can write plain text or paste full HTML including
-                  headings, lists, bold text etc.
-                </p>
-                <input
-                  type="file"
-                  className="border p-1.5 rounded-xl"
-                  onChange={(e) =>
-                    setBlogForm({ ...blogForm, file: e.target.files[0] })
-                  }
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-blue-600 text-white p-2 rounded-xl"
-                >
-                  Publish
-                </button>
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-bold text-slate-800">
+                  {editingBlog ? `✏️ Edit: ${editingBlog.title.substring(0, 40)}...` : "➕ Create New Blog"}
+                </h2>
+                {editingBlog && (
+                  <button onClick={() => { setEditingBlog(null); setBlogForm({ title: "", content: "", excerpt: "", category: "Admission Guide", tags: "", keywords: "", seoTitle: "", seoDescription: "", status: "published", coverColor: "#EFF6FF", readTime: 5, file: null }); }}
+                    className="text-xs text-slate-500 hover:text-red-500 border border-slate-200 px-3 py-1.5 rounded-lg">
+                    ✕ Cancel Edit
+                  </button>
+                )}
+              </div>
+
+              <form onSubmit={handleUploadBlog} className="space-y-4">
+                {/* Row 1: Title + Category */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Title *</label>
+                    <input required placeholder="How to Calculate Aggregate for..." className="w-full border border-slate-200 p-3 rounded-xl text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
+                      value={blogForm.title} onChange={e => setBlogForm({ ...blogForm, title: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Category *</label>
+                    <select className="w-full border border-slate-200 p-3 rounded-xl text-sm bg-white outline-none focus:border-blue-400"
+                      value={blogForm.category} onChange={e => setBlogForm({ ...blogForm, category: e.target.value })}>
+                      {["Admission Guide","Merit & Aggregate","Entry Tests","Scholarships","University Reviews","Career Guide"].map(c => (
+                        <option key={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Excerpt */}
+                <div>
+                  <label className="text-xs font-bold text-slate-600 mb-1 block">Excerpt (short description) *</label>
+                  <textarea rows={2} placeholder="Brief 1-2 sentence summary shown on blog card..." className="w-full border border-slate-200 p-3 rounded-xl text-sm outline-none focus:border-blue-400 resize-none"
+                    value={blogForm.excerpt} onChange={e => setBlogForm({ ...blogForm, excerpt: e.target.value })} />
+                </div>
+
+                {/* Content */}
+                <div>
+                  <label className="text-xs font-bold text-slate-600 mb-1 block">Content (HTML) *</label>
+                  <textarea required rows={12} placeholder="&lt;h2&gt;Heading&lt;/h2&gt;&lt;p&gt;Your content...&lt;/p&gt;" className="w-full border border-slate-200 p-3 rounded-xl text-xs font-mono outline-none focus:border-blue-400 resize-y"
+                    value={blogForm.content} onChange={e => setBlogForm({ ...blogForm, content: e.target.value })} />
+                  <p className="text-xs text-slate-400 mt-1">💡 Supports full HTML: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;&lt;li&gt;, &lt;strong&gt;, &lt;a href&gt;, &lt;table&gt;</p>
+                </div>
+
+                {/* Row: Tags + Keywords + Read Time + Cover Color */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Tags (comma separated)</label>
+                    <input placeholder="MDCAT, merit, 2025" className="w-full border border-slate-200 p-2.5 rounded-xl text-xs outline-none focus:border-blue-400"
+                      value={blogForm.tags} onChange={e => setBlogForm({ ...blogForm, tags: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">SEO Keywords (comma)</label>
+                    <input placeholder="aggregate formula pakistan" className="w-full border border-slate-200 p-2.5 rounded-xl text-xs outline-none focus:border-blue-400"
+                      value={blogForm.keywords} onChange={e => setBlogForm({ ...blogForm, keywords: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Read Time (mins)</label>
+                    <input type="number" min={1} max={60} className="w-full border border-slate-200 p-2.5 rounded-xl text-xs outline-none focus:border-blue-400"
+                      value={blogForm.readTime} onChange={e => setBlogForm({ ...blogForm, readTime: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Cover Color</label>
+                    <div className="flex items-center gap-2">
+                      <input type="color" className="w-10 h-10 border border-slate-200 rounded-lg cursor-pointer p-1"
+                        value={blogForm.coverColor} onChange={e => setBlogForm({ ...blogForm, coverColor: e.target.value })} />
+                      <span className="text-xs text-slate-500">{blogForm.coverColor}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SEO Fields */}
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                  <p className="text-xs font-black text-blue-700">🔍 SEO Fields (for Google ranking)</p>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">SEO Title (max 70 chars)</label>
+                    <input placeholder="How to Calculate Aggregate Pakistan 2025 | Rahbars" className="w-full border border-blue-200 bg-white p-2.5 rounded-xl text-xs outline-none focus:border-blue-500"
+                      value={blogForm.seoTitle} onChange={e => setBlogForm({ ...blogForm, seoTitle: e.target.value })} />
+                    <p className="text-[10px] text-slate-400 mt-0.5">{blogForm.seoTitle.length}/70 chars</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">SEO Description (max 160 chars)</label>
+                    <textarea rows={2} placeholder="Step-by-step guide to calculate your aggregate..." className="w-full border border-blue-200 bg-white p-2.5 rounded-xl text-xs outline-none focus:border-blue-500 resize-none"
+                      value={blogForm.seoDescription} onChange={e => setBlogForm({ ...blogForm, seoDescription: e.target.value })} />
+                    <p className="text-[10px] text-slate-400 mt-0.5">{blogForm.seoDescription.length}/160 chars</p>
+                  </div>
+                </div>
+
+                {/* Status + Image + Submit */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Status</label>
+                    <select className="border border-slate-200 p-2.5 rounded-xl text-sm bg-white outline-none"
+                      value={blogForm.status} onChange={e => setBlogForm({ ...blogForm, status: e.target.value })}>
+                      <option value="published">Published</option>
+                      <option value="draft">Draft</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Featured Image (optional)</label>
+                    <input type="file" accept="image/*" className="border border-slate-200 p-2 rounded-xl text-xs w-full"
+                      onChange={e => setBlogForm({ ...blogForm, file: e.target.files[0] })} />
+                  </div>
+                  <div className="flex items-end">
+                    <button type="submit" disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl transition-colors disabled:opacity-60">
+                      {loading ? "Saving..." : editingBlog ? "Update Blog" : "Publish Blog"}
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
 
-            <div className="grid gap-3">
-              {blogs.map((b) => (
-                <div key={b._id} className="bg-white p-4 rounded-xl border">
-                  <p className="font-bold">{b.title}</p>
-                  <p className="text-xs text-slate-500">
-                    {b.category} • {b.views} views
-                  </p>
-                </div>
-              ))}
+            {/* Blog List */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+              <div className="p-5 border-b border-slate-100">
+                <h3 className="font-bold text-slate-800">All Blogs ({blogs.length})</h3>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {blogs.length === 0 ? (
+                  <div className="text-center py-12 text-slate-400">
+                    <BookOpen size={32} className="mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No blogs yet. Create one above or seed 20 educational blogs.</p>
+                  </div>
+                ) : blogs.map(b => (
+                  <div key={b._id} className="flex items-start gap-4 p-4 hover:bg-slate-50 transition-colors">
+                    <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: b.coverColor || "#EFF6FF" }}>
+                      <BookOpen size={20} className="text-blue-400 opacity-50" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-sm line-clamp-1">{b.title}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          b.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                        }`}>{b.status}</span>
+                        <span className="text-[10px] text-slate-400">{b.category}</span>
+                        <span className="text-[10px] text-slate-400">{b.views || 0} views</span>
+                        <span className="text-[10px] text-slate-400">{b.readTime || 5} min</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a href={`/blog/${b.slug}`} target="_blank" rel="noreferrer"
+                        className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" title="View">
+                        <Eye size={15} />
+                      </a>
+                      <button onClick={() => startEditBlog(b)}
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors" title="Edit">
+                        <Edit2 size={15} />
+                      </button>
+                      <button onClick={() => handleToggleBlogStatus(b)}
+                        className={`p-1.5 transition-colors text-xs font-bold ${b.status === "published" ? "text-amber-500 hover:text-amber-700" : "text-emerald-500 hover:text-emerald-700"}`}
+                        title={b.status === "published" ? "Set Draft" : "Publish"}>
+                        {b.status === "published" ? "Draft" : "Pub"}
+                      </button>
+                      <button onClick={() => handleDeleteBlog(b._id)}
+                        className="p-1.5 text-slate-400 hover:text-red-600 transition-colors" title="Delete">
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
