@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   Search, BookOpen, Clock, ArrowRight, Tag, ChevronRight,
-  TrendingUp, Filter, X
+  TrendingUp, Filter, X, Calculator, Target, FileText, Headphones
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -340,6 +340,61 @@ export default function BlogPage() {
             ))}
           </div>
         </div>
+
+        {/* Tools & Features grid */}
+        <section className="mt-20 pt-16 border-t border-slate-200">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+              <Target size={12} /> TOOLS & FEATURES
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black mb-3 text-slate-900" style={{ fontFamily: "Sora" }}>
+              Everything You Need
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto">
+              From finding the right university to getting admitted — all tools in one place.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: <Search size={20} />, title: "Smart Uni Finder", desc: "10 questions — get matched to your perfect university",
+                to: "/find-university", color: "#3B82F6", bg: "#EFF6FF", tag: "Most Used", cta: "Find University"
+              },
+              {
+                icon: <Calculator size={20} />, title: "Aggregate Calculator", desc: "Enter your marks — see if you qualify instantly",
+                to: "/merit-calculator", color: "#22C55E", bg: "#F0FDF4", tag: "Tool", cta: "Calculate Aggregate"
+              },
+              {
+                icon: <FileText size={20} />, title: "Document Compressor", desc: "Compress documents to exact university size requirements",
+                to: "/document-tools", color: "#F97316", bg: "#FFF7ED", tag: "Tool", cta: "Compress Now"
+              },
+              {
+                icon: <Headphones size={20} />, title: "1-on-1 Counseling", desc: "Talk to an expert — get clear answers about your admission",
+                to: "/counseling", color: "#8B5CF6", bg: "#F5F3FF", tag: "Expert Help", cta: "Book Now"
+              },
+              {
+                icon: <BookOpen size={20} />, title: "Compare Universities", desc: "Side by side comparison of fee, merit and facilities",
+                to: "/compare", color: "#0F172A", bg: "#F0F4FF", tag: "New", cta: "Compare University"
+              },
+              {
+                icon: <FileText size={20} />, title: "Past Papers", desc: "Download official past papers and practice for entry tests",
+                to: "/past-papers", color: "#EC4899", bg: "#FDF2F8", tag: "Hot", cta: "Check Now"
+              }
+            ].map((t, i) => (
+              <Link key={i} to={t.to} className="group relative bg-white rounded-2xl p-6 border border-slate-200 hover:border-transparent overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none rounded-2xl" style={{ background: `linear-gradient(135deg, transparent, ${t.color})` }} />
+                <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-full" style={{ background: t.bg, color: t.color }}>{t.tag}</span>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:-translate-y-1" style={{ background: t.bg, color: t.color }}>{t.icon}</div>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">{t.title}</h3>
+                <p className="text-sm text-slate-500 mb-5 leading-relaxed">{t.desc}</p>
+                <div className="inline-flex items-center gap-1.5 text-sm font-bold group-hover:gap-2 transition-all" style={{ color: t.color }}>
+                  {t.cta} <ChevronRight size={15} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );

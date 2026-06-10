@@ -274,52 +274,33 @@ export default function BlogDetailPage() {
 
               {/* Related Articles */}
               {related.length > 0 && (
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-5 lg:sticky lg:top-20">
+                <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-5 lg:sticky lg:top-20 shadow-sm hover:shadow-md transition-shadow">
                   <h3 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
-                    <BookOpen size={14} /> Related Articles
+                    <BookOpen size={14} className="text-blue-600" /> Related Articles
                   </h3>
                   <div className="space-y-4">
                     {related.map(r => (
-                      <Link key={r._id} to={`/blog/${r.slug}`} className="block group">
-                        <div className="h-24 rounded-xl mb-2 overflow-hidden">
+                      <Link key={r._id} to={`/blog/${r.slug || r._id}`} className="block group">
+                        <div className="h-24 rounded-xl mb-3 overflow-hidden border border-slate-100">
                           <img
                             src={CAT_IMAGES[r.category] || CAT_IMAGES["default"]}
                             alt={r.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             onError={e => { e.target.src = CAT_IMAGES["default"]; }}
                           />
                         </div>
-                        <p className="text-xs font-bold text-slate-700 group-hover:text-blue-600 leading-snug line-clamp-2 transition-colors">
+                        <p className="text-sm font-bold text-slate-700 group-hover:text-blue-600 leading-snug line-clamp-2 transition-colors">
                           {r.title}
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-1">{r.readTime || 5} min read</p>
+                        <p className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+                          <Clock size={10} /> {r.readTime || 5} min read
+                        </p>
                       </Link>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* CTA Box */}
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-5 text-white">
-                <p className="text-base font-black mb-2">🎯 Calculate Your Aggregate</p>
-                <p className="text-blue-200 text-xs mb-4 leading-relaxed">
-                  See if your marks qualify for your dream university — instantly free.
-                </p>
-                <Link to="/merit-calculator"
-                  className="block w-full text-center bg-white text-blue-700 font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
-                  Try Free Calculator →
-                </Link>
-              </div>
-
-              {/* Find University CTA */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 mt-4">
-                <p className="text-sm font-black text-slate-800 mb-2">🏫 Find Your University</p>
-                <p className="text-xs text-slate-500 mb-3">Use AI to match universities with your grades and budget.</p>
-                <Link to="/find-university"
-                  className="block w-full text-center bg-slate-900 text-white font-bold text-xs py-2.5 rounded-xl hover:bg-slate-800 transition-colors">
-                  Smart University Finder
-                </Link>
-              </div>
             </aside>
 
           </div>
