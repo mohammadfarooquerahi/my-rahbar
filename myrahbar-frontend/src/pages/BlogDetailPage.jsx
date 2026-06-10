@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft, Calendar, Eye, Clock, Tag, Share2,
-  ChevronRight, BookOpen, MessageCircle
+  ChevronRight, BookOpen, MessageCircle, Target, Calculator, Search
 } from "lucide-react";
 
 // Inline Facebook SVG (not in lucide-react)
@@ -240,6 +240,19 @@ export default function BlogDetailPage() {
                 </div>
               )}
 
+              {/* Official Links */}
+              <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                <p className="text-sm font-bold text-slate-800 mb-3">🔗 Official Resources</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a href="https://hec.gov.pk" target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 bg-white border border-slate-200 px-4 py-2 rounded-xl hover:border-blue-300 transition-all">
+                    HEC Official Website <ChevronRight size={12} />
+                  </a>
+                  <a href="https://pmc.gov.pk" target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 bg-white border border-slate-200 px-4 py-2 rounded-xl hover:border-blue-300 transition-all">
+                    PMC / PMDC <ChevronRight size={12} />
+                  </a>
+                </div>
+              </div>
+
               {/* Share */}
               <div className="mt-8 bg-white rounded-2xl border border-slate-200 p-5">
                 <p className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
@@ -300,6 +313,25 @@ export default function BlogDetailPage() {
                   </div>
                 </div>
               )}
+
+              {/* Tools CTA Card */}
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg sticky top-20">
+                <div className="inline-flex items-center gap-1.5 bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full mb-4 uppercase tracking-wider">
+                  <Target size={10} /> Free Tools
+                </div>
+                <h3 className="text-lg font-black mb-2" style={{ fontFamily: "Sora" }}>Calculate Your Aggregate</h3>
+                <p className="text-blue-100 text-xs mb-5 leading-relaxed">
+                  See if your marks qualify for your dream university. Instantly check your merit chances.
+                </p>
+                <div className="flex flex-col gap-2">
+                  <Link to="/merit-calculator" className="w-full bg-white text-blue-700 text-xs font-bold py-3 rounded-xl text-center hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+                    <Calculator size={14} /> Merit Calculator
+                  </Link>
+                  <Link to="/find-university" className="w-full bg-indigo-900/40 border border-white/20 text-white text-xs font-bold py-3 rounded-xl text-center hover:bg-indigo-900/60 transition-colors flex items-center justify-center gap-2">
+                    <Search size={14} /> Smart Uni Finder
+                  </Link>
+                </div>
+              </div>
 
             </aside>
 
