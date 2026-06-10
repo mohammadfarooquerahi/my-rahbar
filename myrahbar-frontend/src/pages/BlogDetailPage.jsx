@@ -253,6 +253,28 @@ export default function BlogDetailPage() {
                 </div>
               </div>
 
+              {/* FAQs */}
+              {blog.faqs?.length > 0 && (
+                <div className="mt-8 bg-white rounded-2xl border border-slate-200 p-6">
+                  <h2 className="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
+                    ❓ Frequently Asked Questions
+                  </h2>
+                  <div className="space-y-3">
+                    {blog.faqs.map((faq, i) => (
+                      <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
+                        <summary className="flex items-center justify-between cursor-pointer px-5 py-4 font-bold text-sm text-slate-800 hover:bg-slate-50 transition-colors select-none list-none">
+                          <span>{faq.question}</span>
+                          <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-2">▼</span>
+                        </summary>
+                        <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                          {faq.answer}
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Share */}
               <div className="mt-8 bg-white rounded-2xl border border-slate-200 p-5">
                 <p className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">

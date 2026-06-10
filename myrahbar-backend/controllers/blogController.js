@@ -55,7 +55,7 @@ const getBlogBySlug = async (req, res) => {
 
 // ─── POST /api/blogs (Admin only) ───────────────────────────────────────────
 const createBlog = async (req, res) => {
-  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor } = req.body;
+  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor, faqs } = req.body;
   const featuredImage = req.file ? `/uploads/blogs/${req.file.filename}` : undefined;
 
   if (!title || !content || !category) {
@@ -65,6 +65,11 @@ const createBlog = async (req, res) => {
   let slug = slugify(title, { lower: true, strict: true });
   const existing = await Blog.findOne({ slug });
   if (existing) slug = slug + "-" + Date.now();
+
+  let parsedFaqs = [];
+  if (faqs) {
+    try { parsedFaqs = typeof faqs === "string" ? JSON.parse(faqs) : faqs; } catch {}
+  }
 
   const blog = await Blog.create({
     title, slug, content,
@@ -79,9 +84,10 @@ const createBlog = async (req, res) => {
     seoDescription: seoDescription || (excerpt || "").substring(0, 160),
     readTime: readTime || Math.max(1, Math.ceil(content.replace(/<[^>]*>/g, "").split(" ").length / 200)),
     coverColor: coverColor || "#EFF6FF",
+    faqs: parsedFaqs,
   });
 
-  res.status(201).json(blog);
+  res.status(201).json({ blog, _id: blog._id });
 };
 
 // ─── PUT /api/blogs/:id (Admin only) ────────────────────────────────────────
@@ -1130,4 +1136,120 @@ const seedBlogs = async (req, res) => {
   res.json({ message: `Seeded ${created.length} blogs`, blogs: created });
 };
 
-module.exports = { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs };
+// ─── GET /api/blogs/trending-topics ─────────────────────────────────────────
+const getTrendingTopics = async (req, res) => {
+  // Curated trending Pakistani education topics (updated for 2025)
+  const topics = [
+    { title: "MDCAT 2025 Registration Dates and Complete Guide", category: "Entry Tests", hot: true },
+    { title: "ECAT 2025 Engineering Entry Test — Everything You Need", category: "Entry Tests", hot: true },
+    { title: "NUST Merit 2025 — Closing Merit List for All Departments", category: "Merit & Aggregate", hot: true },
+    { title: "FAST University CS Admission 2025 — Eligibility, Dates and Merit", category: "University Reviews", hot: false },
+    { title: "How to Apply for HEC Scholarship 2025 — Step by Step", category: "Scholarships", hot: true },
+    { title: "Top 10 Medical Colleges in Pakistan 2025 — Rankings and Merit", category: "University Reviews", hot: false },
+    { title: "Dow University MBBS Admission 2025 — Merit, Fee and Eligibility", category: "University Reviews", hot: true },
+    { title: "Aggregate Formula for NED University 2025 — Calculate Now", category: "Merit & Aggregate", hot: false },
+    { title: "LUMS Admission 2025 — NCA Test, Fee and Departments", category: "University Reviews", hot: false },
+    { title: "Best Software Engineering Universities in Pakistan 2025", category: "University Reviews", hot: true },
+    { title: "AGA Khan Medical College Admission 2025 — Complete Guide", category: "University Reviews", hot: false },
+    { title: "Gap Year After FSc in Pakistan — What To Do Next", category: "Admission Guide", hot: false },
+    { title: "Pharm-D Admission 2025 in Pakistan — Universities and Merit", category: "Admission Guide", hot: false },
+    { title: "UHS MBBS Merit List 2025 — How to Check and What to Expect", category: "Merit & Aggregate", hot: true },
+    { title: "Documents Required for University Admission in Pakistan 2025", category: "Admission Guide", hot: false },
+    { title: "PIEAS Admission 2025 — Nuclear Engineering Merit and Test", category: "Entry Tests", hot: false },
+    { title: "COMSATS University Admission 2025 — All Campuses and Merit", category: "University Reviews", hot: false },
+    { title: "BDS Admission 2025 Pakistan — Complete Universities List", category: "Admission Guide", hot: true },
+    { title: "How to Prepare for NUMS Entry Test 2025 — Army Medical College", category: "Entry Tests", hot: false },
+    { title: "DPT Admission 2025 Pakistan — Fee, Merit and Top Universities", category: "Admission Guide", hot: false },
+  ];
+  res.json({ topics });
+};
+
+// ─── POST /api/blogs/ai-generate ────────────────────────────────────────────
+const aiGenerateBlog = async (req, res) => {
+  const { title, category, keywords, additionalContext } = req.body;
+  if (!title) return res.status(400).json({ message: "Title is required" });
+
+  const { GoogleGenerativeAI } = require("@google/generative-ai");
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `You are an expert Pakistani educational content writer for Rahbars.com — Pakistan's #1 free university admission guide.
+
+Write a comprehensive, SEO-optimized blog article with the following details:
+- Title: "${title}"
+- Category: "${category || "Admission Guide"}"
+- Target keywords: ${keywords || title}
+${additionalContext ? `- Additional context: ${additionalContext}` : ""}
+
+IMPORTANT REQUIREMENTS:
+1. Write in English (professional but easy to understand for Pakistani FSc students)
+2. Article length: 1500-2000 words minimum
+3. Cover ALL subtopics thoroughly (dates, eligibility, merit, fee, process, tips)
+4. Include internal links like: <a href="/merit-calculator">Rahbars Aggregate Calculator</a> and <a href="/find-university">Smart University Finder</a>
+5. Use proper HTML formatting: <h2>, <h3>, <p>, <ul>, <ol>, <li>, <strong>, <table> where appropriate
+6. Add a "Key Takeaways" section at the top as a <ul> list
+7. End with a strong conclusion encouraging students to use Rahbars tools
+8. Make the content factually accurate for Pakistan 2025
+
+Return ONLY a JSON object with these exact fields (no markdown, no code blocks):
+{
+  "content": "<full HTML article content>",
+  "excerpt": "One compelling sentence summary (max 160 chars)",
+  "seoTitle": "SEO optimized title (max 60 chars)",
+  "seoDescription": "Meta description (max 155 chars)",
+  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "readTime": 8,
+  "faqs": [
+    {"question": "FAQ question 1?", "answer": "Detailed answer 1"},
+    {"question": "FAQ question 2?", "answer": "Detailed answer 2"},
+    {"question": "FAQ question 3?", "answer": "Detailed answer 3"},
+    {"question": "FAQ question 4?", "answer": "Detailed answer 4"},
+    {"question": "FAQ question 5?", "answer": "Detailed answer 5"}
+  ]
+}`;
+
+  const result = await model.generateContent(prompt);
+  let text = result.response.text().trim();
+
+  // Strip markdown code blocks if present
+  text = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch (e) {
+    // If JSON parse fails, try to extract content manually
+    return res.status(500).json({ message: "AI response parsing failed. Please try again.", raw: text.substring(0, 500) });
+  }
+
+  res.json({ 
+    success: true, 
+    generated: {
+      title,
+      category: category || "Admission Guide",
+      ...parsed
+    }
+  });
+};
+
+// ─── PUT /api/blogs/:id/approve ──────────────────────────────────────────────
+const approveBlog = async (req, res) => {
+  const blog = await Blog.findById(req.params.id);
+  if (!blog) return res.status(404).json({ message: "Blog not found" });
+  blog.status = "published";
+  await blog.save();
+  res.json({ message: "Blog approved and published!", blog });
+};
+
+// ─── PUT /api/blogs/:id/reject ───────────────────────────────────────────────
+const rejectBlog = async (req, res) => {
+  const blog = await Blog.findById(req.params.id);
+  if (!blog) return res.status(404).json({ message: "Blog not found" });
+  blog.status = "draft";
+  await blog.save();
+  res.json({ message: "Blog moved back to draft", blog });
+};
+
+module.exports = { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog };
+

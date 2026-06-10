@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import UniversityDataCollector from "./UniversityDataCollector";
+import AIBlogGenerator from "../components/admin/AIBlogGenerator";
 import {
   Shield,
   CheckCircle,
@@ -21,6 +22,13 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
+  Sparkles,
+  TrendingUp,
+  RefreshCw,
+  Send,
+  AlertCircle,
+  CheckSquare,
+  Loader,
 } from "lucide-react";
 
 import { useAuthStore } from "../store";
@@ -36,6 +44,7 @@ const TABS = [
   "Bookings",
   "Past Papers",
   "Blogs",
+  "AI Blog Generator",
   "News",
 ];
 
@@ -2484,6 +2493,12 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+
+        {/* ─── AI BLOG GENERATOR TAB ─── */}
+        {activeTab === "AI Blog Generator" && (
+          <AIBlogGenerator token={localStorage.getItem("token")} />
+        )}
+
       </div>
     </>
   );

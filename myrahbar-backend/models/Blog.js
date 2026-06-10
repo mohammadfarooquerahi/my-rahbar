@@ -11,7 +11,7 @@ const blogSchema = new mongoose.Schema(
     featuredImage:  { type: String },
     coverColor:     { type: String, default: "#EFF6FF" },
     tags:           [{ type: String }],
-    status:         { type: String, enum: ["draft", "published"], default: "draft" },
+    status:         { type: String, enum: ["draft", "pending", "published"], default: "draft" },
     views:          { type: Number, default: 0 },
 
     // SEO fields
@@ -19,6 +19,7 @@ const blogSchema = new mongoose.Schema(
     seoDescription: { type: String, maxlength: 160 },
     keywords:       [{ type: String }],
     readTime:       { type: Number, default: 5 }, // in minutes
+    faqs:           [{ question: String, answer: String }],
   },
   { timestamps: true }
 );

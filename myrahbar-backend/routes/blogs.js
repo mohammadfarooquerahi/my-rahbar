@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs } = require("../controllers/blogController");
+const { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog } = require("../controllers/blogController");
 const { protect, adminOnly } = require("../middleware/auth");
 const multer = require("multer");
 const path = require("path");
@@ -19,13 +19,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB
 
 // Public routes
+router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
 router.get("/", getBlogs);
 router.get("/:slug", getBlogBySlug);
 
 // Admin only routes
 router.post("/seed", protect, adminOnly, seedBlogs);
+router.post("/ai-generate", protect, adminOnly, aiGenerateBlog);
 router.post("/", protect, adminOnly, upload.single("featuredImage"), createBlog);
+router.put("/:id/approve", protect, adminOnly, approveBlog);
+router.put("/:id/reject", protect, adminOnly, rejectBlog);
 router.put("/:id", protect, adminOnly, upload.single("featuredImage"), updateBlog);
 router.delete("/:id", protect, adminOnly, deleteBlog);
 
 module.exports = router;
+
