@@ -103,6 +103,7 @@ export default function AdminPage() {
   const [news, setNews] = useState([]);
   const [excelPreview, setExcelPreview] = useState(null);
   const [excelImportResult, setExcelImportResult] = useState(null);
+  const [uniFilter, setUniFilter] = useState("all"); // 'all', 'pending', 'approved'
   const [paperForm, setPaperForm] = useState({
     universityId: "",
     year: "2024",
@@ -448,6 +449,8 @@ export default function AdminPage() {
       admissionDeadline: uni.admissionDeadline
         ? new Date(uni.admissionDeadline).toISOString().split("T")[0]
         : "",
+      admissionDeadlines: uni.admissionDeadlines || [],
+      admissionTestType: uni.admissionTestType || "Own Test",
       testRequired: uni.testRequired,
       admissionFee: uni.admissionFee,
       hostelAvailable: uni.hostelAvailable,
@@ -953,6 +956,18 @@ export default function AdminPage() {
         {/* ===== UNIVERSITIES TAB ===== */}
         {activeTab === "Universities" && (
           <div className="space-y-3">
+            <div className="flex gap-2 mb-4 bg-slate-50 p-2 rounded-xl border border-slate-200">
+              <button onClick={() => setUniFilter("all")} className={`px-4 py-2 rounded-lg text-sm font-bold flex-1 ${uniFilter === "all" ? "bg-white shadow text-blue-600" : "text-slate-500 hover:text-slate-700"}`}>
+                All ({unis.length})
+              </button>
+              <button onClick={() => setUniFilter("pending")} className={`px-4 py-2 rounded-lg text-sm font-bold flex-1 ${uniFilter === "pending" ? "bg-white shadow text-orange-600" : "text-slate-500 hover:text-slate-700"}`}>
+                Pending ({unis.filter(u => u.status === "pending").length})
+              </button>
+              <button onClick={() => setUniFilter("approved")} className={`px-4 py-2 rounded-lg text-sm font-bold flex-1 ${uniFilter === "approved" ? "bg-white shadow text-green-600" : "text-slate-500 hover:text-slate-700"}`}>
+                Approved ({unis.filter(u => u.status === "approved" || !u.status).length})
+              </button>
+            </div>
+
             {loading && (
               <p className="text-center text-slate-400 py-10">Loading...</p>
             )}
@@ -970,7 +985,9 @@ export default function AdminPage() {
               </div>
             )}
 
-            {unis.map((uni) => (
+            {unis
+              .filter(uni => uniFilter === "all" ? true : uniFilter === "pending" ? uni.status === "pending" : uni.status !== "pending")
+              .map((uni) => (
               <div
                 key={uni._id}
                 className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
