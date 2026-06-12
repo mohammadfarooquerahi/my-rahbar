@@ -76,9 +76,13 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
   "city": "city name",
   "establishedYear": 1900,
   "officialWebsite": "https://website.edu.pk",
-  "entryTest": "NTS or ECAT or Own Test or None",
+  "admissionTestType": "NTS",
+  "testRequired": "NAT-IE / NAT-ICS",
   "admissionFee": 3500,
   "admissionOpen": true,
+  "admissionDeadlines": [
+    { "degreeLevel": "BS", "deadline": "2024-08-30", "note": "Fall 2024" }
+  ],
   "hostelAvailable": true,
   "matricWeight": 0.10,
   "fscWeight": 0.40,
@@ -90,8 +94,9 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
     {
       "name": "BS Computer Science",
       "category": "CS",
+      "degreeLevel": "BS",
       "semesterFee": 25000,
-      "lastMerit": 75.5,
+      "lastMerit": [ { "year": 2023, "closing": 75.5 } ],
       "meritSeats": 60,
       "selfFinanceSeats": 40
     }
@@ -102,6 +107,8 @@ IMPORTANT RULES:
 - Fill ALL fields with REAL data from the actual university.
 - Include ALL major departments (minimum 10 departments if available).
 - Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
+- degreeLevel must be "BS", "MS", "PhD", "MBBS", "BDS", "BBA", etc.
+- admissionTestType MUST be one of: "Own Test", "HEC-NAT", "NTS", "MDCAT", "ECAT", "NUMS", "SAT", "None", "Multiple".
 - type must be lowercase "government" or "private"
 - Weights must sum to exactly 1.00
 - Fees should be in PKR
