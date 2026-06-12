@@ -3,11 +3,10 @@ const Alert = require("../models/Alert");
 const sendWhatsApp = require("./sendWhatsApp");
 const sendEmail = require("./sendEmail");
 
-// Run every day at 9:00 AM
+// Run every day at 9:00 AM Pakistan time
 const startAlertCron = () => {
   cron.schedule("0 9 * * *", async () => {
     console.log("Running deadline alert check...");
-
     try {
       const now = new Date();
       const active = await Alert.find({ isActive: true });
@@ -19,110 +18,95 @@ const startAlertCron = () => {
         const diffMs = deadline - now;
         const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-        // 7 day alert
         if (diffDays === 7 && !alert.sent7Day) {
           await sendDeadlineAlert(alert, diffDays);
           await Alert.findByIdAndUpdate(alert._id, { sent7Day: true });
         }
 
-        // 1 day alert
         if (diffDays === 1 && !alert.sent1Day) {
           await sendDeadlineAlert(alert, diffDays);
           await Alert.findByIdAndUpdate(alert._id, { sent1Day: true });
         }
 
-        // Deactivate if deadline passed
         if (diffDays < 0) {
           await Alert.findByIdAndUpdate(alert._id, { isActive: false });
         }
       }
-
       console.log("Alert check complete.");
     } catch (err) {
       console.error("Alert cron error: " + err.message);
     }
   });
-
   console.log("Deadline alert cron job started.");
 };
 
-// Build and send the actual alert messages
 const sendDeadlineAlert = async (alert, daysLeft) => {
   const uniName = alert.universityName || "University";
+  const degreeLabel = alert.degreeLevel && alert.degreeLevel !== "All" ? ` (${alert.degreeLevel})` : "";
   const urgent = daysLeft === 1;
 
-  // WhatsApp message
   const waMessage = [
-    urgent
-      ? "🚨 *URGENT — Last Day Tomorrow!*"
-      : "⏰ *Deadline Reminder — MyRahbar*",
+    urgent ? "🚨 *URGENT — Last Day Tomorrow!*" : "⏰ *Deadline Reminder — Rahbars*",
     "",
-    "University: *" + uniName + "*",
-    "Admission deadline is in *" +
-      daysLeft +
-      (daysLeft === 1 ? " day*" : " days*"),
+    `University: *${uniName}*`,
+    degreeLabel ? `Program: *${alert.degreeLevel}*` : "",
+    `Admission deadline is in *${daysLeft}${daysLeft === 1 ? " day*" : " days*"}`,
     "",
     urgent
       ? "This is your last chance to apply. Do not miss it!"
       : "Make sure your documents are ready and form is submitted.",
     "",
-    "Visit myrahbar.com to check details.",
+    "Visit rahbars.com to check details.",
     "",
     "Reply STOP to unsubscribe.",
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
-  // Email HTML
   const emailHtml = `
-    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
-      <div style="background: #1E3A5F; padding: 20px; text-align: center;">
-        <h2 style="color: white; margin: 0;">MyRahbar</h2>
-        <p style="color: #7DD3A8; margin: 4px 0 0;">Your University Guide</p>
+    <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+      <div style="background: linear-gradient(135deg, #1545A5, #0f286b); padding: 28px; text-align: center;">
+        <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.02em;">Rahbars</h2>
+        <p style="color: rgba(255,255,255,0.75); margin: 4px 0 0; font-size: 13px;">LEARN. GROW. SUCCEED.</p>
       </div>
 
-      <div style="padding: 24px; background: #f5f8fc;">
-        <h3 style="color: #1E3A5F;">
-          ${urgent ? "🚨 Last Day Tomorrow!" : "⏰ Deadline Reminder"}
+      <div style="padding: 32px 28px; background: #f8faff;">
+        <h3 style="color: #1545A5; font-size: 20px; margin: 0 0 16px;">
+          ${urgent ? "🚨 Last Day Tomorrow!" : `⏰ ${daysLeft} Days Left — Act Now!`}
         </h3>
 
-        <p style="color: #333;">
-          The admission deadline for <strong>${uniName}</strong> is in
-          <strong>${daysLeft} ${daysLeft === 1 ? "day" : "days"}</strong>.
+        <div style="background: white; border-radius: 10px; padding: 20px; border-left: 4px solid #1545A5; margin-bottom: 20px;">
+          <p style="color: #333; margin: 0 0 8px; font-size: 15px;">
+            <strong>University:</strong> ${uniName}
+          </p>
+          ${degreeLabel ? `<p style="color: #333; margin: 0 0 8px; font-size: 15px;"><strong>Program:</strong> ${alert.degreeLevel}</p>` : ""}
+          <p style="color: ${urgent ? "#e74c3c" : "#1545A5"}; margin: 0; font-size: 15px; font-weight: bold;">
+            Deadline: ${daysLeft} ${daysLeft === 1 ? "day" : "days"} remaining
+          </p>
+        </div>
+
+        <p style="color: #555; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
+          ${urgent
+            ? "This is your last chance to submit your application. Visit the university website and submit your form immediately!"
+            : "Prepare your documents now. Make sure your admission form is complete and submitted before the deadline."}
         </p>
 
-        <p style="color: #333;">
-          ${
-            urgent
-              ? "This is your last chance to submit your application. Do not miss it!"
-              : "Make sure your documents are ready and your admission form is submitted."
-          }
-        </p>
-
-        <a
-          href="https://myrahbar.com"
-          style="display: inline-block; background: #27AE60; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;"
-        >
-          View on MyRahbar
+        <a href="https://rahbars.com"
+          style="display: inline-block; background: #1545A5; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
+          Open Rahbars → Check University
         </a>
       </div>
 
-      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">
-        You are receiving this because you saved ${uniName} on MyRahbar.
-        <br>To unsubscribe visit your watchlist settings.
+      <div style="padding: 16px; text-align: center; color: #999; font-size: 12px; background: #f0f4ff;">
+        You are receiving this because you saved ${uniName} on Rahbars.<br>
+        <a href="https://rahbars.com/profile" style="color: #1545A5;">Manage your alerts here</a>
       </div>
     </div>
   `;
 
-  // Send both
-  if (alert.whatsapp) {
-    await sendWhatsApp(alert.whatsapp, waMessage);
-  }
+  if (alert.whatsapp) await sendWhatsApp(alert.whatsapp, waMessage);
   if (alert.email) {
     await sendEmail({
       to: alert.email,
-      subject:
-        (urgent ? "🚨 Last Day — " : "⏰ " + daysLeft + " Days Left — ") +
-        uniName +
-        " Admission Deadline",
+      subject: `${urgent ? "🚨 Last Day — " : `⏰ ${daysLeft} Days Left — `}${uniName}${degreeLabel} Admission Deadline`,
       html: emailHtml,
     });
   }

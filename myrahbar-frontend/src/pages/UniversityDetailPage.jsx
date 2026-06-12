@@ -31,9 +31,73 @@ const TABS = [
   "Admission",
   "Fee & Expenses",
   "Scholarships",
+  "Documents",
   "Reviews",
   "Past Papers",
 ];
+
+const TEST_TYPE_CONFIG = {
+  "Own Test":  { emoji: "📝", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  "HEC-NAT":   { emoji: "🏛", color: "bg-purple-100 text-purple-700 border-purple-200" },
+  "NTS":       { emoji: "📋", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  "MDCAT":     { emoji: "🩺", color: "bg-red-100 text-red-700 border-red-200" },
+  "ECAT":      { emoji: "⚙️", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  "NUMS":      { emoji: "🏥", color: "bg-pink-100 text-pink-700 border-pink-200" },
+  "SAT":       { emoji: "🌐", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
+  "None":      { emoji: "✅", color: "bg-green-100 text-green-700 border-green-200" },
+  "Multiple":  { emoji: "🔀", color: "bg-slate-100 text-slate-700 border-slate-200" },
+};
+
+function CompressorWidget() {
+  const [file, setFile] = useState(null);
+  const [quality, setQuality] = useState(0.7);
+  const [output, setOutput] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const compress = async () => {
+    if (!file) return;
+    setProcessing(true); setOutput(null);
+    if (file.type.startsWith("image/")) {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width; canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        canvas.toBlob(blob => {
+          setOutput({ url: URL.createObjectURL(blob), size: blob.size, name: file.name.replace(/\.[^.]+$/, "") + "_compressed.jpg" });
+          setProcessing(false);
+        }, "image/jpeg", quality);
+      };
+      img.src = URL.createObjectURL(file);
+    } else {
+      setOutput({ url: URL.createObjectURL(file), size: file.size, name: file.name, isPdf: true });
+      setProcessing(false);
+    }
+  };
+  return (
+    <div className="space-y-3">
+      <input type="file" accept="image/*,.pdf" onChange={e => { setFile(e.target.files[0]); setOutput(null); }}
+        className="block w-full text-sm text-white file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-white/20 file:text-white file:font-medium hover:file:bg-white/30 cursor-pointer" />
+      {file && file.type.startsWith("image/") && (
+        <div>
+          <label className="text-xs text-blue-100 mb-1 block">Quality: {Math.round(quality * 100)}%</label>
+          <input type="range" min="0.1" max="1" step="0.05" value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-white" />
+        </div>
+      )}
+      {file && <p className="text-xs text-blue-100">📁 {file.name} ({(file.size/1024).toFixed(0)} KB)</p>}
+      <button onClick={compress} disabled={!file || processing}
+        className="w-full py-2.5 bg-white text-blue-700 font-bold text-sm rounded-xl hover:bg-blue-50 disabled:opacity-50 transition-colors">
+        {processing ? "Processing..." : "🗜 Compress File"}
+      </button>
+      {output && (
+        <div className="bg-white/20 rounded-xl p-3 flex items-center justify-between">
+          <div><p className="text-xs font-bold text-white">{output.isPdf ? "PDF Ready" : "Compressed!"}</p><p className="text-[10px] text-blue-100">{(output.size/1024).toFixed(0)} KB</p></div>
+          <a href={output.url} download={output.name} className="px-3 py-1.5 bg-white text-blue-700 font-bold text-xs rounded-lg hover:bg-blue-50">⬇ Download</a>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const WHATSAPP = "923455589079";
 
 // Pakistani fake reviews shown when no real reviews exist
@@ -527,12 +591,22 @@ export default function UniversityDetailPage() {
                         </div>
                       )}
 
-                      <p className="text-sm text-slate-500 mt-3">
-                        Test Required:{" "}
-                        <span className="font-medium text-slate-700">
-                          {uni.testRequired}
-                        </span>
-                      </p>
+                      {/* Admission Test Type Badge */}
+                      <div className="mt-4 flex flex-wrap gap-2 items-center">
+                        <span className="text-sm text-slate-500">Admission Test:</span>
+                        {(() => {
+                          const testType = uni.admissionTestType || "Own Test";
+                          const cfg = TEST_TYPE_CONFIG[testType] || TEST_TYPE_CONFIG["Own Test"];
+                          return (
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${cfg.color}`}>
+                              {cfg.emoji} {testType}
+                            </span>
+                          );
+                        })()}
+                        {uni.testRequired && uni.testRequired !== uni.admissionTestType && (
+                          <span className="text-xs text-slate-400">({uni.testRequired})</span>
+                        )}
+                      </div>
                     </div>
 
                     {uni.requiredDocuments?.length > 0 && (
@@ -876,66 +950,131 @@ export default function UniversityDetailPage() {
                     </a>
                   </div>
                 )}
+
+                {/* DOCUMENTS TAB */}
+                {activeTab === "Documents" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <FileText size={16} className="text-blue-600" /> Required Documents Checklist
+                      </h3>
+                      {uni.requiredDocuments?.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {uni.requiredDocuments.map((doc, i) => (
+                            <div key={i} className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl p-3">
+                              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shrink-0 mt-0.5">
+                                <CheckCircle size={12} className="text-white" />
+                              </div>
+                              <span className="text-sm text-slate-700 font-medium">{doc}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="bg-slate-50 rounded-xl p-6 text-center">
+                          <FileText size={32} className="mx-auto mb-2 text-slate-300" />
+                          <p className="text-sm text-slate-500">No documents listed yet. Check the university website.</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Degree-wise Deadlines */}
+                    <div>
+                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        🗓 Admission Deadlines by Program
+                      </h3>
+                      {uni.admissionDeadlines?.length > 0 ? (
+                        <div className="space-y-2">
+                          {uni.admissionDeadlines.map((dl, i) => {
+                            const d = new Date(dl.deadline);
+                            const diff = Math.ceil((d - new Date()) / 86400000);
+                            const color = diff < 0 ? "text-red-500" : diff <= 7 ? "text-orange-500" : "text-green-600";
+                            return (
+                              <div key={i} className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
+                                  <span className="text-sm text-slate-700">{d.toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })}</span>
+                                  {dl.note && <span className="text-xs text-slate-400">({dl.note})</span>}
+                                </div>
+                                <span className={`text-sm font-bold ${color}`}>
+                                  {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff}d left`}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : uni.admissionDeadline ? (
+                        <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 flex items-center justify-between">
+                          <span className="text-sm text-slate-700">All Programs</span>
+                          <span className="text-sm font-bold text-blue-700">{new Date(uni.admissionDeadline).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })}</span>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-slate-500">Deadline not announced yet.</p>
+                      )}
+                    </div>
+
+                    {/* PDF Compressor */}
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white">
+                      <h3 className="font-bold text-lg mb-1 flex items-center gap-2">📄 Document Compressor</h3>
+                      <p className="text-blue-100 text-sm mb-4">Compress your PDFs and images before uploading. Runs in your browser — nothing uploaded to our servers.</p>
+                      <CompressorWidget />
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="lg:w-72 shrink-0 space-y-4">
-            {/* Deadline */}
+            {/* Deadline Card */}
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
-              <p className="text-xs text-slate-500 uppercase font-medium tracking-wider mb-3">
-                Admission Deadline
-              </p>
-              <div
-                className={
-                  "text-2xl font-bold mb-1 " +
-                  (dlColors[dl.color] || "text-slate-600")
-                }
-                style={{ fontFamily: "DM Mono" }}
-              >
-                {dl.text}
-              </div>
-              <p className="text-sm text-slate-500">
-                {uni.admissionDeadline
-                  ? new Date(uni.admissionDeadline).toLocaleDateString(
-                      "en-PK",
-                      {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      },
-                    )
-                  : "Not set"}
-              </p>
+              <p className="text-xs text-slate-500 uppercase font-medium tracking-wider mb-3">Admission Deadline</p>
 
-              <a
-                href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
-                style={{ background: "var(--green)" }}
-              >
-                Apply Now →
-              </a>
+              {/* Per-degree deadlines */}
+              {uni.admissionDeadlines?.length > 0 ? (
+                <div className="space-y-2 mb-3">
+                  {uni.admissionDeadlines.map((item, i) => {
+                    const d = new Date(item.deadline);
+                    const diff = Math.ceil((d - new Date()) / 86400000);
+                    const urgency = diff < 0 ? "text-red-500 bg-red-50 border-red-200" : diff <= 3 ? "text-orange-600 bg-orange-50 border-orange-200" : "text-green-600 bg-green-50 border-green-200";
+                    return (
+                      <div key={i} className={`flex items-center justify-between rounded-xl px-3 py-2 border text-xs ${urgency}`}>
+                        <span className="font-bold">{item.degreeLevel}</span>
+                        <span className="font-medium">{diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff} days left`}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <>
+                  <div className={"text-2xl font-bold mb-1 " + (dlColors[dl.color] || "text-slate-600")} style={{ fontFamily: "DM Mono" }}>{dl.text}</div>
+                  <p className="text-sm text-slate-500">{uni.admissionDeadline ? new Date(uni.admissionDeadline).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" }) : "Not set"}</p>
+                </>
+              )}
 
-              <button
-                onClick={setDeadlineAlert}
-                className="mt-2 w-full py-2.5 text-sm font-medium rounded-xl border flex items-center justify-center gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 transition-colors"
-              >
-                <Bell size={14} />
-                Set Deadline Alert
+              {/* Test Type Badge */}
+              {uni.admissionTestType && (
+                <div className="mt-3 mb-3">
+                  {(() => {
+                    const cfg = TEST_TYPE_CONFIG[uni.admissionTestType] || TEST_TYPE_CONFIG["Own Test"];
+                    return <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${cfg.color}`}>{cfg.emoji} {uni.admissionTestType}</span>;
+                  })()}
+                </div>
+              )}
+
+              <a href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
+                target="_blank" rel="noopener noreferrer"
+                className="mt-2 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
+                style={{ background: "var(--green)" }}>Apply Now →</a>
+
+              <button onClick={setDeadlineAlert}
+                className="mt-2 w-full py-2.5 text-sm font-medium rounded-xl border flex items-center justify-center gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 transition-colors">
+                <Bell size={14} /> Set Deadline Alert
               </button>
 
-              <button
-                onClick={toggleWatch}
-                className={
-                  "mt-2 w-full py-2.5 text-sm font-medium rounded-xl border transition-colors flex items-center justify-center gap-2 " +
-                  (watched
-                    ? "bg-red-50 text-red-600 border-red-200"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300")
-                }
-              >
+              <button onClick={toggleWatch}
+                className={"mt-2 w-full py-2.5 text-sm font-medium rounded-xl border transition-colors flex items-center justify-center gap-2 " + (watched ? "bg-red-50 text-red-600 border-red-200" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300")}>
                 <Heart size={14} fill={watched ? "currentColor" : "none"} />
                 {watched ? "Remove from Watchlist" : "Add to Watchlist"}
               </button>

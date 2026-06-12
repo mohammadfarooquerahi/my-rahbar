@@ -2,17 +2,11 @@ const express = require("express");
 const router = express.Router();
 const University = require("../models/University");
 const {
-  getAllUnis,
-  approveUni,
-  rejectUni,
-  getAllReviews,
-  approveReview,
-  rejectReview,
-  getAllBookings,
-  getAllUsers,
-  getDashboardStats,
-  getErrorLogs,
-  uploadExcelFile,
+  getAllUnis, approveUni, rejectUni,
+  getAllReviews, approveReview, rejectReview,
+  getAllBookings, getAllUsers,
+  getDashboardStats, getErrorLogs,
+  uploadExcelFile, previewExcelFile,
 } = require("../controllers/adminController");
 const { protect, adminOnly } = require("../middleware/auth");
 const { uploadExcel } = require("../config/multer");
@@ -25,7 +19,9 @@ router.get("/dashboard", getDashboardStats);
 router.get("/error-logs", getErrorLogs);
 
 // Excel Upload
+router.post("/preview-excel", uploadExcel.single("file"), previewExcelFile);
 router.post("/upload-excel", uploadExcel.single("file"), uploadExcelFile);
+
 
 // Universities
 router.get("/universities", getAllUnis);

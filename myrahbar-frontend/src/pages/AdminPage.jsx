@@ -58,6 +58,8 @@ const EMPTY_UNI = {
   website: "",
   admissionOpen: true,
   admissionDeadline: "",
+  admissionDeadlines: [],
+  admissionTestType: "Own Test",
   testRequired: "",
   admissionFee: "",
   hostelAvailable: false,
@@ -68,6 +70,7 @@ const EMPTY_UNI = {
   requiredDocuments: "",
   departments: [],
 };
+
 
 const EMPTY_DEPT = {
   name: "",
@@ -98,6 +101,8 @@ export default function AdminPage() {
   const [pastPapers, setPastPapers] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [news, setNews] = useState([]);
+  const [excelPreview, setExcelPreview] = useState(null);
+  const [excelImportResult, setExcelImportResult] = useState(null);
   const [paperForm, setPaperForm] = useState({
     universityId: "",
     year: "2024",
@@ -584,33 +589,37 @@ export default function AdminPage() {
     );
   };
 
-  const handleExcelUpload = async (e) => {
+  const handleExcelPreview = async (e) => {
     e.preventDefault();
-    if (!excelFile) {
-      showMsg("Please select an Excel file first");
-      return;
-    }
+    if (!excelFile) { showMsg("Please select an Excel file first"); return; }
     const formData = new FormData();
     formData.append("file", excelFile);
-
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/upload-excel", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + token },
-        body: formData,
-      });
+      const res = await fetch("/api/admin/preview-excel", { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      showMsg(`Successfully processed ${data.universitiesAdded} universities!`);
-      setExcelFile(null);
-      e.target.reset();
-    } catch (err) {
-      showMsg("Error uploading Excel: " + err.message);
-    } finally {
-      setLoading(false);
-    }
+      setExcelPreview(data);
+    } catch (err) { showMsg("Preview error: " + err.message); }
+    finally { setLoading(false); }
   };
+
+  const handleExcelUpload = async (e) => {
+    e.preventDefault();
+    if (!excelFile) { showMsg("Please select an Excel file first"); return; }
+    const formData = new FormData();
+    formData.append("file", excelFile);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/upload-excel", { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showMsg(data.message || `Import done!`);
+      setExcelFile(null); setExcelPreview(null); setExcelImportResult(data);
+    } catch (err) { showMsg("Error: " + err.message); }
+    finally { setLoading(false); }
+  };
+
 
   const updateFormula = (key, val) => {
     setUniForm((prev) => ({
@@ -805,57 +814,100 @@ export default function AdminPage() {
 
         {/* ===== UPLOAD EXCEL TAB ===== */}
         {activeTab === "Upload Excel" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 max-w-xl mx-auto mt-10">
-            <h2
-              className="text-xl font-bold mb-2"
-              style={{ fontFamily: "Sora", color: "var(--navy)" }}
-            >
-              Upload University Excel Data
-            </h2>
-            <p className="text-sm text-slate-500 mb-6">
-              Bulk import universities and departments using the official
-              Rahbars Excel template.
-            </p>
-
-            <form onSubmit={handleExcelUpload} className="space-y-6">
-              <div className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:bg-slate-50 transition-colors">
-                <input
-                  type="file"
-                  accept=".xlsx, .xls"
-                  onChange={(e) => setExcelFile(e.target.files[0])}
-                  className="hidden"
-                  id="excel-upload"
-                />
-                <label
-                  htmlFor="excel-upload"
-                  className="cursor-pointer flex flex-col items-center"
-                >
-                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
-                    <BookOpen size={24} />
-                  </div>
-                  <span className="text-sm font-semibold text-blue-600 hover:underline">
-                    Select Excel File
-                  </span>
-                  <span className="text-xs text-slate-400 mt-2">
-                    {excelFile ? excelFile.name : "No file selected"}
-                  </span>
-                </label>
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 max-w-2xl mx-auto">
+              <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "Sora", color: "var(--navy)" }}>Upload University Excel Data</h2>
+              <p className="text-sm text-slate-500 mb-2">Bulk import universities and departments. <strong>Step 1:</strong> Preview → <strong>Step 2:</strong> Import.</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-6 text-xs text-blue-700">
+                <strong>Excel Columns:</strong> University Name | Short Name | Type | City | Website | Established | Admission Open | Admission Fee | Test Type | Matric % | FSc % | Test % | Hostel | Hostel Fee | Scholarships | Required Documents | Departments (format: <em>CS,60,50000,78.5 | Math,40,35000,71</em>)
               </div>
 
-              <button
-                type="submit"
-                disabled={loading || !excelFile}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition disabled:opacity-50 flex justify-center items-center gap-2"
-              >
-                {loading ? (
-                  "Processing..."
-                ) : (
-                  <>
-                    <Save size={18} /> Process Import
-                  </>
-                )}
-              </button>
-            </form>
+              <form onSubmit={handleExcelPreview} className="space-y-4">
+                <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:bg-slate-50 transition-colors">
+                  <input type="file" accept=".xlsx, .xls" onChange={(e) => { setExcelFile(e.target.files[0]); setExcelPreview(null); setExcelImportResult(null); }}
+                    className="hidden" id="excel-upload" />
+                  <label htmlFor="excel-upload" className="cursor-pointer flex flex-col items-center">
+                    <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
+                      <BookOpen size={22} />
+                    </div>
+                    <span className="text-sm font-semibold text-blue-600 hover:underline">Select Excel File (.xlsx / .xls)</span>
+                    <span className="text-xs text-slate-400 mt-1">{excelFile ? excelFile.name : "No file selected"}</span>
+                  </label>
+                </div>
+
+                <button type="submit" disabled={loading || !excelFile}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition disabled:opacity-50 flex justify-center items-center gap-2">
+                  {loading ? "Parsing..." : <><Save size={18} /> Preview Import</>}
+                </button>
+              </form>
+            </div>
+
+            {/* Preview Table */}
+            {excelPreview && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-bold text-slate-800">Preview — {excelPreview.total} Universities Found</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">{excelPreview.duplicates} will update existing records</p>
+                  </div>
+                  <button onClick={handleExcelUpload} disabled={loading}
+                    className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm rounded-xl flex items-center gap-2 disabled:opacity-50">
+                    {loading ? "Importing..." : `✓ Import All ${excelPreview.total}`}
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200">
+                        {["University","Type","City","Test Type","Depts","Docs","Status"].map(h => (
+                          <th key={h} className="text-left px-4 py-2.5 text-slate-500 font-semibold">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {excelPreview.preview.map((u, i) => (
+                        <tr key={i} className={u.isDuplicate ? "bg-amber-50" : ""}>
+                          <td className="px-4 py-2.5">
+                            <p className="font-bold text-slate-800">{u.name}</p>
+                            <p className="text-slate-400">{u.shortName}</p>
+                          </td>
+                          <td className="px-4 py-2.5"><span className={`px-2 py-0.5 rounded-full font-bold ${u.type === "private" ? "bg-purple-100 text-purple-700" : "bg-green-100 text-green-700"}`}>{u.type}</span></td>
+                          <td className="px-4 py-2.5 text-slate-600">{u.city}</td>
+                          <td className="px-4 py-2.5"><span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">{u.admissionTestType}</span></td>
+                          <td className="px-4 py-2.5 text-slate-600">{u.departments?.length || 0}</td>
+                          <td className="px-4 py-2.5 text-slate-600">{u.requiredDocuments?.length || 0}</td>
+                          <td className="px-4 py-2.5">
+                            {u.isDuplicate
+                              ? <span className="text-amber-600 font-bold">⟳ Update</span>
+                              : <span className="text-green-600 font-bold">+ New</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Import Result */}
+            {excelImportResult && (
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+                <div className="text-4xl mb-3">🎉</div>
+                <h3 className="font-bold text-green-800 text-lg">Import Complete!</h3>
+                <p className="text-green-700 text-sm mt-1">{excelImportResult.message}</p>
+                <div className="flex justify-center gap-4 mt-4">
+                  <div className="bg-white rounded-xl px-4 py-2 border border-green-200 text-center">
+                    <p className="text-xl font-black text-green-600">{excelImportResult.imported}</p>
+                    <p className="text-xs text-slate-500">New</p>
+                  </div>
+                  <div className="bg-white rounded-xl px-4 py-2 border border-green-200 text-center">
+                    <p className="text-xl font-black text-amber-600">{excelImportResult.updated}</p>
+                    <p className="text-xs text-slate-500">Updated</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-3">All imported universities are in <strong>Pending</strong> status. Go to Universities tab to approve them.</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -1184,59 +1236,76 @@ export default function AdminPage() {
 
               {/* Admission info */}
               <div>
-                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
-                  Admission Details
-                </p>
+                <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">Admission Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* General deadline (backward compat) */}
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">
-                      Admission Deadline
-                    </label>
-                    <input
-                      type="date"
-                      value={uniForm.admissionDeadline}
-                      onChange={(e) =>
-                        setUniForm((p) => ({
-                          ...p,
-                          admissionDeadline: e.target.value,
-                        }))
-                      }
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
-                    />
+                    <label className="block text-xs text-slate-500 mb-1">General Deadline (all programs)</label>
+                    <input type="date" value={uniForm.admissionDeadline}
+                      onChange={(e) => setUniForm((p) => ({ ...p, admissionDeadline: e.target.value }))}
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
                   </div>
+
+                  {/* Admission Test Type */}
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">
-                      Admission Fee (PKR)
-                    </label>
-                    <input
-                      type="number"
-                      value={uniForm.admissionFee}
-                      onChange={(e) =>
-                        setUniForm((p) => ({
-                          ...p,
-                          admissionFee: e.target.value,
-                        }))
-                      }
+                    <label className="block text-xs text-slate-500 mb-1">Admission Test Type</label>
+                    <select value={uniForm.admissionTestType || "Own Test"}
+                      onChange={(e) => setUniForm((p) => ({ ...p, admissionTestType: e.target.value }))}
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400 bg-white">
+                      {["Own Test","HEC-NAT","NTS","SAT","MDCAT","ECAT","NUMS","None","Multiple"].map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Admission Fee */}
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">Admission Fee (PKR)</label>
+                    <input type="number" value={uniForm.admissionFee}
+                      onChange={(e) => setUniForm((p) => ({ ...p, admissionFee: e.target.value }))}
                       placeholder="e.g. 3500"
-                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
-                    />
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
                   </div>
+                </div>
+
+                {/* Per-Degree Deadlines */}
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-slate-600">📅 Deadlines by Degree Level</p>
+                    <button type="button"
+                      onClick={() => setUniForm(p => ({ ...p, admissionDeadlines: [...(p.admissionDeadlines||[]), { degreeLevel: "BS", deadline: "", note: "" }] }))}
+                      className="text-xs font-bold text-blue-600 hover:text-blue-800">+ Add Deadline</button>
+                  </div>
+                  {(uniForm.admissionDeadlines || []).map((dl, i) => (
+                    <div key={i} className="flex items-center gap-2 mb-2">
+                      <select value={dl.degreeLevel}
+                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].degreeLevel = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                        className="border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400 bg-white">
+                        {["BS","MS","PhD","BBA","MBA","MBBS","BDS","All"].map(d => <option key={d}>{d}</option>)}
+                      </select>
+                      <input type="date" value={dl.deadline}
+                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                        className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                      <input type="text" placeholder="Note (optional)" value={dl.note}
+                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].note = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                        className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                      <button type="button"
+                        onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
+                        className="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center gap-3">
                     <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={uniForm.admissionOpen}
-                        onChange={(e) =>
-                          setUniForm((p) => ({
-                            ...p,
-                            admissionOpen: e.target.checked,
-                          }))
-                        }
-                        className="rounded"
-                      />
+                      <input type="checkbox" checked={uniForm.admissionOpen}
+                        onChange={(e) => setUniForm((p) => ({ ...p, admissionOpen: e.target.checked }))}
+                        className="rounded" />
                       Admission Currently Open
                     </label>
                   </div>
+
                   <div className="flex items-center gap-3">
                     <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
                       <input
