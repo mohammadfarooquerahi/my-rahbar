@@ -4,6 +4,7 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import AIChatWidget from "./components/common/AIChatWidget";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,6 +53,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
+      <Toaster position="top-center" />
       <Navbar />
       <main className="flex-1">
         <Suspense fallback={<PageLoader />}>
