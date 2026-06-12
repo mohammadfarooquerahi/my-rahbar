@@ -20,7 +20,13 @@ async function generateWithRetry(prompt, maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`Trying model: ${modelName} (attempt ${attempt}/${maxRetries})`);
-        const model = genAI.getGenerativeModel({ model: modelName });
+        
+        // Enable Google Search Grounding to fetch latest real-time data
+        const model = genAI.getGenerativeModel({ 
+          model: modelName,
+          tools: [{ googleSearch: {} }]
+        });
+        
         const result = await model.generateContent(prompt);
         const text = result.response.text();
         console.log(`Success with model: ${modelName}`);
@@ -64,8 +70,9 @@ async function generateWithRetry(prompt, maxRetries = 3) {
 }
 
 const PROMPT_TEMPLATE = (universityName) => `You are a professional university data researcher for Pakistan. 
-Find the official, real, and current data for "${universityName}" in Pakistan.
-Verify details from HEC records, official university websites, and recent prospectus.
+You MUST use Google Search to find the absolute latest, real, and current 2026 data for "${universityName}" in Pakistan.
+You must strictly verify details from the official university website and HEC records.
+Ensure admission dates, test dates, and fee structures are 100% REAL and accurate. DO NOT make up data.
 
 Return ONLY valid JSON (no markdown, no backticks) matching this exact structure:
 {
@@ -81,7 +88,7 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
   "admissionFee": 3500,
   "admissionOpen": true,
   "admissionDeadlines": [
-    { "degreeLevel": "BS", "deadline": "2024-08-30", "note": "Fall 2024" }
+    { "degreeLevel": "BS", "deadline": "2026-08-30", "note": "Fall 2026" }
   ],
   "hostelAvailable": true,
   "matricWeight": 0.10,
@@ -96,7 +103,7 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
       "category": "CS",
       "degreeLevel": "BS",
       "semesterFee": 25000,
-      "lastMerit": [ { "year": 2023, "closing": 75.5 } ],
+      "lastMerit": [ { "year": 2025, "closing": 75.5 } ],
       "meritSeats": 60,
       "selfFinanceSeats": 40
     }
@@ -104,6 +111,7 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
 }
 
 IMPORTANT RULES:
+- Use Google Search to fetch REAL, LATEST 2026 DATA. If exact 2026 fees/merit aren't out, use the most recent confirmed 2025 data.
 - Fill ALL fields with REAL data from the actual university.
 - Include ALL major departments (minimum 10 departments if available).
 - Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
