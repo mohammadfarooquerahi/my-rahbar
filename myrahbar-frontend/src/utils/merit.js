@@ -36,14 +36,17 @@ export function formatFee(amount) {
 
 // How many days until deadline
 export function daysUntilDeadline(dateStr) {
-  const now = new Date();
+  if (!dateStr) return null;
   const deadline = new Date(dateStr);
+  if (isNaN(deadline.getTime())) return null;
+  const now = new Date();
   const diff = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
   return diff;
 }
 
 // Return label and color for deadline countdown
 export function deadlineLabel(days) {
+  if (days === null || isNaN(days)) return { text: "Not Announced", color: "gray" };
   if (days < 0) return { text: "Deadline Passed", color: "red" };
   if (days === 0) return { text: "Last Day Today!", color: "red" };
   if (days <= 7) return { text: days + " days left", color: "orange" };

@@ -225,7 +225,7 @@ export default function UniversityDetailPage() {
           Authorization: "Bearer " + token,
         },
         body: JSON.stringify({
-          universityId: uni._id,
+          universityId: uniId,
           universityName: uni.name,
           deadline: uni.admissionDeadline,
         }),
