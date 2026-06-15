@@ -12,7 +12,7 @@ import { KARACHI_UNIVERSITIES } from "../data/universities";
 import { calculateAggregate, getMeritStatus } from "../utils/merit";
 
 export default function MeritCalculatorPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Live universities from API, fallback to static data
   const [allUniversities, setAllUniversities] = useState(KARACHI_UNIVERSITIES);
@@ -31,6 +31,20 @@ export default function MeritCalculatorPage() {
   const [selectedUniSlug, setSelectedUniSlug] = useState(
     searchParams.get("uni") || "",
   );
+
+  // Sync URL when university selection changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (selectedUniSlug) {
+      params.set("uni", selectedUniSlug);
+    } else {
+      params.delete("uni");
+    }
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [selectedUniSlug, searchParams, setSearchParams]);
+
   const [selectedDeptName, setSelectedDeptName] = useState("");
   const [matric, setMatric] = useState("");
   const [fsc, setFsc] = useState("");

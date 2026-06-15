@@ -21,7 +21,11 @@ const departmentSchema = new mongoose.Schema({
 });
 
 const admissionDeadlineSchema = new mongoose.Schema({
+  round: { type: String, default: "Round 1" },
   degreeLevel: { type: String, enum: ["BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "All"], default: "All" },
+  testDate: { type: Date },
+  testCities: [{ type: String }],
+  resultDate: { type: Date },
   deadline: { type: Date },
   note: { type: String, default: "" },
 });
@@ -42,9 +46,10 @@ const universitySchema = new mongoose.Schema(
 
     admissionOpen: { type: Boolean, default: false },
     admissionDeadline: { type: Date },                   // kept for backward compat
-    admissionDeadlines: [admissionDeadlineSchema],       // NEW: per-degree deadlines
+    admissionDeadlines: [admissionDeadlineSchema],       // NEW: per-degree/round deadlines
     admissionProcess: { type: String, default: "" },
     requiredDocuments: [{ type: String }],
+    eligibilityCriteria: { type: String, default: "" },  // e.g. "Intermediate 65%"
 
     aggregateFormula: {
       matric: { type: Number, default: 0.1 },
@@ -53,6 +58,16 @@ const universitySchema = new mongoose.Schema(
       portfolio: { type: Number, default: 0 },
     },
     testRequired: { type: String, default: "Own Entry Test" },
+    testDetails: {
+      totalMcqs: { type: Number, default: 0 },
+      negativeMarking: { type: Boolean, default: false },
+      syllabus: [
+        {
+          category: { type: String }, // e.g., Pre-Medical, ICS
+          details: { type: String },  // e.g., Biology 30%, Chemistry 30%
+        }
+      ]
+    },
 
     // Structured test type badge
     admissionTestType: {
@@ -61,7 +76,14 @@ const universitySchema = new mongoose.Schema(
       default: "Own Test",
     },
 
-    admissionFee: { type: Number, default: 0 },
+    feeStructure: [
+      {
+        title: { type: String },
+        amount: { type: Number },
+        description: { type: String }
+      }
+    ],
+    admissionFee: { type: Number, default: 0 }, // kept for compat
     hostelAvailable: { type: Boolean, default: false },
     hostelFee: { type: Number, default: null },
     messFee: { type: Number, default: null },
@@ -70,6 +92,8 @@ const universitySchema = new mongoose.Schema(
 
     overallRating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
+    
+    isVerified: { type: Boolean, default: false },
 
     status: {
       type: String,

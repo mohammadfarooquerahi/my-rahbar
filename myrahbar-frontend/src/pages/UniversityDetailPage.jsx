@@ -388,10 +388,15 @@ export default function UniversityDetailPage() {
                     </div>
 
                     <h1
-                      className="text-2xl font-bold"
+                      className="text-2xl font-bold flex items-center gap-2"
                       style={{ fontFamily: "Sora", color: "var(--navy)" }}
                     >
                       {uni.name}
+                      {uni.isVerified && (
+                        <span title="Human Verified" className="flex items-center justify-center w-5 h-5 bg-green-100 text-green-600 rounded-full text-[10px]">
+                          ✅
+                        </span>
+                      )}
                     </h1>
 
                     <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
@@ -480,6 +485,16 @@ export default function UniversityDetailPage() {
                 {/* OVERVIEW */}
                 {activeTab === "Overview" && (
                   <div className="space-y-6">
+                    {uni.eligibilityCriteria && (
+                      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                        <h4 className="font-semibold text-blue-800 mb-1 flex items-center gap-2">
+                          <CheckCircle size={16} />
+                          Eligibility Criteria
+                        </h4>
+                        <p className="text-sm text-blue-700">{uni.eligibilityCriteria}</p>
+                      </div>
+                    )}
+
                     <h3
                       className="font-semibold text-slate-800"
                       style={{ fontFamily: "Sora" }}
@@ -634,12 +649,33 @@ export default function UniversityDetailPage() {
                       </div>
                     )}
 
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    {uni.testDetails?.syllabus?.length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-slate-700">📚 Entry Test Syllabus</h4>
+                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
+                            {uni.testDetails.totalMcqs} MCQs {uni.testDetails.negativeMarking ? "| Negative Marking" : "| No Negative Marking"}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {uni.testDetails.syllabus.map(syl => (
+                            <div key={syl.category} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                              <p className="text-sm font-bold text-slate-800 mb-1">{syl.category}</p>
+                              <p className="text-xs text-slate-600 leading-relaxed">{syl.details}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex justify-between items-center flex-wrap gap-2">
                       <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
                         <AlertCircle size={14} />
-                        Admission Fee: {formatFee(uni.admissionFee)}{" "}
-                        (non-refundable)
+                        Admission Processing Fee:
                       </p>
+                      <span className="font-bold text-amber-900" style={{ fontFamily: "DM Mono" }}>
+                        {formatFee(uni.admissionFee)} (non-refundable)
+                      </span>
                     </div>
 
                     <Link
@@ -696,13 +732,34 @@ export default function UniversityDetailPage() {
                         </tbody>
                       </table>
                     </div>
+                    {uni.feeStructure?.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
+                          Other Fee Types
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {uni.feeStructure.map((fee, idx) => (
+                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+                              <div>
+                                <p className="font-medium text-slate-700 text-sm">{fee.title}</p>
+                                {fee.description && <p className="text-xs text-slate-500 mt-0.5">{fee.description}</p>}
+                              </div>
+                              <span className="font-bold text-slate-800" style={{ fontFamily: "DM Mono" }}>
+                                {formatFee(fee.amount)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                      <p className="text-sm font-medium text-orange-800">
-                        💡 Hidden Charges Tip
+                      <p className="text-sm font-medium text-orange-800 flex items-center gap-2">
+                        <AlertCircle size={14} /> Hidden Charges Tip
                       </p>
                       <p className="text-xs text-orange-700 mt-1">
                         Students often report extra costs like printing, library
-                        card, sports fund. Always ask a current student before
+                        card, and sports fund. Always ask a current student before
                         applying.
                       </p>
                     </div>
@@ -983,21 +1040,56 @@ export default function UniversityDetailPage() {
                         🗓 Admission Deadlines by Program
                       </h3>
                       {uni.admissionDeadlines?.length > 0 ? (
-                        <div className="space-y-2">
+                        <div className="grid gap-3">
                           {uni.admissionDeadlines.map((dl, i) => {
                             const d = new Date(dl.deadline);
                             const diff = Math.ceil((d - new Date()) / 86400000);
-                            const color = diff < 0 ? "text-red-500" : diff <= 7 ? "text-orange-500" : "text-green-600";
+                            const color = diff < 0 ? "text-red-500 bg-red-50" : diff <= 7 ? "text-orange-600 bg-orange-50" : "text-green-600 bg-green-50";
+                            
                             return (
-                              <div key={i} className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
-                                <div className="flex items-center gap-3">
-                                  <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
-                                  <span className="text-sm text-slate-700">{d.toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })}</span>
-                                  {dl.note && <span className="text-xs text-slate-400">({dl.note})</span>}
+                              <div key={i} className="bg-white rounded-xl p-4 border border-slate-200">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    {dl.round && <span className="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full">{dl.round}</span>}
+                                    <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
+                                  </div>
+                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${color}`}>
+                                    {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff} days left`}
+                                  </span>
                                 </div>
-                                <span className={`text-sm font-bold ${color}`}>
-                                  {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff}d left`}
-                                </span>
+                                <div className="grid grid-cols-2 gap-2 text-sm text-slate-600">
+                                  <div>
+                                    <p className="text-xs text-slate-400">Application Deadline</p>
+                                    <p className="font-medium text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                  </div>
+                                  {dl.testDate && (
+                                    <div>
+                                      <p className="text-xs text-slate-400">Test Date</p>
+                                      <p className="font-medium text-slate-800">{new Date(dl.testDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                    </div>
+                                  )}
+                                  {dl.resultDate && (
+                                    <div>
+                                      <p className="text-xs text-slate-400">Result Date</p>
+                                      <p className="font-medium text-slate-800">{new Date(dl.resultDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                    </div>
+                                  )}
+                                  {dl.testCities?.length > 0 && (
+                                    <div className="col-span-2">
+                                      <p className="text-xs text-slate-400">Test Cities</p>
+                                      <p className="font-medium text-slate-800 flex flex-wrap gap-1 mt-1">
+                                        {dl.testCities.map(city => (
+                                          <span key={city} className="bg-slate-100 px-2 py-0.5 rounded text-xs">{city}</span>
+                                        ))}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {dl.note && (
+                                    <div className="col-span-2 mt-1">
+                                      <p className="text-xs text-slate-500 italic">Note: {dl.note}</p>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             );
                           })}

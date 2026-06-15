@@ -2,14 +2,31 @@ const University = require("../models/University");
 const Review = require("../models/Review");
 // GET /api/universities
 const getAll = async (req, res) => {
-  const { type, city, open } = req.query;
+  const { type, city, open, degree, dept, maxFee, maxMerit } = req.query;
 
   // FIX: Changed from { status: "approved" } to an empty object
   // This allows all universities to show on the Home Page regardless of status
   const filter = {};
   if (type) filter.type = type;
-  if (city) filter.city = city;
+  if (city) filter.city = { $regex: new RegExp(`^${city}$`, "i") };
   if (open === "true") filter.admissionOpen = true;
+  
+  if (degree) {
+    filter.degreeLevels = { $regex: new RegExp(`^${degree}$`, "i") };
+  }
+  
+  if (dept) {
+    filter["departments.name"] = { $regex: new RegExp(dept, "i") };
+  }
+
+  if (maxFee) {
+    filter.admissionFee = { $lte: Number(maxFee) };
+  }
+
+  // maxMerit implies we only want universities where the last merit was less than or equal to this
+  if (maxMerit) {
+    filter["departments.lastMerit.closingPercentage"] = { $lte: Number(maxMerit) };
+  }
 
   const universities = await University.find(filter).sort({
     overallRating: -1,

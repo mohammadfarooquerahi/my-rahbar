@@ -8,9 +8,17 @@ import UniversityCard from "../components/university/UniversityCard";
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [openOnly, setOpenOnly] = useState(false);
+  const [typeFilter, setTypeFilter] = useState(searchParams.get("type") || "all");
+  const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category") || "all");
+  const [openOnly, setOpenOnly] = useState(searchParams.get("openOnly") === "true");
+  
+  // New Advanced Filters
+  const [degreeLevel, setDegreeLevel] = useState(searchParams.get("degreeLevel") || "all");
+  const [department, setDepartment] = useState(searchParams.get("dept") || "");
+  const [cityFilter, setCityFilter] = useState(searchParams.get("city") || "all");
+  const [maxFee, setMaxFee] = useState(searchParams.get("maxFee") || "");
+  const [maxMerit, setMaxMerit] = useState(searchParams.get("maxMerit") || "");
+
   const [allUnis, setAllUnis] = useState([]);
   const [results, setResults] = useState([]);
   const [loadingUnis, setLoadingUnis] = useState(true);
@@ -48,44 +56,84 @@ export default function SearchPage() {
         const deptMatch = uni.departments?.some(
           (d) =>
             d.name.toLowerCase().includes(q) ||
-            d.category.toLowerCase().includes(q),
+            d.category?.toLowerCase().includes(q),
         );
         return nameMatch || shortMatch || deptMatch;
       });
     }
 
     if (typeFilter !== "all") {
-      filtered = filtered.filter((u) => u.type === typeFilter);
+      filtered = filtered.filter((uni) => uni.type === typeFilter);
     }
-
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((u) =>
-        u.departments?.some(
-          (d) => d.category.toLowerCase() === categoryFilter.toLowerCase(),
-        ),
+      filtered = filtered.filter((uni) =>
+        uni.departments?.some((d) => d.category === categoryFilter),
+      );
+    }
+    if (openOnly) {
+      filtered = filtered.filter((uni) => uni.admissionOpen);
+    }
+    if (degreeLevel !== "all") {
+      filtered = filtered.filter((uni) => 
+        uni.admissionDeadlines?.some(dl => dl.degreeLevel === degreeLevel || dl.degreeLevel === "All")
+      );
+    }
+    if (department.trim()) {
+      const q = department.toLowerCase();
+      filtered = filtered.filter((uni) =>
+        uni.departments?.some((d) => d.name.toLowerCase().includes(q))
+      );
+    }
+    if (cityFilter !== "all") {
+      filtered = filtered.filter((uni) => uni.city === cityFilter);
+    }
+    if (maxFee) {
+      filtered = filtered.filter((uni) =>
+        uni.departments?.some((d) => d.semesterFee <= Number(maxFee))
+      );
+    }
+    if (maxMerit) {
+      filtered = filtered.filter((uni) =>
+        uni.departments?.some((d) => d.lastMerit?.[0]?.closing <= Number(maxMerit))
       );
     }
 
-    if (openOnly) {
-      filtered = filtered.filter((u) => u.admissionOpen);
-    }
-
     setResults(filtered);
-  }, [query, typeFilter, categoryFilter, openOnly, allUnis]);
+  }, [query, typeFilter, categoryFilter, openOnly, degreeLevel, department, cityFilter, maxFee, maxMerit, allUnis]);
+
+  // Sync URL Params
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (typeFilter !== "all") params.set("type", typeFilter);
+    if (categoryFilter !== "all") params.set("category", categoryFilter);
+    if (openOnly) params.set("openOnly", "true");
+    if (degreeLevel !== "all") params.set("degreeLevel", degreeLevel);
+    if (department) params.set("dept", department);
+    if (cityFilter !== "all") params.set("city", cityFilter);
+    if (maxFee) params.set("maxFee", maxFee);
+    if (maxMerit) params.set("maxMerit", maxMerit);
+    setSearchParams(params, { replace: true });
+  }, [query, typeFilter, categoryFilter, openOnly, degreeLevel, department, cityFilter, maxFee, maxMerit, setSearchParams]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearchParams(query ? { q: query } : {});
+    // The useEffect hooks above handle everything locally since we fetched all unis!
   };
 
   const clearFilters = () => {
     setTypeFilter("all");
     setCategoryFilter("all");
     setOpenOnly(false);
+    setDegreeLevel("all");
+    setDepartment("");
+    setCityFilter("all");
+    setMaxFee("");
+    setMaxMerit("");
   };
 
   const hasFilters =
-    typeFilter !== "all" || categoryFilter !== "all" || openOnly;
+    typeFilter !== "all" || categoryFilter !== "all" || openOnly || degreeLevel !== "all" || department !== "" || cityFilter !== "all" || maxFee !== "" || maxMerit !== "";
 
   return (
     <main>
@@ -136,50 +184,98 @@ export default function SearchPage() {
           </div>
         </form>
 
-        <div className="flex flex-wrap items-center gap-3 mb-8">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <SlidersHorizontal size={15} />
-            <span>Filter:</span>
-          </div>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700"
-          >
-            <option value="all">All Types</option>
-            <option value="government">Government</option>
-            <option value="private">Private</option>
-          </select>
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700"
-          >
-            <option value="all">All Fields</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={openOnly}
-              onChange={(e) => setOpenOnly(e.target.checked)}
-              className="rounded"
-            />
-            Open Admissions Only
-          </label>
-          {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1"
+          <div className="grid grid-cols-2 sm:flex flex-wrap items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 text-sm text-slate-500 w-full sm:w-auto col-span-2">
+              <SlidersHorizontal size={15} />
+              <span>Basic Filters:</span>
+            </div>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
             >
-              <X size={13} /> Clear
-            </button>
-          )}
-        </div>
+              <option value="all">All Types</option>
+              <option value="government">Government</option>
+              <option value="private">Private</option>
+            </select>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            >
+              <option value="all">All Fields</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer w-full sm:w-auto bg-white px-3 py-1.5 border border-slate-200 rounded-xl">
+              <input
+                type="checkbox"
+                checked={openOnly}
+                onChange={(e) => setOpenOnly(e.target.checked)}
+                className="w-4 h-4 rounded"
+              />
+              Admissions Open
+            </label>
+            {hasFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-sm font-medium text-red-500 hover:text-red-600 w-full sm:w-auto"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 sm:flex flex-wrap items-center gap-3 mb-8 pb-4 border-b border-slate-100">
+             <div className="flex items-center gap-2 text-sm text-slate-500 w-full sm:w-auto col-span-2">
+              <span>Advanced Filters:</span>
+            </div>
+            <select
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            >
+              <option value="all">All Cities</option>
+              {Array.from(new Set(allUnis.map(u => u.city).filter(Boolean))).map(city => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
+            <select
+              value={degreeLevel}
+              onChange={(e) => setDegreeLevel(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            >
+              <option value="all">All Degrees</option>
+              <option value="BS">BS / Undergraduate</option>
+              <option value="MS">MS / MPhil</option>
+              <option value="PhD">PhD / Doctorate</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Department (e.g. CS)"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            />
+            <input
+              type="number"
+              placeholder="Max Fee/Sem (PKR)"
+              value={maxFee}
+              onChange={(e) => setMaxFee(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            />
+            <input
+              type="number"
+              placeholder="Max Merit %"
+              value={maxMerit}
+              onChange={(e) => setMaxMerit(e.target.value)}
+              className="text-sm border border-slate-200 rounded-xl px-3 py-1.5 bg-white outline-none text-slate-700 w-full sm:w-auto"
+            />
+          </div>
+
 
         <div className="flex items-center justify-between mb-5">
           <p className="text-sm text-slate-500">

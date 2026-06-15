@@ -32,14 +32,19 @@ import { useWatchlistStore, useAuthStore } from "../store";
 import Logo from "../components/common/Logo";
 
 export default function HomePage() {
-  const [query, setQuery] = useState("");
+  const [degreeLevel, setDegreeLevel] = useState("");
+  const [department, setDepartment] = useState("");
   const navigate = useNavigate();
   const { universities: savedUnis } = useWatchlistStore();
   const { isLoggedIn, user } = useAuthStore();
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (query.trim()) navigate("/search?q=" + encodeURIComponent(query.trim()));
+    const params = new URLSearchParams();
+    if (degreeLevel) params.set("degreeLevel", degreeLevel);
+    if (department) params.set("dept", department);
+    if (params.toString()) navigate("/search?" + params.toString());
+    else navigate("/search");
   };
 
   const [universities, setUniversities] = useState([]);
@@ -342,25 +347,40 @@ export default function HomePage() {
             expert counseling — all in one place, completely free.
           </p>
 
-          {/* Search Bar - Glassmorphism */}
+          {/* Search Bar - 2 Step Glassmorphism */}
           <form
             onSubmit={handleSearch}
-            className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
+            className="fade-up-3 max-w-3xl mx-auto mb-8 relative group"
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-            <div className="relative flex items-center bg-white backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 gap-2 transition-all">
-              <Search size={22} className="text-blue-600 ml-3 shrink-0" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search University or Department..."
-                className="flex-1 py-4 px-2 text-slate-900 placeholder:text-slate-400 outline-none text-base bg-transparent font-medium"
-              />
+            <div className="relative flex flex-col sm:flex-row items-center bg-white backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 gap-2 transition-all">
+              <div className="flex-1 w-full flex items-center border-b sm:border-b-0 sm:border-r border-slate-200 px-3 py-2 sm:py-0">
+                <select 
+                  value={degreeLevel} 
+                  onChange={(e) => setDegreeLevel(e.target.value)} 
+                  className="w-full py-2 bg-transparent text-slate-900 outline-none text-base font-medium cursor-pointer"
+                >
+                  <option value="" disabled>Select Degree Level</option>
+                  <option value="BS">BS / Undergraduate</option>
+                  <option value="MS">MS / MPhil</option>
+                  <option value="PhD">PhD / Doctorate</option>
+                  <option value="Other">Other (Diplomas/Certificates)</option>
+                </select>
+              </div>
+              <div className="flex-1 w-full flex items-center px-3 py-2 sm:py-0">
+                <Search size={20} className="text-blue-600 mr-2 shrink-0" />
+                <input
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  placeholder="Which program? (e.g. Computer Science)"
+                  className="w-full py-2 bg-transparent text-slate-900 outline-none text-base font-medium placeholder:text-slate-400"
+                />
+              </div>
               <button
                 type="submit"
-                className="px-6 sm:px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
               >
-                Search
+                Find Universities
               </button>
             </div>
           </form>

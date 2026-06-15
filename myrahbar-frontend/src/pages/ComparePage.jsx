@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Plus, X, BarChart2, Check, Minus } from "lucide-react";
@@ -6,16 +6,54 @@ import { KARACHI_UNIVERSITIES } from "../data/universities";
 import { formatFee } from "../utils/merit";
 
 export default function ComparePage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [allUniversities, setAllUniversities] = useState(KARACHI_UNIVERSITIES);
+  const [selected, setSelected] = useState([]);
 
-  const initialSlug = searchParams.get("uni1") || "";
-  const initialUni = KARACHI_UNIVERSITIES.find((u) => u.slug === initialSlug);
+  // Fetch real universities
+  useEffect(() => {
+    fetch("/api/universities")
+      .then((r) => r.json())
+      .then((data) => {
+        const unis = data.universities || [];
+        if (unis.length > 0) {
+          const formattedUnis = unis.map((u) => ({ ...u, id: u._id || u.id }));
+          setAllUniversities(formattedUnis);
 
-  const [selected, setSelected] = useState(initialUni ? [initialUni] : []);
+          // Once data is loaded, populate `selected` array from URL params
+          const u1 = formattedUnis.find(u => u.slug === searchParams.get("uni1"));
+          const u2 = formattedUnis.find(u => u.slug === searchParams.get("uni2"));
+          const u3 = formattedUnis.find(u => u.slug === searchParams.get("uni3"));
+          const initialSelection = [u1, u2, u3].filter(Boolean);
+          setSelected(initialSelection);
+        }
+      })
+      .catch(() => {
+        // Fallback to static if API fails
+        const u1 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni1"));
+        const u2 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni2"));
+        const u3 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni3"));
+        setSelected([u1, u2, u3].filter(Boolean));
+      });
+  }, [searchParams]);
+
+  // Sync URL when selection changes manually (add/remove)
+  useEffect(() => {
+    if (selected.length === 0) return; // Wait for initial load
+    const params = new URLSearchParams(searchParams);
+    if (selected[0]) params.set("uni1", selected[0].slug); else params.delete("uni1");
+    if (selected[1]) params.set("uni2", selected[1].slug); else params.delete("uni2");
+    if (selected[2]) params.set("uni3", selected[2].slug); else params.delete("uni3");
+    
+    // Only update if changed to avoid infinite loop
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [selected, searchParams, setSearchParams]);
 
   const addUniversity = (slug) => {
     if (selected.length >= 3) return;
-    const uni = KARACHI_UNIVERSITIES.find((u) => u.slug === slug);
+    const uni = allUniversities.find((u) => u.slug === slug);
     if (uni && !selected.find((s) => s.id === uni.id)) {
       setSelected([...selected, uni]);
     }
@@ -23,9 +61,16 @@ export default function ComparePage() {
 
   const removeUniversity = (id) => {
     setSelected(selected.filter((u) => u.id !== id));
+    // When removing, we need to immediately update URL to drop the removed param
+    const remaining = selected.filter((u) => u.id !== id);
+    const params = new URLSearchParams();
+    if (remaining[0]) params.set("uni1", remaining[0].slug);
+    if (remaining[1]) params.set("uni2", remaining[1].slug);
+    if (remaining[2]) params.set("uni3", remaining[2].slug);
+    setSearchParams(params, { replace: true });
   };
 
-  const available = KARACHI_UNIVERSITIES.filter(
+  const available = allUniversities.filter(
     (u) => !selected.find((s) => s.id === u.id),
   );
 

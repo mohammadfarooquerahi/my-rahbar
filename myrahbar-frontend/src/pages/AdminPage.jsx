@@ -57,17 +57,25 @@ const EMPTY_UNI = {
   established: "",
   website: "",
   admissionOpen: true,
+  eligibilityCriteria: "",
   admissionDeadline: "",
   admissionDeadlines: [],
   admissionTestType: "Own Test",
   testRequired: "",
+  testDetails: {
+    totalMcqs: 0,
+    negativeMarking: false,
+    syllabus: []
+  },
   admissionFee: "",
+  feeStructure: [],
   hostelAvailable: false,
   hostelFee: "",
   messFee: "",
   aggregateFormula: { matric: 0.1, fsc: 0.4, test: 0.5 },
   scholarships: "",
   requiredDocuments: "",
+  isVerified: false,
   departments: [],
 };
 
@@ -496,19 +504,23 @@ export default function AdminPage() {
       established: uni.established,
       website: uni.website,
       admissionOpen: uni.admissionOpen,
+      eligibilityCriteria: uni.eligibilityCriteria || "",
       admissionDeadline: uni.admissionDeadline
         ? new Date(uni.admissionDeadline).toISOString().split("T")[0]
         : "",
       admissionDeadlines: uni.admissionDeadlines || [],
       admissionTestType: uni.admissionTestType || "Own Test",
       testRequired: uni.testRequired,
+      testDetails: uni.testDetails || { totalMcqs: 0, negativeMarking: false, syllabus: [] },
       admissionFee: uni.admissionFee,
+      feeStructure: uni.feeStructure || [],
       hostelAvailable: uni.hostelAvailable,
       hostelFee: uni.hostelFee || "",
       messFee: uni.messFee || "",
       aggregateFormula: uni.aggregateFormula,
       scholarships: uni.scholarships?.join(", ") || "",
       requiredDocuments: uni.requiredDocuments?.join(", ") || "",
+      isVerified: uni.isVerified || false,
     });
     setDepartments(uni.departments || []);
     setActiveTab("Add University");
@@ -1282,6 +1294,34 @@ export default function AdminPage() {
                       className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
                     />
                   </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-slate-500 mb-1">
+                      Eligibility Criteria
+                    </label>
+                    <input
+                      value={uniForm.eligibilityCriteria}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, eligibilityCriteria: e.target.value }))
+                      }
+                      placeholder="e.g. Intermediate (Pre-Engineering/Computer Science) with minimum 60% marks"
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer mt-2">
+                      <input
+                        type="checkbox"
+                        checked={uniForm.isVerified}
+                        onChange={(e) =>
+                          setUniForm((p) => ({ ...p, isVerified: e.target.checked }))
+                        }
+                        className="w-4 h-4 text-green-600 rounded"
+                      />
+                      <span className="text-sm font-bold text-slate-700 flex items-center gap-1">
+                        <span className="text-green-500">✅</span> Mark as Verified
+                      </span>
+                    </label>
+                  </div>
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">
                       Entry Test Required
@@ -1335,51 +1375,109 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Per-Degree Deadlines */}
+                {/* Advanced Deadlines */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-slate-600">📅 Deadlines by Degree Level</p>
+                    <p className="text-xs font-semibold text-slate-600">📅 Advanced Deadlines (Rounds & Tests)</p>
                     <button type="button"
-                      onClick={() => setUniForm(p => ({ ...p, admissionDeadlines: [...(p.admissionDeadlines||[]), { degreeLevel: "BS", deadline: "", note: "" }] }))}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-800">+ Add Deadline</button>
+                      onClick={() => setUniForm(p => ({ ...p, admissionDeadlines: [...(p.admissionDeadlines||[]), { round: "Round 1", degreeLevel: "BS", testDate: "", testCities: [], resultDate: "", deadline: "", note: "" }] }))}
+                      className="text-xs font-bold text-blue-600 hover:text-blue-800">+ Add Deadline Round</button>
                   </div>
                   {(uniForm.admissionDeadlines || []).map((dl, i) => (
-                    <div key={i} className="flex items-center gap-2 mb-2">
-                      <select value={dl.degreeLevel}
-                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].degreeLevel = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                        className="border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400 bg-white">
-                        {["BS","MS","PhD","BBA","MBA","MBBS","BDS","All"].map(d => <option key={d}>{d}</option>)}
-                      </select>
-                      <input type="date" value={dl.deadline}
-                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                        className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
-                      <input type="text" placeholder="Note (optional)" value={dl.note}
-))}
-                      <button type="button"
-                        onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
-                        className="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>
+                    <div key={i} className="flex flex-col gap-2 mb-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                      <div className="flex items-center gap-2">
+                        <input type="text" placeholder="Round (e.g. Round 1)" value={dl.round || ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].round = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                        <select value={dl.degreeLevel}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].degreeLevel = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400 bg-white">
+                          {["BS","MS","PhD","BBA","MBA","MBBS","BDS","All"].map(d => <option key={d}>{d}</option>)}
+                        </select>
+                        <input type="date" title="Application Deadline" value={dl.deadline || ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                        <button type="button"
+                          onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
+                          className="text-red-400 hover:text-red-600 text-xs font-bold p-2">✕</button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input type="date" title="Test Date" value={dl.testDate ? dl.testDate.split("T")[0] : ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].testDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                        <input type="date" title="Result Date" value={dl.resultDate ? dl.resultDate.split("T")[0] : ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].resultDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                        <input type="text" placeholder="Test Cities (comma separated)" value={dl.testCities ? dl.testCities.join(", ") : ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].testCities = e.target.value.split(",").map(c=>c.trim()).filter(Boolean); setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                      </div>
+                      <div>
+                         <input type="text" placeholder="Note (optional)" value={dl.note || ""}
+                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].note = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                          className="w-full border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {/* FAQs Section */}
+                {/* Test Details Section */}
                 <div className="pt-4 border-t border-slate-100">
+                  <p className="text-sm font-semibold text-slate-700 mb-3">Test Details</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Total MCQs</label>
+                      <input type="number" value={uniForm.testDetails?.totalMcqs || ""}
+                        onChange={(e) => setUniForm(p => ({ ...p, testDetails: { ...(p.testDetails||{}), totalMcqs: parseInt(e.target.value)||0 } }))}
+                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                    <div className="flex items-center gap-2 mt-6">
+                      <input type="checkbox" checked={uniForm.testDetails?.negativeMarking || false}
+                        onChange={(e) => setUniForm(p => ({ ...p, testDetails: { ...(p.testDetails||{}), negativeMarking: e.target.checked } }))}
+                        className="w-4 h-4" />
+                      <label className="text-sm text-slate-600">Negative Marking</label>
+                    </div>
+                  </div>
+                  
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-bold text-slate-600 block">FAQs</label>
-                    <button type="button" onClick={() => setBlogForm({...blogForm, faqs: [...(blogForm.faqs || []), {question: '', answer: ''}]})} className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">
-                      + Add FAQ
+                    <label className="text-xs font-bold text-slate-600 block">Test Syllabus Categories</label>
+                    <button type="button" onClick={() => setUniForm(p => ({...p, testDetails: { ...(p.testDetails||{}), syllabus: [...(p.testDetails?.syllabus || []), {category: '', details: ''}]}}))} className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">
+                      + Add Category
                     </button>
                   </div>
                   <div className="space-y-3">
-                    {(blogForm.faqs || []).map((faq, idx) => (
+                    {(uniForm.testDetails?.syllabus || []).map((syl, idx) => (
                       <div key={idx} className="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
                         <div className="flex items-center justify-between gap-2">
-                          <input placeholder="Question" className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
-                            value={faq.question} onChange={e => { const newFaqs = [...blogForm.faqs]; newFaqs[idx].question = e.target.value; setBlogForm({...blogForm, faqs: newFaqs})}} />
-                          <button type="button" onClick={() => { const newFaqs = blogForm.faqs.filter((_, i) => i !== idx); setBlogForm({...blogForm, faqs: newFaqs}) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
+                          <input placeholder="Category (e.g. Pre-Medical)" className="w-1/3 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                            value={syl.category} onChange={e => { const newSyl = [...(uniForm.testDetails.syllabus||[])]; newSyl[idx].category = e.target.value; setUniForm(p => ({...p, testDetails: {...p.testDetails, syllabus: newSyl}}))}} />
+                          <input placeholder="Details (e.g. Bio 30%, Chem 30%)" className="flex-1 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                            value={syl.details} onChange={e => { const newSyl = [...(uniForm.testDetails.syllabus||[])]; newSyl[idx].details = e.target.value; setUniForm(p => ({...p, testDetails: {...p.testDetails, syllabus: newSyl}}))}} />
+                          <button type="button" onClick={() => { const newSyl = uniForm.testDetails.syllabus.filter((_, i) => i !== idx); setUniForm(p => ({...p, testDetails: {...p.testDetails, syllabus: newSyl}})) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
                         </div>
-                        <textarea rows={2} placeholder="Answer" className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400 resize-none"
-                          value={faq.answer} onChange={e => { const newFaqs = [...blogForm.faqs]; newFaqs[idx].answer = e.target.value; setBlogForm({...blogForm, faqs: newFaqs})}} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dynamic Fee Structure Section */}
+                <div className="pt-4 border-t border-slate-100 mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-semibold text-slate-700 block">Dynamic Fee Structure</label>
+                    <button type="button" onClick={() => setUniForm(p => ({...p, feeStructure: [...(p.feeStructure || []), {title: '', amount: '', description: ''}]}))} className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">
+                      + Add Fee Type
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {(uniForm.feeStructure || []).map((fee, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <input placeholder="Fee Title (e.g. Admission Fee)" className="w-1/3 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                          value={fee.title} onChange={e => { const arr = [...(uniForm.feeStructure||[])]; arr[idx].title = e.target.value; setUniForm(p => ({...p, feeStructure: arr}))}} />
+                        <input type="number" placeholder="Amount (PKR)" className="w-1/4 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                          value={fee.amount} onChange={e => { const arr = [...(uniForm.feeStructure||[])]; arr[idx].amount = parseInt(e.target.value)||0; setUniForm(p => ({...p, feeStructure: arr}))}} />
+                        <input placeholder="Description (optional)" className="flex-1 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                          value={fee.description} onChange={e => { const arr = [...(uniForm.feeStructure||[])]; arr[idx].description = e.target.value; setUniForm(p => ({...p, feeStructure: arr}))}} />
+                        <button type="button" onClick={() => { const arr = uniForm.feeStructure.filter((_, i) => i !== idx); setUniForm(p => ({...p, feeStructure: arr})) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
                       </div>
                     ))}
                   </div>

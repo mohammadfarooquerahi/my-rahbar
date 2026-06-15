@@ -85,10 +85,29 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
   "officialWebsite": "https://website.edu.pk",
   "admissionTestType": "NTS",
   "testRequired": "NAT-IE / NAT-ICS",
-  "admissionFee": 3500,
+  "testDetails": {
+    "totalMcqs": 100,
+    "negativeMarking": false,
+    "syllabus": [
+      { "category": "Pre-Medical", "details": "Biology 30%, Chemistry 30%, Physics 20%, English 20%" }
+    ]
+  },
   "admissionOpen": true,
+  "eligibilityCriteria": "Intermediate (Pre-Engineering/Computer Science) with minimum 60% marks",
   "admissionDeadlines": [
-    { "degreeLevel": "BS", "deadline": "2026-08-30", "note": "Fall 2026" }
+    { 
+      "round": "Round 1", 
+      "degreeLevel": "BS", 
+      "testDate": "2026-08-15", 
+      "testCities": ["Karachi", "Lahore", "Islamabad"], 
+      "resultDate": "2026-08-20", 
+      "deadline": "2026-08-10", 
+      "note": "Fall 2026 Admissions" 
+    }
+  ],
+  "feeStructure": [
+    { "title": "Admission Fee", "amount": 25000, "description": "One time payment" },
+    { "title": "Tuition Fee", "amount": 120000, "description": "Per semester" }
   ],
   "hostelAvailable": true,
   "matricWeight": 0.10,
@@ -102,10 +121,9 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
       "name": "BS Computer Science",
       "category": "CS",
       "degreeLevel": "BS",
-      "semesterFee": 25000,
-      "lastMerit": [ { "year": 2025, "closing": 75.5 } ],
-      "meritSeats": 60,
-      "selfFinanceSeats": 40
+      "semesterFee": 120000,
+      "lastMerit": [ { "year": 2025, "closing": 75.5, "closingPercentage": 75.5, "quota": "merit" } ],
+      "seats": { "merit": 60, "selfFinance": 40, "other": 0 }
     }
   ]
 }
