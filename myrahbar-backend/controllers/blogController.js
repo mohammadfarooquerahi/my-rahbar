@@ -92,7 +92,7 @@ const createBlog = async (req, res) => {
 
 // ─── PUT /api/blogs/:id (Admin only) ────────────────────────────────────────
 const updateBlog = async (req, res) => {
-  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor } = req.body;
+  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor, faqs } = req.body;
   const blog = await Blog.findById(req.params.id);
   if (!blog) return res.status(404).json({ message: "Blog not found" });
 
@@ -107,6 +107,11 @@ const updateBlog = async (req, res) => {
   if (seoDescription) blog.seoDescription = seoDescription;
   if (readTime) blog.readTime = Number(readTime);
   if (coverColor) blog.coverColor = coverColor;
+  
+  if (faqs) {
+    try { blog.faqs = typeof faqs === "string" ? JSON.parse(faqs) : faqs; } catch {}
+  }
+
   if (req.file) blog.featuredImage = `/uploads/blogs/${req.file.filename}`;
 
   await blog.save();

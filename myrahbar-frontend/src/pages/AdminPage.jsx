@@ -114,8 +114,13 @@ export default function AdminPage() {
   const [blogForm, setBlogForm] = useState({
     title: "", content: "", excerpt: "", category: "Admission Guide",
     tags: "", keywords: "", seoTitle: "", seoDescription: "",
-    status: "published", coverColor: "#EFF6FF", readTime: 5, file: null,
+    status: "published", coverColor: "#EFF6FF", readTime: 5, file: null, faqs: []
   });
+  const [trendingTopics, setTrendingTopics] = useState([]);
+  const [fetchingTopics, setFetchingTopics] = useState(false);
+  const [generatingBlog, setGeneratingBlog] = useState(false);
+  const [aiTopic, setAiTopic] = useState("");
+  const [aiGeo, setAiGeo] = useState("");
   const [editingBlog, setEditingBlog] = useState(null);
   const [newsForm, setNewsForm] = useState({
     title: "",
@@ -167,6 +172,50 @@ export default function AdminPage() {
     }
   };
 
+  const handleFetchTrendingTopics = async () => {
+    setFetchingTopics(true);
+    try {
+      const res = await fetch("/api/ai-collect/trending-topics", { headers });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch topics");
+      setTrendingTopics(data.topics || []);
+      showMsg("Trending topics fetched successfully!");
+    } catch (err) {
+      showMsg(err.message);
+    }
+    setFetchingTopics(false);
+  };
+
+  const handleGenerateAIBlog = async () => {
+    if (!aiTopic.trim()) return showMsg("Please enter a topic first.");
+    setGeneratingBlog(true);
+    showMsg("Generating blog... this usually takes 30-60 seconds.");
+    try {
+      const res = await fetch("/api/ai-collect/generate-blog", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ topic: aiTopic, geo: aiGeo })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to generate blog");
+      
+      setBlogForm({
+        ...blogForm,
+        title: data.title || "",
+        content: data.content || "",
+        excerpt: data.excerpt || "",
+        seoTitle: data.seoTitle || "",
+        seoDescription: data.seoDescription || "",
+        keywords: Array.isArray(data.keywords) ? data.keywords.join(", ") : data.keywords || "",
+        faqs: Array.isArray(data.faqs) ? data.faqs : [],
+      });
+      showMsg("Blog generated! You can now review and tweak it.");
+    } catch (err) {
+      showMsg(err.message);
+    }
+    setGeneratingBlog(false);
+  };
+
   const handleUploadBlog = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -181,6 +230,7 @@ export default function AdminPage() {
     formData.append("status", blogForm.status);
     formData.append("coverColor", blogForm.coverColor);
     formData.append("readTime", blogForm.readTime);
+    if (blogForm.faqs) formData.append("faqs", JSON.stringify(blogForm.faqs));
     if (blogForm.file) formData.append("featuredImage", blogForm.file);
     setLoading(true);
     try {
@@ -1304,13 +1354,35 @@ export default function AdminPage() {
                         onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
                         className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
                       <input type="text" placeholder="Note (optional)" value={dl.note}
-                        onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].note = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                        className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+))}
                       <button type="button"
                         onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
                         className="text-red-400 hover:text-red-600 text-xs font-bold">✕</button>
                     </div>
                   ))}
+                </div>
+
+                {/* FAQs Section */}
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-bold text-slate-600 block">FAQs</label>
+                    <button type="button" onClick={() => setBlogForm({...blogForm, faqs: [...(blogForm.faqs || []), {question: '', answer: ''}]})} className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">
+                      + Add FAQ
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {(blogForm.faqs || []).map((faq, idx) => (
+                      <div key={idx} className="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div className="flex items-center justify-between gap-2">
+                          <input placeholder="Question" className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                            value={faq.question} onChange={e => { const newFaqs = [...blogForm.faqs]; newFaqs[idx].question = e.target.value; setBlogForm({...blogForm, faqs: newFaqs})}} />
+                          <button type="button" onClick={() => { const newFaqs = blogForm.faqs.filter((_, i) => i !== idx); setBlogForm({...blogForm, faqs: newFaqs}) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
+                        </div>
+                        <textarea rows={2} placeholder="Answer" className="w-full bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400 resize-none"
+                          value={faq.answer} onChange={e => { const newFaqs = [...blogForm.faqs]; newFaqs[idx].answer = e.target.value; setBlogForm({...blogForm, faqs: newFaqs})}} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -1976,6 +2048,66 @@ export default function AdminPage() {
               <div className="bg-white border border-slate-100 rounded-2xl px-5 py-4">
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Total Views</p>
                 <p className="text-3xl font-black text-purple-600">{blogs.reduce((a, b) => a + (b.views || 0), 0)}</p>
+              </div>
+            </div>
+
+            {/* AI Blog Generator */}
+            <div className="bg-gradient-to-r from-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-xl mb-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                  <h3 className="font-black text-xl flex items-center gap-2">
+                    <Sparkles size={20} className="text-yellow-400" /> AI Blog Generator
+                  </h3>
+                  <p className="text-purple-200 text-sm mt-1">Generate complete SEO blogs with real-time 2026 data via Google Search.</p>
+                </div>
+                <button 
+                  onClick={handleFetchTrendingTopics}
+                  disabled={fetchingTopics}
+                  className="bg-white/20 hover:bg-white/30 backdrop-blur text-white text-sm font-bold px-4 py-2 rounded-xl transition-all"
+                >
+                  {fetchingTopics ? "Fetching..." : "🔥 Fetch Trending Topics"}
+                </button>
+              </div>
+
+              {trendingTopics.length > 0 && (
+                <div className="mb-5 bg-black/20 rounded-xl p-4">
+                  <p className="text-xs font-bold text-purple-200 mb-2 uppercase tracking-wide">Live Trending Topics in Pakistan</p>
+                  <div className="flex flex-wrap gap-2">
+                    {trendingTopics.map((t, i) => (
+                      <button 
+                        type="button"
+                        key={i}
+                        onClick={() => setAiTopic(t)}
+                        className="bg-white/10 hover:bg-white/25 text-white text-xs px-3 py-1.5 rounded-lg border border-white/20 transition-all text-left"
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col md:flex-row gap-3">
+                <input 
+                  placeholder="Enter a topic (e.g., MDCAT 2026 Guide)" 
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  className="flex-1 bg-black/20 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder:text-purple-300 outline-none focus:border-white focus:bg-black/40"
+                />
+                <input 
+                  placeholder="Geo Target (e.g., Karachi)" 
+                  value={aiGeo}
+                  onChange={(e) => setAiGeo(e.target.value)}
+                  className="w-full md:w-48 bg-black/20 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder:text-purple-300 outline-none focus:border-white focus:bg-black/40"
+                />
+                <button 
+                  type="button"
+                  onClick={handleGenerateAIBlog}
+                  disabled={generatingBlog}
+                  className="bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-black px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-yellow-400/20 shrink-0"
+                >
+                  {generatingBlog ? "Generating..." : "✨ Generate Blog"}
+                </button>
               </div>
             </div>
 

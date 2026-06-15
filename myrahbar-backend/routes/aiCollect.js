@@ -185,4 +185,77 @@ router.post("/submit-university", async (req, res) => {
   }
 });
 
+// GET /api/ai-collect/trending-topics
+router.get("/trending-topics", async (req, res) => {
+  try {
+    const prompt = `You are an SEO expert and educational consultant for Pakistan.
+    Using Google Search, find the absolute latest trending topics (year 2026) related to universities, admissions, MDCAT, ECAT, or higher education in Pakistan.
+    Return ONLY a valid JSON array of 5 highly engaging, click-worthy blog post topics.
+    Example output format:
+    ["Top 10 Universities in Karachi for BS Computer Science in 2026", "How to prepare for MDCAT 2026: Complete Guide"]
+    
+    Ensure no markdown formatting or backticks. Return the JSON array directly.`;
+
+    const text = await generateWithRetry(prompt);
+    
+    let cleanText = text.trim();
+    if (cleanText.startsWith("```json")) cleanText = cleanText.slice(7);
+    else if (cleanText.startsWith("```")) cleanText = cleanText.slice(3);
+    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3);
+    cleanText = cleanText.trim();
+
+    const topics = JSON.parse(cleanText);
+    res.json({ topics });
+  } catch (err) {
+    console.error("AI Trending Topics Error:", err.message);
+    res.status(500).json({ message: "Failed to fetch trending topics: " + err.message });
+  }
+});
+
+// POST /api/ai-collect/generate-blog
+router.post("/generate-blog", async (req, res) => {
+  try {
+    const { topic, geo } = req.body;
+    if (!topic) return res.status(400).json({ message: "Topic is required" });
+
+    const geoContext = geo ? ` Target Audience Location (Geo-targeting): ${geo}. Make sure the content specifically appeals to students in or looking at ${geo}.` : "";
+
+    const prompt = `You are an expert SEO blog writer and educational consultant for Pakistan.
+    Write a comprehensive, engaging, and highly informative blog post about: "${topic}".
+    ${geoContext}
+    
+    Use Google Search to ensure all facts, dates, and statistics mentioned are accurate for the year 2026.
+    
+    Format the response as a single valid JSON object matching this exact structure:
+    {
+      "title": "A highly engaging SEO title",
+      "excerpt": "A compelling 2-3 sentence meta description/excerpt.",
+      "content": "The full blog post content in HTML format. Use <h2> and <h3> tags for subheadings, <p> for paragraphs, and <ul>/<li> for lists. Do NOT include the main title <h1> in the content.",
+      "seoTitle": "SEO optimized title under 60 chars",
+      "seoDescription": "SEO optimized description under 160 chars",
+      "keywords": ["keyword1", "keyword2", "keyword3", "include geo keywords if applicable"],
+      "faqs": [
+        { "question": "Common question 1?", "answer": "Clear answer 1" },
+        { "question": "Common question 2?", "answer": "Clear answer 2" }
+      ]
+    }
+    
+    Ensure NO markdown formatting or backticks around the JSON. Return ONLY the raw JSON object.`;
+
+    const text = await generateWithRetry(prompt, 3);
+    
+    let cleanText = text.trim();
+    if (cleanText.startsWith("```json")) cleanText = cleanText.slice(7);
+    else if (cleanText.startsWith("```")) cleanText = cleanText.slice(3);
+    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3);
+    cleanText = cleanText.trim();
+
+    const blogData = JSON.parse(cleanText);
+    res.json(blogData);
+  } catch (err) {
+    console.error("AI Generate Blog Error:", err.message);
+    res.status(500).json({ message: "Failed to generate blog: " + err.message });
+  }
+});
+
 module.exports = router;
