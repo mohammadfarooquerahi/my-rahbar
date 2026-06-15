@@ -2051,66 +2051,6 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* AI Blog Generator */}
-            <div className="bg-gradient-to-r from-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-xl mb-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="font-black text-xl flex items-center gap-2">
-                    <Sparkles size={20} className="text-yellow-400" /> AI Blog Generator
-                  </h3>
-                  <p className="text-purple-200 text-sm mt-1">Generate complete SEO blogs with real-time 2026 data via Google Search.</p>
-                </div>
-                <button 
-                  onClick={handleFetchTrendingTopics}
-                  disabled={fetchingTopics}
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur text-white text-sm font-bold px-4 py-2 rounded-xl transition-all"
-                >
-                  {fetchingTopics ? "Fetching..." : "🔥 Fetch Trending Topics"}
-                </button>
-              </div>
-
-              {trendingTopics.length > 0 && (
-                <div className="mb-5 bg-black/20 rounded-xl p-4">
-                  <p className="text-xs font-bold text-purple-200 mb-2 uppercase tracking-wide">Live Trending Topics in Pakistan</p>
-                  <div className="flex flex-wrap gap-2">
-                    {trendingTopics.map((t, i) => (
-                      <button 
-                        type="button"
-                        key={i}
-                        onClick={() => setAiTopic(t)}
-                        className="bg-white/10 hover:bg-white/25 text-white text-xs px-3 py-1.5 rounded-lg border border-white/20 transition-all text-left"
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex flex-col md:flex-row gap-3">
-                <input 
-                  placeholder="Enter a topic (e.g., MDCAT 2026 Guide)" 
-                  value={aiTopic}
-                  onChange={(e) => setAiTopic(e.target.value)}
-                  className="flex-1 bg-black/20 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder:text-purple-300 outline-none focus:border-white focus:bg-black/40"
-                />
-                <input 
-                  placeholder="Geo Target (e.g., Karachi)" 
-                  value={aiGeo}
-                  onChange={(e) => setAiGeo(e.target.value)}
-                  className="w-full md:w-48 bg-black/20 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder:text-purple-300 outline-none focus:border-white focus:bg-black/40"
-                />
-                <button 
-                  type="button"
-                  onClick={handleGenerateAIBlog}
-                  disabled={generatingBlog}
-                  className="bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-black px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-yellow-400/20 shrink-0"
-                >
-                  {generatingBlog ? "Generating..." : "✨ Generate Blog"}
-                </button>
-              </div>
-            </div>
-
             {/* Seed Button */}
             <div className="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-5 text-white flex items-center justify-between">
               <div>

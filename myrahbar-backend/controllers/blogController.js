@@ -1248,20 +1248,28 @@ Return ONLY a valid JSON object with these exact fields (absolutely no markdown,
 
 // ─── PUT /api/blogs/:id/approve ──────────────────────────────────────────────
 const approveBlog = async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  if (!blog) return res.status(404).json({ message: "Blog not found" });
-  blog.status = "published";
-  await blog.save();
-  res.json({ message: "Blog approved and published!", blog });
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    blog.status = "published";
+    await blog.save();
+    res.json({ message: "Blog approved and published!", blog });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to approve blog: " + err.message });
+  }
 };
 
 // ─── PUT /api/blogs/:id/reject ───────────────────────────────────────────────
 const rejectBlog = async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  if (!blog) return res.status(404).json({ message: "Blog not found" });
-  blog.status = "draft";
-  await blog.save();
-  res.json({ message: "Blog moved back to draft", blog });
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    blog.status = "draft";
+    await blog.save();
+    res.json({ message: "Blog moved back to draft", blog });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to reject blog: " + err.message });
+  }
 };
 
 module.exports = { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog };

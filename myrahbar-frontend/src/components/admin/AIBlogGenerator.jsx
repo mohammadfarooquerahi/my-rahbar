@@ -114,19 +114,31 @@ export default function AIBlogGenerator({ token }) {
   };
 
   const handleApprove = async (id) => {
-    await fetch(`/api/blogs/${id}/approve`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    loadPendingBlogs();
+    try {
+      const res = await fetch(`/api/blogs/${id}/approve`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Approval failed");
+      loadPendingBlogs();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleReject = async (id) => {
-    await fetch(`/api/blogs/${id}/reject`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    loadPendingBlogs();
+    try {
+      const res = await fetch(`/api/blogs/${id}/reject`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Rejection failed");
+      loadPendingBlogs();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const resetAll = () => {
