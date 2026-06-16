@@ -564,6 +564,25 @@ export default function UniversityDetailPage() {
                       )}
                     </div>
 
+                    {uni.testDetails?.syllabus?.length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-slate-700">📚 Entry Test Syllabus</h4>
+                          <span className="text-xs font-bold bg-slate-800 text-white px-2 py-1 rounded-full">
+                            {uni.testDetails.totalMcqs} MCQs {uni.testDetails.negativeMarking ? "| Negative Marking" : "| No Negative Marking"}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {uni.testDetails.syllabus.map(syl => (
+                            <div key={syl.category} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                              <p className="text-sm font-bold text-slate-800 mb-1">{syl.category}</p>
+                              <p className="text-xs text-slate-600 leading-relaxed">{syl.details}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <h3
                       className="font-semibold text-slate-800"
                       style={{ fontFamily: "Sora" }}
@@ -718,24 +737,7 @@ export default function UniversityDetailPage() {
                       </div>
                     )}
 
-                    {uni.testDetails?.syllabus?.length > 0 && (
-                      <div className="bg-white border border-slate-200 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-semibold text-slate-700">📚 Entry Test Syllabus</h4>
-                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
-                            {uni.testDetails.totalMcqs} MCQs {uni.testDetails.negativeMarking ? "| Negative Marking" : "| No Negative Marking"}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {uni.testDetails.syllabus.map(syl => (
-                            <div key={syl.category} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                              <p className="text-sm font-bold text-slate-800 mb-1">{syl.category}</p>
-                              <p className="text-xs text-slate-600 leading-relaxed">{syl.details}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+
 
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex justify-between items-center flex-wrap gap-2">
                       <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
