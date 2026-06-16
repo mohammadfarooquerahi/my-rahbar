@@ -33,7 +33,7 @@ import Logo from "../components/common/Logo";
 
 export default function HomePage() {
   const [degreeLevel, setDegreeLevel] = useState("");
-  const [department, setDepartment] = useState("");
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const { universities: savedUnis } = useWatchlistStore();
   const { isLoggedIn, user } = useAuthStore();
@@ -42,7 +42,7 @@ export default function HomePage() {
     e.preventDefault();
     const params = new URLSearchParams();
     if (degreeLevel) params.set("degreeLevel", degreeLevel);
-    if (department) params.set("dept", department);
+    if (query) params.set("q", query);
     if (params.toString()) navigate("/search?" + params.toString());
     else navigate("/search");
   };
@@ -370,9 +370,9 @@ export default function HomePage() {
               <div className="flex-1 w-full flex items-center px-3 py-1.5 sm:py-0">
                 <Search size={16} className="text-blue-600 mr-2 shrink-0" />
                 <input
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  placeholder="Which program? (e.g. Computer Science)"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search university name, program, city..."
                   className="w-full py-1.5 bg-transparent text-slate-900 outline-none text-sm font-medium placeholder:text-slate-400"
                 />
               </div>
