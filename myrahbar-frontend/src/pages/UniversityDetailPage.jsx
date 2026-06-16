@@ -1197,7 +1197,7 @@ export default function UniversityDetailPage() {
                 Calculate your aggregate and see if you qualify.
               </p>
               <Link
-                to={"/merit-calculator?uni=" + uni.slug}
+                to={"/" + uni.slug + "/merit-cal"}
                 className="block w-full text-center py-2 bg-blue-700 text-white text-sm font-medium rounded-xl hover:bg-blue-800 transition-colors"
               >
                 Calculate Merit

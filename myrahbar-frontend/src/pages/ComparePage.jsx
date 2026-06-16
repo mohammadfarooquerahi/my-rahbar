@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Plus, X, BarChart2, Check, Minus } from "lucide-react";
-import { KARACHI_UNIVERSITIES } from "../data/universities";
 import { formatFee } from "../utils/merit";
 
 export default function ComparePage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [allUniversities, setAllUniversities] = useState(KARACHI_UNIVERSITIES);
+  const [searchParams] = useSearchParams();
+  const { uni1Slug, uni2Slug } = useParams();
+  const navigate = useNavigate();
+
+  const [allUniversities, setAllUniversities] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch real universities
   useEffect(() => {
@@ -20,36 +24,40 @@ export default function ComparePage() {
           const formattedUnis = unis.map((u) => ({ ...u, id: u._id || u.id }));
           setAllUniversities(formattedUnis);
 
-          // Once data is loaded, populate `selected` array from URL params
-          const u1 = formattedUnis.find(u => u.slug === searchParams.get("uni1"));
-          const u2 = formattedUnis.find(u => u.slug === searchParams.get("uni2"));
-          const u3 = formattedUnis.find(u => u.slug === searchParams.get("uni3"));
-          const initialSelection = [u1, u2, u3].filter(Boolean);
-          setSelected(initialSelection);
+          // Populate from URL
+          const u1Param = uni1Slug || searchParams.get("uni1");
+          const u2Param = uni2Slug || searchParams.get("uni2");
+          const u3Param = searchParams.get("uni3");
+
+          const u1 = formattedUnis.find(u => u.slug === u1Param);
+          const u2 = formattedUnis.find(u => u.slug === u2Param);
+          const u3 = formattedUnis.find(u => u.slug === u3Param);
+          
+          setSelected([u1, u2, u3].filter(Boolean));
         }
+        setIsLoading(false);
+        setIsInitialized(true);
       })
       .catch(() => {
-        // Fallback to static if API fails
-        const u1 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni1"));
-        const u2 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni2"));
-        const u3 = KARACHI_UNIVERSITIES.find(u => u.slug === searchParams.get("uni3"));
-        setSelected([u1, u2, u3].filter(Boolean));
+        setIsLoading(false);
+        setIsInitialized(true);
       });
-  }, [searchParams]);
+  }, [uni1Slug, uni2Slug, searchParams]);
 
   // Sync URL when selection changes manually (add/remove)
   useEffect(() => {
-    if (selected.length === 0) return; // Wait for initial load
-    const params = new URLSearchParams(searchParams);
-    if (selected[0]) params.set("uni1", selected[0].slug); else params.delete("uni1");
-    if (selected[1]) params.set("uni2", selected[1].slug); else params.delete("uni2");
-    if (selected[2]) params.set("uni3", selected[2].slug); else params.delete("uni3");
+    if (!isInitialized) return; // Wait for initial data load to complete
     
-    // Only update if changed to avoid infinite loop
-    if (params.toString() !== searchParams.toString()) {
-      setSearchParams(params, { replace: true });
+    if (selected.length === 3) {
+      navigate(`/${selected[0].slug}/vs/${selected[1].slug}?uni3=${selected[2].slug}`, { replace: true });
+    } else if (selected.length === 2) {
+      navigate(`/${selected[0].slug}/vs/${selected[1].slug}`, { replace: true });
+    } else if (selected.length === 1) {
+      navigate(`/compare?uni1=${selected[0].slug}`, { replace: true });
+    } else if (selected.length === 0) {
+      navigate(`/compare`, { replace: true });
     }
-  }, [selected, searchParams, setSearchParams]);
+  }, [selected, navigate, isInitialized]);
 
   const addUniversity = (slug) => {
     if (selected.length >= 3) return;

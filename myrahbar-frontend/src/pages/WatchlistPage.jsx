@@ -216,7 +216,7 @@ export default function WatchlistPage() {
                         View
                       </Link>
                       <Link
-                        to={"/merit-calculator?uni=" + uni.slug}
+                        to={"/" + uni.slug + "/merit-cal"}
                         className="text-xs font-medium text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100"
                       >
                         Merit

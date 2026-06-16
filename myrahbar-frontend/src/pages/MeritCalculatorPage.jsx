@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   Calculator,
@@ -8,14 +8,16 @@ import {
   CheckCircle,
   Info,
 } from "lucide-react";
-import { KARACHI_UNIVERSITIES } from "../data/universities";
 import { calculateAggregate, getMeritStatus } from "../utils/merit";
 
 export default function MeritCalculatorPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { uniSlug } = useParams();
+  const navigate = useNavigate();
 
-  // Live universities from API, fallback to static data
-  const [allUniversities, setAllUniversities] = useState(KARACHI_UNIVERSITIES);
+  // Live universities from API (No Dummy Fallback)
+  const [allUniversities, setAllUniversities] = useState([]);
+  
   useEffect(() => {
     fetch("/api/universities")
       .then((r) => r.json())
@@ -25,25 +27,19 @@ export default function MeritCalculatorPage() {
           setAllUniversities(unis.map((u) => ({ ...u, id: u._id || u.id })));
         }
       })
-      .catch(() => {}); // fallback stays as KARACHI_UNIVERSITIES
+      .catch(() => {});
   }, []);
 
   const [selectedUniSlug, setSelectedUniSlug] = useState(
-    searchParams.get("uni") || "",
+    uniSlug || searchParams.get("uni") || "",
   );
 
-  // Sync URL when university selection changes
+  // Sync state if URL changes
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (selectedUniSlug) {
-      params.set("uni", selectedUniSlug);
-    } else {
-      params.delete("uni");
+    if (uniSlug) {
+      setSelectedUniSlug(uniSlug);
     }
-    if (params.toString() !== searchParams.toString()) {
-      setSearchParams(params, { replace: true });
-    }
-  }, [selectedUniSlug, searchParams, setSearchParams]);
+  }, [uniSlug]);
 
   const [selectedDeptName, setSelectedDeptName] = useState("");
   const [matric, setMatric] = useState("");
@@ -186,8 +182,14 @@ export default function MeritCalculatorPage() {
             <select
               value={selectedUniSlug}
               onChange={(e) => {
-                setSelectedUniSlug(e.target.value);
+                const newSlug = e.target.value;
+                setSelectedUniSlug(newSlug);
                 setSelectedDeptName("");
+                if (newSlug) {
+                  navigate(`/${newSlug}/merit-cal`);
+                } else {
+                  navigate(`/merit-calculator`);
+                }
               }}
               className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none bg-white text-slate-700 focus:border-blue-400"
             >

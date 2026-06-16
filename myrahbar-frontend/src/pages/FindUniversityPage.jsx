@@ -363,7 +363,7 @@ export default function FindUniversityPage() {
                         View Details
                       </Link>
                       <Link
-                        to={"/merit-calculator?uni=" + uni.slug}
+                        to={"/" + uni.slug + "/merit-cal"}
                         className="flex-1 text-center py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-xl hover:bg-blue-100"
                       >
                         Check Merit

@@ -66,7 +66,9 @@ export default function App() {
             />
             <Route path="/find-university" element={<FindUniversity />} />
             <Route path="/merit-calculator" element={<MeritCalculator />} />
+            <Route path="/:uniSlug/merit-cal" element={<MeritCalculator />} />
             <Route path="/compare" element={<ComparePage />} />
+            <Route path="/:uni1Slug/vs/:uni2Slug" element={<ComparePage />} />
             <Route path="/document-tools" element={<DocumentTools />} />
             <Route path="/counseling" element={<CounselingPage />} />
             <Route path="/career-match" element={<CareerMatchPage />} />
