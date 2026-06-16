@@ -51,7 +51,7 @@ export default function SearchPage() {
     if (query.trim()) {
       const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
       filtered = filtered.filter((uni) => {
-        const uniText = [
+        let uniText = [
           uni.name,
           uni.shortName,
           uni.city,
@@ -59,7 +59,16 @@ export default function SearchPage() {
           ...(uni.departments?.map(d => `${d.name} ${d.category}`) || [])
         ].filter(Boolean).join(" ").toLowerCase();
 
-        // Every keyword must be found somewhere in the university text (multi-word similarity)
+        // Intelligent Synonym Expansion
+        if (/\bcs\b/.test(uniText) || uniText.includes("computer science") || uniText.includes("computing")) uniText += " cs computer science software it";
+        if (/\beng\b/.test(uniText) || uniText.includes("engineering")) uniText += " eng engineering engineer";
+        if (/\bbba\b/.test(uniText) || uniText.includes("business") || uniText.includes("management")) uniText += " bba mba business management";
+        if (/\bmed\b/.test(uniText) || /\bmbbs\b/.test(uniText) || /\bbds\b/.test(uniText) || uniText.includes("medical") || uniText.includes("medicine")) uniText += " med medical medicine mbbs bds doctor";
+        if (/\bit\b/.test(uniText) || uniText.includes("information technology")) uniText += " it information technology cs";
+        if (/\bai\b/.test(uniText) || uniText.includes("artificial intelligence")) uniText += " ai artificial intelligence";
+        if (/\bds\b/.test(uniText) || uniText.includes("data science")) uniText += " ds data science";
+
+        // Every keyword must be found somewhere in the expanded university text
         return keywords.every(kw => uniText.includes(kw));
       });
     }
