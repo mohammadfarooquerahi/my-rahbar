@@ -161,17 +161,13 @@ router.post("/collect-university", async (req, res) => {
     const prompt = PROMPT_TEMPLATE(universityName);
     const text = await generateWithRetry(prompt);
 
-    // Clean the response - remove markdown code blocks if present
     let cleanText = text.trim();
-    if (cleanText.startsWith("```json")) {
-      cleanText = cleanText.slice(7);
-    } else if (cleanText.startsWith("```")) {
-      cleanText = cleanText.slice(3);
+    // Use regex to extract the first JSON object or array, ignoring conversational fluff
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("AI did not return a recognizable JSON object: " + cleanText.slice(0, 100));
     }
-    if (cleanText.endsWith("```")) {
-      cleanText = cleanText.slice(0, -3);
-    }
-    cleanText = cleanText.trim();
+    cleanText = jsonMatch[0];
 
     const data = JSON.parse(cleanText);
     res.json(data);
@@ -228,10 +224,11 @@ router.get("/trending-topics", async (req, res) => {
     const text = await generateWithRetry(prompt);
     
     let cleanText = text.trim();
-    if (cleanText.startsWith("```json")) cleanText = cleanText.slice(7);
-    else if (cleanText.startsWith("```")) cleanText = cleanText.slice(3);
-    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3);
-    cleanText = cleanText.trim();
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("AI did not return a recognizable JSON object: " + cleanText.slice(0, 100));
+    }
+    cleanText = jsonMatch[0];
 
     const topics = JSON.parse(cleanText);
     res.json({ topics });
@@ -274,10 +271,11 @@ router.post("/generate-blog", async (req, res) => {
     const text = await generateWithRetry(prompt, 3);
     
     let cleanText = text.trim();
-    if (cleanText.startsWith("```json")) cleanText = cleanText.slice(7);
-    else if (cleanText.startsWith("```")) cleanText = cleanText.slice(3);
-    if (cleanText.endsWith("```")) cleanText = cleanText.slice(0, -3);
-    cleanText = cleanText.trim();
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("AI did not return a recognizable JSON object: " + cleanText.slice(0, 100));
+    }
+    cleanText = jsonMatch[0];
 
     const blogData = JSON.parse(cleanText);
     res.json(blogData);
