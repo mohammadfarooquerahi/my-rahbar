@@ -7,6 +7,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const compression = require("compression");
+const mongoSanitize = require("express-mongo-sanitize");
 
 // Config aur Utils Imports
 const connectDB = require("./config/db.js");
@@ -38,6 +40,12 @@ startAlertCron();
 
 // Security headers
 app.use(helmet());
+
+// Data Sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Response Compression
+app.use(compression());
 
 // CORS — allow frontend
 app.use(
