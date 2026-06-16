@@ -23,10 +23,10 @@ const departmentSchema = new mongoose.Schema({
 const admissionDeadlineSchema = new mongoose.Schema({
   round: { type: String, default: "Round 1" },
   degreeLevel: { type: String, enum: ["BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "All"], default: "All" },
-  testDate: { type: Date },
+  testDate: { type: String },
   testCities: [{ type: String }],
-  resultDate: { type: Date },
-  deadline: { type: Date },
+  resultDate: { type: String },
+  deadline: { type: String },
   note: { type: String, default: "" },
 });
 
