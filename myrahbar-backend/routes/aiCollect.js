@@ -141,7 +141,7 @@ IMPORTANT RULES:
 - Use Google Search to fetch REAL, LATEST 2026 DATA. If exact 2026 fees/merit aren't out, use the most recent confirmed 2025 data.
 - Fill ALL fields with REAL data from the actual university.
 - ZERO HALLUCINATION: If a university does not offer a program (like MBBS or Engineering), do NOT add it. Check their official faculty list.
-- Include ALL major real departments (minimum 5, up to 20 if available).
+- Include the most popular real departments (MAXIMUM 8 departments) to keep the response fast. Do not exceed 8.
 - Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
 - degreeLevels array must contain values like "BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"
 - admissionTestType MUST be one of: "Own Test", "HEC-NAT", "NTS", "SAT", "MDCAT", "ECAT", "NUMS", "None", "Multiple".
