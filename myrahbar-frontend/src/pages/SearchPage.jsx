@@ -49,52 +49,83 @@ export default function SearchPage() {
     let filtered = allUnis;
 
     if (query.trim()) {
-      const q = query.toLowerCase();
+      const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
       filtered = filtered.filter((uni) => {
-        const nameMatch = uni.name.toLowerCase().includes(q);
-        const shortMatch = uni.shortName?.toLowerCase().includes(q);
-        const deptMatch = uni.departments?.some(
-          (d) =>
-            d.name.toLowerCase().includes(q) ||
-            d.category?.toLowerCase().includes(q),
-        );
-        return nameMatch || shortMatch || deptMatch;
+        const uniText = [
+          uni.name,
+          uni.shortName,
+          uni.city,
+          uni.type,
+          ...(uni.departments?.map(d => `${d.name} ${d.category}`) || [])
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        // Every keyword must be found somewhere in the university text (multi-word similarity)
+        return keywords.every(kw => uniText.includes(kw));
       });
     }
 
     if (typeFilter !== "all") {
       filtered = filtered.filter((uni) => uni.type === typeFilter);
     }
+    
     if (categoryFilter !== "all") {
       filtered = filtered.filter((uni) =>
-        uni.departments?.some((d) => d.category === categoryFilter),
+        uni.departments?.some((d) => d.category === categoryFilter)
       );
     }
+    
     if (openOnly) {
-      filtered = filtered.filter((uni) => uni.admissionOpen);
+      filtered = filtered.filter((uni) => {
+        if (uni.admissionOpen) return true;
+        
+        const now = new Date();
+        const checkDate = (dStr) => {
+          if (!dStr) return false;
+          const d = new Date(dStr);
+          return !isNaN(d.getTime()) && Math.ceil((d - now) / 86400000) >= 0;
+        };
+
+        if (checkDate(uni.admissionDeadline)) return true;
+        if (uni.admissionDeadlines?.some(dl => checkDate(dl.deadline))) return true;
+
+        return false;
+      });
     }
+    
     if (degreeLevel !== "all") {
+      const level = degreeLevel.toLowerCase();
       filtered = filtered.filter((uni) => 
-        uni.admissionDeadlines?.some(dl => dl.degreeLevel === degreeLevel || dl.degreeLevel === "All")
+        uni.admissionDeadlines?.some(dl => dl.degreeLevel?.toLowerCase().includes(level)) ||
+        uni.departments?.some(d => d.name.toLowerCase().includes(level))
       );
     }
+    
     if (department.trim()) {
       const q = department.toLowerCase();
       filtered = filtered.filter((uni) =>
-        uni.departments?.some((d) => d.name.toLowerCase().includes(q))
+        uni.departments?.some((d) => d.name.toLowerCase().includes(q) || d.category?.toLowerCase().includes(q))
       );
     }
+    
     if (cityFilter !== "all") {
-      filtered = filtered.filter((uni) => uni.city === cityFilter);
+      filtered = filtered.filter((uni) => 
+        uni.city?.toLowerCase() === cityFilter.toLowerCase() ||
+        uni.admissionDeadlines?.some(dl => dl.testCities?.some(c => c.toLowerCase().includes(cityFilter.toLowerCase())))
+      );
     }
+    
     if (maxFee) {
       filtered = filtered.filter((uni) =>
-        uni.departments?.some((d) => d.semesterFee <= Number(maxFee))
+        uni.departments?.some((d) => d.semesterFee && d.semesterFee <= Number(maxFee))
       );
     }
+    
     if (maxMerit) {
       filtered = filtered.filter((uni) =>
-        uni.departments?.some((d) => d.lastMerit?.[0]?.closing <= Number(maxMerit))
+        uni.departments?.some((d) => {
+          const closing = d.lastMerit?.[0]?.closing;
+          return closing !== undefined && closing <= Number(maxMerit);
+        })
       );
     }
 
