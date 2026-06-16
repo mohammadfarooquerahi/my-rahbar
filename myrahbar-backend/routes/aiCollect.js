@@ -134,7 +134,8 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
       "lastMerit": [ { "year": 2025, "closing": 75.5, "closingPercentage": 75.5, "quota": "merit" } ],
       "seats": { "merit": 60, "selfFinance": 40, "other": 0 }
     }
-  ]
+  ],
+  "sources": ["https://nust.edu.pk/admissions", "https://hec.gov.pk/nust"]
 }
 
 IMPORTANT RULES:
@@ -142,6 +143,7 @@ IMPORTANT RULES:
 - Fill ALL fields with REAL data from the actual university.
 - ZERO HALLUCINATION: If a university does not offer a program (like MBBS or Engineering), do NOT add it. Check their official faculty list.
 - Include the most popular real departments (MAXIMUM 8 departments) to keep the response fast. Do not exceed 8.
+- MUST provide the 'sources' array with the exact official URLs where you verified the data. This proves you didn't hallucinate.
 - Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
 - degreeLevels array must contain values like "BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"
 - admissionTestType MUST be one of: "Own Test", "HEC-NAT", "NTS", "SAT", "MDCAT", "ECAT", "NUMS", "None", "Multiple".

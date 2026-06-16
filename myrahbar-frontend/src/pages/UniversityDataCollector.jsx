@@ -122,22 +122,32 @@ export default function UniversityDataCollector() {
         type: (formData.type || "government").toLowerCase(),
         city: formData.city || "Karachi",
         established: formData.establishedYear || null,
-        website: formData.officialWebsite || "",
-        testRequired: formData.entryTest || "Own Entry Test",
-        admissionFee: Number(formData.admissionFee) || 0,
+        website: formData.website || formData.officialWebsite || "",
+        testRequired: formData.testRequired || formData.entryTest || "Own Entry Test",
+        admissionTestType: formData.admissionTestType || "Own Test",
         admissionOpen: !!formData.admissionOpen,
-        admissionDeadline: formData.admissionDeadline || null,
+        eligibilityCriteria: formData.eligibilityCriteria || "",
+        admissionProcess: formData.admissionProcess || "",
+        admissionDeadlines: Array.isArray(formData.admissionDeadlines) ? formData.admissionDeadlines : [],
+        feeStructure: Array.isArray(formData.feeStructure) ? formData.feeStructure : [],
+        feeNotes: Array.isArray(formData.feeNotes) ? formData.feeNotes : [],
+        testDetails: typeof formData.testDetails === 'object' ? formData.testDetails : {},
         hostelAvailable: !!formData.hostelAvailable,
+        hostelFee: Number(formData.hostelFee) || 0,
+        messFee: Number(formData.messFee) || 0,
         aggregateFormula: {
-          matric: Number(formData.matricWeight) || 0.1,
-          fsc: Number(formData.fscWeight) || 0.4,
-          test: Number(formData.testWeight) || 0.5,
+          matric: Number(formData.aggregateFormula?.matric || formData.matricWeight) || 0.1,
+          fsc: Number(formData.aggregateFormula?.fsc || formData.fscWeight) || 0.4,
+          test: Number(formData.aggregateFormula?.test || formData.testWeight) || 0.5,
+          portfolio: Number(formData.aggregateFormula?.portfolio) || 0,
         },
         scholarships: Array.isArray(formData.scholarships) ? formData.scholarships : [],
         requiredDocuments: Array.isArray(formData.requiredDocuments) ? formData.requiredDocuments : [],
+        sources: Array.isArray(formData.sources) ? formData.sources : [],
         departments: (formData.departments || []).map((d) => ({
           name: d.name,
           category: d.category || "CS",
+          degreeLevel: d.degreeLevel || "BS",
           semesterFee: Number(d.semesterFee) || 0,
           seats: {
             merit: Number(d.meritSeats) || 0,
@@ -170,9 +180,9 @@ export default function UniversityDataCollector() {
   };
 
   const totalWeight = (
-    (+formData?.matricWeight || 0) +
-    (+formData?.fscWeight || 0) +
-    (+formData?.testWeight || 0)
+    (+(formData?.aggregateFormula?.matric || formData?.matricWeight) || 0) +
+    (+(formData?.aggregateFormula?.fsc || formData?.fscWeight) || 0) +
+    (+(formData?.aggregateFormula?.test || formData?.testWeight) || 0)
   ).toFixed(2);
 
   // ── STYLES ────────────────────────────────────────────────────
@@ -567,8 +577,8 @@ export default function UniversityDataCollector() {
               <input
                 style={s.input}
                 type="number"
-                value={formData.establishedYear || ""}
-                onChange={(e) => updateField("establishedYear", e.target.value)}
+                value={formData.established || formData.establishedYear || ""}
+                onChange={(e) => updateField("established", e.target.value)}
               />
             </div>
           </div>
@@ -577,16 +587,16 @@ export default function UniversityDataCollector() {
               <label style={s.label}>Official Website</label>
               <input
                 style={s.input}
-                value={formData.officialWebsite || ""}
-                onChange={(e) => updateField("officialWebsite", e.target.value)}
+                value={formData.website || formData.officialWebsite || ""}
+                onChange={(e) => updateField("website", e.target.value)}
               />
             </div>
             <div>
               <label style={s.label}>Entry Test Required</label>
               <input
                 style={s.input}
-                value={formData.entryTest || ""}
-                onChange={(e) => updateField("entryTest", e.target.value)}
+                value={formData.testRequired || formData.entryTest || ""}
+                onChange={(e) => updateField("testRequired", e.target.value)}
               />
             </div>
           </div>
@@ -605,44 +615,28 @@ export default function UniversityDataCollector() {
           <div style={s.sectionTitle}>📅 Admission Details</div>
           <div style={s.row2}>
             <div>
-              <label style={s.label}>Admission Fee (PKR)</label>
+              <label style={s.label}>Admission Test Type</label>
               <input
                 style={s.input}
-                type="number"
-                value={formData.admissionFee || ""}
-                onChange={(e) => updateField("admissionFee", e.target.value)}
+                value={formData.admissionTestType || ""}
+                onChange={(e) => updateField("admissionTestType", e.target.value)}
               />
             </div>
             <div>
-              <label style={s.label}>Admission Deadline</label>
-              <input
-                style={s.input}
-                type="date"
-                value={formData.admissionDeadline || ""}
-                onChange={(e) =>
-                  updateField("admissionDeadline", e.target.value)
-                }
-              />
+              <label style={s.label}>Admission Open</label>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 14 }}>
+                  <input
+                    type="checkbox"
+                    checked={!!formData.admissionOpen}
+                    onChange={(e) => updateField("admissionOpen", e.target.checked)}
+                  />
+                  Yes, Admission is Open
+                </label>
+              </div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 24, marginBottom: 16 }}>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                fontSize: 14,
-                color: "#374151",
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={!!formData.admissionOpen}
-                onChange={(e) => updateField("admissionOpen", e.target.checked)}
-              />
-              Admission Currently Open
-            </label>
             <label
               style={{
                 display: "flex",
@@ -672,9 +666,9 @@ export default function UniversityDataCollector() {
                 style={s.input}
                 type="number"
                 step="0.01"
-                value={formData.matricWeight || ""}
+                value={formData?.aggregateFormula?.matric || formData?.matricWeight || ""}
                 onChange={(e) =>
-                  updateField("matricWeight", parseFloat(e.target.value))
+                  updateField("aggregateFormula", { ...formData.aggregateFormula, matric: parseFloat(e.target.value) })
                 }
               />
             </div>
@@ -684,9 +678,9 @@ export default function UniversityDataCollector() {
                 style={s.input}
                 type="number"
                 step="0.01"
-                value={formData.fscWeight || ""}
+                value={formData?.aggregateFormula?.fsc || formData?.fscWeight || ""}
                 onChange={(e) =>
-                  updateField("fscWeight", parseFloat(e.target.value))
+                  updateField("aggregateFormula", { ...formData.aggregateFormula, fsc: parseFloat(e.target.value) })
                 }
               />
             </div>
@@ -696,9 +690,9 @@ export default function UniversityDataCollector() {
                 style={s.input}
                 type="number"
                 step="0.01"
-                value={formData.testWeight || ""}
+                value={formData?.aggregateFormula?.test || formData?.testWeight || ""}
                 onChange={(e) =>
-                  updateField("testWeight", parseFloat(e.target.value))
+                  updateField("aggregateFormula", { ...formData.aggregateFormula, test: parseFloat(e.target.value) })
                 }
               />
             </div>
@@ -713,6 +707,50 @@ export default function UniversityDataCollector() {
             Total: {totalWeight}{" "}
             {totalWeight === "1.00" ? "✅ (correct)" : "⚠️ (must equal 1.00)"}
           </p>
+
+          <div style={s.sectionTitle}>📁 AI Gathered Complex Details</div>
+          <div style={{ marginBottom: 16 }}>
+            <label style={s.label}>Admission Deadlines (JSON representation)</label>
+            <textarea
+              style={{ ...s.input, minHeight: 80, fontFamily: "monospace", fontSize: 12 }}
+              value={JSON.stringify(formData.admissionDeadlines || [], null, 2)}
+              onChange={(e) => {
+                try { updateField("admissionDeadlines", JSON.parse(e.target.value)); } catch (e) { /* ignore parse errors while typing */ }
+              }}
+            />
+          </div>
+          <div style={s.row2}>
+            <div>
+              <label style={s.label}>Fee Structure (JSON)</label>
+              <textarea
+                style={{ ...s.input, minHeight: 80, fontFamily: "monospace", fontSize: 12 }}
+                value={JSON.stringify(formData.feeStructure || [], null, 2)}
+                onChange={(e) => {
+                  try { updateField("feeStructure", JSON.parse(e.target.value)); } catch (e) { /* ignore */ }
+                }}
+              />
+            </div>
+            <div>
+              <label style={s.label}>Test Syllabus / Details (JSON)</label>
+              <textarea
+                style={{ ...s.input, minHeight: 80, fontFamily: "monospace", fontSize: 12 }}
+                value={JSON.stringify(formData.testDetails || {}, null, 2)}
+                onChange={(e) => {
+                  try { updateField("testDetails", JSON.parse(e.target.value)); } catch (e) { /* ignore */ }
+                }}
+              />
+            </div>
+            <div>
+              <label style={s.label}>AI Verification Sources (JSON)</label>
+              <textarea
+                style={{ ...s.input, minHeight: 80, fontFamily: "monospace", fontSize: 12, borderColor: "#22c55e", background: "#f0fdf4" }}
+                value={JSON.stringify(formData.sources || [], null, 2)}
+                onChange={(e) => {
+                  try { updateField("sources", JSON.parse(e.target.value)); } catch (e) { /* ignore */ }
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Scholarships & Documents */}
