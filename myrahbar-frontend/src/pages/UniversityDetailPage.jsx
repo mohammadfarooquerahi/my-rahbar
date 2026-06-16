@@ -494,6 +494,75 @@ export default function UniversityDetailPage() {
                         <p className="text-sm text-blue-700">{uni.eligibilityCriteria}</p>
                       </div>
                     )}
+                    {/* Degree-wise Deadlines */}
+                    <div>
+                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        🗓 Admission Deadlines by Program
+                      </h3>
+                      {uni.admissionDeadlines?.length > 0 ? (
+                        <div className="grid gap-3">
+                          {uni.admissionDeadlines.map((dl, i) => {
+                            const d = new Date(dl.deadline);
+                            const diff = Math.ceil((d - new Date()) / 86400000);
+                            const color = diff < 0 ? "text-red-500 bg-red-50" : diff <= 7 ? "text-orange-600 bg-orange-50" : "text-green-600 bg-green-50";
+                            
+                            return (
+                              <div key={i} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-2">
+                                    {dl.round && <span className="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full">{dl.round}</span>}
+                                    <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
+                                  </div>
+                                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${color}`}>
+                                    {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff} days left`}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                  <div>
+                                    <p className="text-xs text-slate-400 mb-0.5">Application Deadline</p>
+                                    <p className="font-medium text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                  </div>
+                                  {dl.testDate && (
+                                    <div>
+                                      <p className="text-xs text-slate-400 mb-0.5">Test Date</p>
+                                      <p className="font-medium text-slate-800">{new Date(dl.testDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                    </div>
+                                  )}
+                                  {dl.resultDate && (
+                                    <div>
+                                      <p className="text-xs text-slate-400 mb-0.5">Result Date</p>
+                                      <p className="font-medium text-slate-800">{new Date(dl.resultDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                    </div>
+                                  )}
+                                  {dl.testCities?.length > 0 && (
+                                    <div className="col-span-2">
+                                      <p className="text-xs text-slate-400 mb-0.5">Test Cities</p>
+                                      <p className="font-medium text-slate-800 flex flex-wrap gap-1 mt-1">
+                                        {dl.testCities.map(city => (
+                                          <span key={city} className="bg-white border border-slate-200 px-2 py-0.5 rounded text-xs">{city}</span>
+                                        ))}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {dl.note && (
+                                    <div className="col-span-2 mt-1">
+                                      <p className="text-xs text-slate-500 italic">Note: {dl.note}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : uni.admissionDeadline ? (
+                        <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 flex items-center justify-between shadow-sm">
+                          <span className="text-sm text-slate-700">All Programs</span>
+                          <span className="text-sm font-bold text-blue-700">{new Date(uni.admissionDeadline).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })}</span>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-slate-500">Deadline not announced yet.</p>
+                      )}
+                    </div>
 
                     <h3
                       className="font-semibold text-slate-800"
@@ -1034,75 +1103,6 @@ export default function UniversityDetailPage() {
                       )}
                     </div>
 
-                    {/* Degree-wise Deadlines */}
-                    <div>
-                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        🗓 Admission Deadlines by Program
-                      </h3>
-                      {uni.admissionDeadlines?.length > 0 ? (
-                        <div className="grid gap-3">
-                          {uni.admissionDeadlines.map((dl, i) => {
-                            const d = new Date(dl.deadline);
-                            const diff = Math.ceil((d - new Date()) / 86400000);
-                            const color = diff < 0 ? "text-red-500 bg-red-50" : diff <= 7 ? "text-orange-600 bg-orange-50" : "text-green-600 bg-green-50";
-                            
-                            return (
-                              <div key={i} className="bg-white rounded-xl p-4 border border-slate-200">
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="flex items-center gap-2">
-                                    {dl.round && <span className="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full">{dl.round}</span>}
-                                    <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
-                                  </div>
-                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${color}`}>
-                                    {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff} days left`}
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 text-sm text-slate-600">
-                                  <div>
-                                    <p className="text-xs text-slate-400">Application Deadline</p>
-                                    <p className="font-medium text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
-                                  </div>
-                                  {dl.testDate && (
-                                    <div>
-                                      <p className="text-xs text-slate-400">Test Date</p>
-                                      <p className="font-medium text-slate-800">{new Date(dl.testDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
-                                    </div>
-                                  )}
-                                  {dl.resultDate && (
-                                    <div>
-                                      <p className="text-xs text-slate-400">Result Date</p>
-                                      <p className="font-medium text-slate-800">{new Date(dl.resultDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
-                                    </div>
-                                  )}
-                                  {dl.testCities?.length > 0 && (
-                                    <div className="col-span-2">
-                                      <p className="text-xs text-slate-400">Test Cities</p>
-                                      <p className="font-medium text-slate-800 flex flex-wrap gap-1 mt-1">
-                                        {dl.testCities.map(city => (
-                                          <span key={city} className="bg-slate-100 px-2 py-0.5 rounded text-xs">{city}</span>
-                                        ))}
-                                      </p>
-                                    </div>
-                                  )}
-                                  {dl.note && (
-                                    <div className="col-span-2 mt-1">
-                                      <p className="text-xs text-slate-500 italic">Note: {dl.note}</p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : uni.admissionDeadline ? (
-                        <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 flex items-center justify-between">
-                          <span className="text-sm text-slate-700">All Programs</span>
-                          <span className="text-sm font-bold text-blue-700">{new Date(uni.admissionDeadline).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })}</span>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-slate-500">Deadline not announced yet.</p>
-                      )}
-                    </div>
 
                     {/* PDF Compressor */}
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white">
