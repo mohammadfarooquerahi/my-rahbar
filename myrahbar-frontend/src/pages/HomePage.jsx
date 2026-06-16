@@ -347,18 +347,18 @@ export default function HomePage() {
             expert counseling — all in one place, completely free.
           </p>
 
-          {/* Search Bar - 2 Step Glassmorphism */}
+          {/* Search Bar - 2 Step Glassmorphism (Compact Size) */}
           <form
             onSubmit={handleSearch}
-            className="fade-up-3 max-w-3xl mx-auto mb-8 relative group"
+            className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-            <div className="relative flex flex-col sm:flex-row items-center bg-white backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl p-2 gap-2 transition-all">
-              <div className="flex-1 w-full flex items-center border-b sm:border-b-0 sm:border-r border-slate-200 px-3 py-2 sm:py-0">
+            <div className="relative flex flex-col sm:flex-row items-center bg-white backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl p-1.5 gap-1.5 transition-all">
+              <div className="flex-1 w-full flex items-center border-b sm:border-b-0 sm:border-r border-slate-200 px-3 py-1.5 sm:py-0">
                 <select 
                   value={degreeLevel} 
                   onChange={(e) => setDegreeLevel(e.target.value)} 
-                  className="w-full py-2 bg-transparent text-slate-900 outline-none text-base font-medium cursor-pointer"
+                  className="w-full py-1.5 bg-transparent text-slate-900 outline-none text-sm font-medium cursor-pointer"
                 >
                   <option value="" disabled>Select Degree Level</option>
                   <option value="BS">BS / Undergraduate</option>
@@ -367,18 +367,18 @@ export default function HomePage() {
                   <option value="Other">Other (Diplomas/Certificates)</option>
                 </select>
               </div>
-              <div className="flex-1 w-full flex items-center px-3 py-2 sm:py-0">
-                <Search size={20} className="text-blue-600 mr-2 shrink-0" />
+              <div className="flex-1 w-full flex items-center px-3 py-1.5 sm:py-0">
+                <Search size={16} className="text-blue-600 mr-2 shrink-0" />
                 <input
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
                   placeholder="Which program? (e.g. Computer Science)"
-                  className="w-full py-2 bg-transparent text-slate-900 outline-none text-base font-medium placeholder:text-slate-400"
+                  className="w-full py-1.5 bg-transparent text-slate-900 outline-none text-sm font-medium placeholder:text-slate-400"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
               >
                 Find Universities
               </button>
