@@ -118,6 +118,7 @@ export default function UniversityDetailPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
+  const [deadlineFilter, setDeadlineFilter] = useState("All");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
   const [reviewsList, setReviewsList] = useState([]);
@@ -496,63 +497,82 @@ export default function UniversityDetailPage() {
                     )}
                     {/* Degree-wise Deadlines */}
                     <div>
-                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        🗓 Admission Deadlines by Program
-                      </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                          🗓 Admission Deadlines
+                        </h3>
+                        {uni.admissionDeadlines?.length > 0 && (
+                          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                            {["All", ...Array.from(new Set(uni.admissionDeadlines.map(d => d.degreeLevel)))].map(level => (
+                              <button
+                                key={level}
+                                onClick={() => setDeadlineFilter(level)}
+                                className={`px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap transition-colors ${deadlineFilter === level ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                              >
+                                {level}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      
                       {uni.admissionDeadlines?.length > 0 ? (
-                        <div className="grid gap-3">
-                          {uni.admissionDeadlines.map((dl, i) => {
+                        <div className="grid gap-2">
+                          {uni.admissionDeadlines.filter(dl => deadlineFilter === "All" || dl.degreeLevel === deadlineFilter).map((dl, i) => {
                             const d = new Date(dl.deadline);
                             const diff = Math.ceil((d - new Date()) / 86400000);
-                            const color = diff < 0 ? "text-red-500 bg-red-50" : diff <= 7 ? "text-orange-600 bg-orange-50" : "text-green-600 bg-green-50";
+                            const color = diff < 0 ? "text-red-500 bg-red-50 border-red-100" : diff <= 7 ? "text-orange-600 bg-orange-50 border-orange-100" : "text-green-600 bg-green-50 border-green-100";
                             
                             return (
-                              <div key={i} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-                                <div className="flex items-center justify-between mb-3">
+                              <div key={i} className="bg-white rounded-lg p-3 border border-slate-200 shadow-sm">
+                                <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    {dl.round && <span className="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full">{dl.round}</span>}
-                                    <span className="text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
+                                    {dl.round && <span className="text-[10px] font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full">{dl.round}</span>}
+                                    <span className="text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full">{dl.degreeLevel}</span>
                                   </div>
-                                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${color}`}>
+                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${color}`}>
                                     {diff < 0 ? "Closed" : diff === 0 ? "Today!" : `${diff} days left`}
                                   </span>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
                                   <div>
-                                    <p className="text-xs text-slate-400 mb-0.5">Application Deadline</p>
-                                    <p className="font-medium text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                    <p className="text-[10px] text-slate-400 mb-0.5">Apply By</p>
+                                    <p className="font-semibold text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short" })}</p>
                                   </div>
                                   {dl.testDate && (
                                     <div>
-                                      <p className="text-xs text-slate-400 mb-0.5">Test Date</p>
-                                      <p className="font-medium text-slate-800">{new Date(dl.testDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                      <p className="text-[10px] text-slate-400 mb-0.5">Test Date</p>
+                                      <p className="font-semibold text-slate-800">{new Date(dl.testDate).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}</p>
                                     </div>
                                   )}
                                   {dl.resultDate && (
                                     <div>
-                                      <p className="text-xs text-slate-400 mb-0.5">Result Date</p>
-                                      <p className="font-medium text-slate-800">{new Date(dl.resultDate).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}</p>
+                                      <p className="text-[10px] text-slate-400 mb-0.5">Result</p>
+                                      <p className="font-semibold text-slate-800">{new Date(dl.resultDate).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}</p>
                                     </div>
                                   )}
                                   {dl.testCities?.length > 0 && (
-                                    <div className="col-span-2">
-                                      <p className="text-xs text-slate-400 mb-0.5">Test Cities</p>
-                                      <p className="font-medium text-slate-800 flex flex-wrap gap-1 mt-1">
+                                    <div className="col-span-2 sm:col-span-4">
+                                      <p className="text-[10px] text-slate-400 mb-0.5">Test Cities</p>
+                                      <p className="font-medium text-slate-800 flex flex-wrap gap-1 mt-0.5">
                                         {dl.testCities.map(city => (
-                                          <span key={city} className="bg-white border border-slate-200 px-2 py-0.5 rounded text-xs">{city}</span>
+                                          <span key={city} className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-[10px]">{city}</span>
                                         ))}
                                       </p>
                                     </div>
                                   )}
                                   {dl.note && (
-                                    <div className="col-span-2 mt-1">
-                                      <p className="text-xs text-slate-500 italic">Note: {dl.note}</p>
+                                    <div className="col-span-2 sm:col-span-4 mt-0.5">
+                                      <p className="text-[10px] text-slate-500 italic">Note: {dl.note}</p>
                                     </div>
                                   )}
                                 </div>
                               </div>
                             );
                           })}
+                          {uni.admissionDeadlines.filter(dl => deadlineFilter === "All" || dl.degreeLevel === deadlineFilter).length === 0 && (
+                             <p className="text-xs text-slate-500 p-3 text-center bg-slate-50 rounded-lg border border-slate-100">No deadlines listed for {deadlineFilter}.</p>
+                          )}
                         </div>
                       ) : uni.admissionDeadline ? (
                         <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200 flex items-center justify-between shadow-sm">
