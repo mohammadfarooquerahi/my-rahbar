@@ -69,6 +69,7 @@ const EMPTY_UNI = {
   },
   admissionFee: "",
   feeStructure: [],
+  feeNotes: [],
   hostelAvailable: false,
   hostelFee: "",
   messFee: "",
@@ -514,6 +515,7 @@ export default function AdminPage() {
       testDetails: uni.testDetails || { totalMcqs: 0, negativeMarking: false, syllabus: [] },
       admissionFee: uni.admissionFee,
       feeStructure: uni.feeStructure || [],
+      feeNotes: uni.feeNotes || [],
       hostelAvailable: uni.hostelAvailable,
       hostelFee: uni.hostelFee || "",
       messFee: uni.messFee || "",
@@ -1478,6 +1480,27 @@ export default function AdminPage() {
                         <input placeholder="Description (optional)" className="flex-1 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
                           value={fee.description} onChange={e => { const arr = [...(uniForm.feeStructure||[])]; arr[idx].description = e.target.value; setUniForm(p => ({...p, feeStructure: arr}))}} />
                         <button type="button" onClick={() => { const arr = uniForm.feeStructure.filter((_, i) => i !== idx); setUniForm(p => ({...p, feeStructure: arr})) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Optional Fee Policies/Notes */}
+                <div className="pt-4 border-t border-slate-100 mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-semibold text-slate-700 block">Optional Fee Notes / Policies</label>
+                    <button type="button" onClick={() => setUniForm(p => ({...p, feeNotes: [...(p.feeNotes || []), {title: '', description: ''}]}))} className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">
+                      + Add Note
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {(uniForm.feeNotes || []).map((note, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <input placeholder="Title (e.g. Refund Policy)" className="w-1/3 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                          value={note.title} onChange={e => { const arr = [...(uniForm.feeNotes||[])]; arr[idx].title = e.target.value; setUniForm(p => ({...p, feeNotes: arr}))}} />
+                        <input placeholder="Description" className="flex-1 bg-white border border-slate-200 p-2 rounded-lg text-xs outline-none focus:border-blue-400"
+                          value={note.description} onChange={e => { const arr = [...(uniForm.feeNotes||[])]; arr[idx].description = e.target.value; setUniForm(p => ({...p, feeNotes: arr}))}} />
+                        <button type="button" onClick={() => { const arr = uniForm.feeNotes.filter((_, i) => i !== idx); setUniForm(p => ({...p, feeNotes: arr})) }} className="text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">✕</button>
                       </div>
                     ))}
                   </div>

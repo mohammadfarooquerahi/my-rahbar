@@ -844,6 +844,22 @@ export default function UniversityDetailPage() {
                       </div>
                     )}
 
+                    {uni.feeNotes?.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
+                          Fee Policies & Notes
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {uni.feeNotes.map((note, idx) => (
+                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-center">
+                              <p className="font-medium text-slate-700 text-sm mb-1">{note.title}</p>
+                              <p className="text-xs text-slate-500 leading-relaxed">{note.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
                       <p className="text-sm font-medium text-orange-800 flex items-center gap-2">
                         <AlertCircle size={14} /> Hidden Charges Tip

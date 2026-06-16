@@ -83,6 +83,12 @@ const universitySchema = new mongoose.Schema(
         description: { type: String }
       }
     ],
+    feeNotes: [
+      {
+        title: { type: String },
+        description: { type: String }
+      }
+    ],
     admissionFee: { type: Number, default: 0 }, // kept for compat
     hostelAvailable: { type: Boolean, default: false },
     hostelFee: { type: Number, default: null },
