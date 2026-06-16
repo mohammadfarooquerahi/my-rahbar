@@ -58,8 +58,8 @@ export default function UniversityDataCollector() {
     }
 
     try {
-      // 🌟 FIXED: Path changed to /api/ai-collect/collect-university to match backend config
-      const res = await fetch("/api/ai-collect/collect-university", {
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/ai-collect/collect-university`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ universityName: searchQuery }),
@@ -161,7 +161,8 @@ export default function UniversityDataCollector() {
         status: "pending",
       };
 
-      const res = await fetch("/api/ai-collect/submit-university", {
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/ai-collect/submit-university`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

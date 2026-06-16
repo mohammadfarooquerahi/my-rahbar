@@ -45,7 +45,8 @@ export default function AIBlogGenerator({ token }) {
   const fetchTrending = async () => {
     setLoadingTrending(true);
     try {
-      const res = await fetch("/api/blogs/trending-topics", {
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/blogs/trending-topics`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -59,7 +60,8 @@ export default function AIBlogGenerator({ token }) {
     setError("");
     setStep("generating");
     try {
-      const res = await fetch("/api/blogs/ai-generate", {
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/blogs/ai-generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title, category, keywords, additionalContext })
