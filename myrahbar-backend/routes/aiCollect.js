@@ -69,10 +69,9 @@ async function generateWithRetry(prompt, maxRetries = 3) {
   throw lastError || new Error("All AI models failed. Please try again later.");
 }
 
-const PROMPT_TEMPLATE = (universityName) => `You are a professional university data researcher for Pakistan. 
+const PROMPT_TEMPLATE = (universityName) => `You are a professional, highly accurate university data researcher for Pakistan. 
 You MUST use Google Search to find the absolute latest, real, and current 2026 data for "${universityName}" in Pakistan.
-You must strictly verify details from the official university website and HEC records.
-Ensure admission dates, test dates, and fee structures are 100% REAL and accurate. DO NOT make up data.
+CRITICAL INSTRUCTION AGAINST HALLUCINATION: You must strictly verify details from the official university website and HEC records. DO NOT invent departments or degrees that the university does not offer. For example, do not add MBBS to an engineering or general arts university. DO NOT guess fee amounts or closing merit percentages; if you cannot find the exact number, omit it or use the closest real historical data available online.
 
 Return ONLY valid JSON (no markdown, no backticks) matching this exact structure:
 {
@@ -81,9 +80,12 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
   "slug": "lowercase-with-dashes",
   "type": "government or private",
   "city": "city name",
-  "establishedYear": 1900,
-  "officialWebsite": "https://website.edu.pk",
-  "admissionTestType": "NTS",
+  "campuses": ["Main Campus", "Sub Campus"],
+  "established": 1900,
+  "website": "https://website.edu.pk",
+  "degreeLevels": ["BS", "MS", "PhD"],
+  "admissionOpen": true,
+  "admissionTestType": "Own Test",
   "testRequired": "NAT-IE / NAT-ICS",
   "testDetails": {
     "totalMcqs": 100,
@@ -92,8 +94,9 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
       { "category": "Pre-Medical", "details": "Biology 30%, Chemistry 30%, Physics 20%, English 20%" }
     ]
   },
-  "admissionOpen": true,
   "eligibilityCriteria": "Intermediate (Pre-Engineering/Computer Science) with minimum 60% marks",
+  "admissionProcess": "Brief description of how to apply online",
+  "requiredDocuments": ["Matric Certificate", "FSc Certificate", "CNIC", "Domicile", "4 Passport Photos"],
   "admissionDeadlines": [
     { 
       "round": "Round 1", 
@@ -109,13 +112,19 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
     { "title": "Admission Fee", "amount": 25000, "description": "One time payment" },
     { "title": "Tuition Fee", "amount": 120000, "description": "Per semester" }
   ],
+  "feeNotes": [
+    { "title": "Tax Information", "description": "5% Advance tax applies to non-filers" }
+  ],
   "hostelAvailable": true,
-  "matricWeight": 0.10,
-  "fscWeight": 0.40,
-  "testWeight": 0.50,
+  "hostelFee": 30000,
+  "messFee": 10000,
+  "aggregateFormula": {
+    "matric": 0.10,
+    "fsc": 0.40,
+    "test": 0.50,
+    "portfolio": 0
+  },
   "scholarships": ["HEC Need-Based Scholarship", "Merit Scholarship"],
-  "requiredDocuments": ["Matric Certificate", "FSc Certificate", "CNIC", "Domicile", "4 Passport Photos"],
-  "description": "Write 2 sentences about this university",
   "departments": [
     {
       "name": "BS Computer Science",
@@ -131,13 +140,13 @@ Return ONLY valid JSON (no markdown, no backticks) matching this exact structure
 IMPORTANT RULES:
 - Use Google Search to fetch REAL, LATEST 2026 DATA. If exact 2026 fees/merit aren't out, use the most recent confirmed 2025 data.
 - Fill ALL fields with REAL data from the actual university.
-- Include ALL major departments (minimum 10 departments if available).
+- ZERO HALLUCINATION: If a university does not offer a program (like MBBS or Engineering), do NOT add it. Check their official faculty list.
+- Include ALL major real departments (minimum 5, up to 20 if available).
 - Categories must be one of: CS, Engineering, Medical, Business, Arts, Law, Social Sciences, Education, Agriculture, Sciences
-- degreeLevel must be "BS", "MS", "PhD", "MBBS", "BDS", "BBA", etc.
-- admissionTestType MUST be one of: "Own Test", "HEC-NAT", "NTS", "MDCAT", "ECAT", "NUMS", "SAT", "None", "Multiple".
+- degreeLevels array must contain values like "BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"
+- admissionTestType MUST be one of: "Own Test", "HEC-NAT", "NTS", "SAT", "MDCAT", "ECAT", "NUMS", "None", "Multiple".
 - type must be lowercase "government" or "private"
-- Weights must sum to exactly 1.00
-- Fees should be in PKR
+- Weights in aggregateFormula must sum to exactly 1.00
 - Return ONLY the JSON object, nothing else.`;
 
 // Collect university data via AI
