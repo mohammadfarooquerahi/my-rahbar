@@ -617,51 +617,48 @@ export default function UniversityDetailPage() {
                       </div>
                     )}
 
-                    <h3
-                      className="font-semibold text-slate-800"
-                      style={{ fontFamily: "Sora" }}
-                    >
-                      Departments Offered
-                    </h3>
-                    {uni.departments?.length === 0 && (
-                      <p className="text-slate-400 text-sm">
-                        No departments added yet.
-                      </p>
-                    )}
-                    <div className="grid gap-3">
-                      {uni.departments?.map((d) => (
-                        <div
-                          key={d.name}
-                          className="flex items-center justify-between bg-slate-50 rounded-xl p-4"
-                        >
-                          <div>
-                            <p className="font-medium text-slate-800 text-sm">
-                              {d.name}
-                            </p>
-                            <p className="text-xs text-slate-500 mt-0.5">
-                              Merit: {d.seats?.merit} | Self-Finance:{" "}
-                              {d.seats?.selfFinance}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p
-                              className="text-sm font-semibold"
-                              style={{
-                                fontFamily: "DM Mono",
-                                color: "var(--navy)",
-                              }}
-                            >
-                              {formatFee(d.semesterFee)}/sem
-                            </p>
-                            {d.lastMerit?.[0] && (
-                              <p className="text-xs text-slate-500 mt-0.5">
-                                Last Merit: {d.lastMerit[0].closing}%
-                              </p>
-                            )}
-                          </div>
+                    {/* Aggregate Formula */}
+                    {uni.aggregateFormula && Object.keys(uni.aggregateFormula).length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
+                          Aggregate Formula
+                        </h3>
+                        <div className="flex flex-wrap gap-3">
+                          {Object.entries(uni.aggregateFormula).map(([key, val]) => (
+                            val > 0 && (
+                              <div key={key} className="bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 flex items-center gap-2">
+                                <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">
+                                  {key === "matric" ? "Matric/O-Level" : key === "fsc" ? "FSc/A-Level" : "Entry Test"}
+                                </span>
+                                <span className="text-sm font-bold text-slate-800">{val * 100}%</span>
+                              </div>
+                            )
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+
+                    {/* Fee Summary */}
+                    {uni.departments?.length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <h3 className="font-semibold text-slate-800 mb-2" style={{ fontFamily: "Sora" }}>
+                          Fee Summary
+                        </h3>
+                        <p className="text-xs text-slate-500 mb-3">Estimated semester fee across all departments.</p>
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center justify-between">
+                          <span className="text-sm font-medium text-slate-700">Semester Fee Range</span>
+                          <span className="text-sm font-bold" style={{ color: "var(--navy)", fontFamily: "DM Mono" }}>
+                            {(() => {
+                              const fees = uni.departments.map(d => d.semesterFee).filter(f => f > 0);
+                              if (fees.length === 0) return "Not Available";
+                              const min = Math.min(...fees);
+                              const max = Math.max(...fees);
+                              return min === max ? formatFee(min) : `${formatFee(min)} - ${formatFee(max)}`;
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
