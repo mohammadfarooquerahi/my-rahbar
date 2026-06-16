@@ -288,7 +288,21 @@ export default function UniversityDetailPage() {
 
   const uniId = uni._id || uni.id;
   const watched = isWatched(uniId);
-  const days = daysUntilDeadline(uni.admissionDeadline);
+  let closestDeadlineDays = daysUntilDeadline(uni.admissionDeadline);
+  if (uni.admissionDeadlines?.length > 0) {
+    uni.admissionDeadlines.forEach(dl => {
+      if (dl.deadline) {
+        const d = daysUntilDeadline(dl.deadline);
+        if (d !== null && d >= 0) {
+          if (closestDeadlineDays === null || d < closestDeadlineDays) {
+            closestDeadlineDays = d;
+          }
+        }
+      }
+    });
+  }
+  const isActuallyOpen = uni.admissionOpen || (closestDeadlineDays !== null && closestDeadlineDays >= 0);
+  const days = closestDeadlineDays;
   const dl = deadlineLabel(days);
 
   const toggleWatch = () => {
@@ -377,7 +391,7 @@ export default function UniversityDetailPage() {
                       >
                         {uni.type === "government" ? "Government" : "Private"}
                       </span>
-                      {uni.admissionOpen ? (
+                      {isActuallyOpen ? (
                         <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">
                           Admissions Open
                         </span>

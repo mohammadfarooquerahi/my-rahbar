@@ -56,10 +56,26 @@ export default function UniversityCard({ uni }) {
     }
   };
 
-  const daysLeft =
-    uni.admissionOpen && uni.admissionDeadline
-      ? daysUntilDeadline(uni.admissionDeadline)
-      : null;
+  let closestDeadlineDays = null;
+  if (uni.admissionDeadline) {
+    const days = daysUntilDeadline(uni.admissionDeadline);
+    if (days !== null && days >= 0) closestDeadlineDays = days;
+  }
+  if (uni.admissionDeadlines?.length > 0) {
+    uni.admissionDeadlines.forEach(dl => {
+      if (dl.deadline) {
+        const days = daysUntilDeadline(dl.deadline);
+        if (days !== null && days >= 0) {
+          if (closestDeadlineDays === null || days < closestDeadlineDays) {
+            closestDeadlineDays = days;
+          }
+        }
+      }
+    });
+  }
+
+  const isActuallyOpen = uni.admissionOpen || (closestDeadlineDays !== null && closestDeadlineDays >= 0);
+  const daysLeft = closestDeadlineDays;
 
   let feeRange = "N/A";
   if (uni.departments && uni.departments.length > 0) {
@@ -137,12 +153,12 @@ export default function UniversityCard({ uni }) {
               <span
                 className={
                   "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full " +
-                  (uni.admissionOpen
+                  (isActuallyOpen
                     ? "bg-emerald-50 text-emerald-700"
                     : "bg-red-50 text-red-700")
                 }
               >
-                {uni.admissionOpen ? "● Open" : "Closed"}
+                {isActuallyOpen ? "● Open" : "Closed"}
               </span>
             </div>
             <h3
@@ -232,7 +248,7 @@ export default function UniversityCard({ uni }) {
           )}
 
           {/* Urgent Countdown */}
-          {uni.admissionOpen && daysLeft !== null && daysLeft >= 0 && (
+          {isActuallyOpen && daysLeft !== null && daysLeft >= 0 && (
             <div className="flex items-center gap-1.5 font-semibold text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg w-fit mt-1">
               <Clock size={14} className="animate-pulse" />
               {daysLeft === 0
