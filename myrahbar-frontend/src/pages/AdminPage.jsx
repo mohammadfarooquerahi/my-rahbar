@@ -1654,50 +1654,19 @@ export default function AdminPage() {
               {/* Departments */}
               <div>
                 <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
-                  Departments
+                  Departments ({departments.length})
                 </p>
 
-                {/* Existing departments */}
+                {/* Existing departments — fully inline editable */}
                 {departments.length > 0 && (
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-3 mb-4">
                     {departments.map((d, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3"
+                        className="bg-slate-50 rounded-xl p-4 border border-slate-100"
                       >
-                        <div>
-                          <p className="font-medium text-slate-700 text-sm">
-                            {d.name}
-                          </p>
-                          <p className="text-xs text-slate-400 mt-0.5">
-                            {d.category} · PKR{" "}
-                            {parseInt(d.semesterFee).toLocaleString()}/sem ·
-                            Merit: {d.seats?.merit} · SF: {d.seats?.selfFinance}
-                            {d.lastMerit?.[0]?.closing
-                              ? " · Last merit: " + d.lastMerit[0].closing + "%"
-                              : ""}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              // Populate form with this dept's data and remove from list
-                              setDeptForm({
-                                name: d.name,
-                                category: d.category,
-                                semesterFee: d.semesterFee,
-                                lastMerit: d.lastMerit?.[0]?.closing || "",
-                                meritSeats: d.seats?.merit || 0,
-                                selfFinanceSeats: d.seats?.selfFinance || 0,
-                              });
-                              removeDept(i);
-                            }}
-                            className="p-1 text-slate-400 hover:text-blue-500"
-                            title="Edit department"
-                          >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                          </button>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-bold text-slate-400">DEPT #{i + 1}</span>
                           <button
                             onClick={(e) => {
                               e.preventDefault();
@@ -1709,15 +1678,109 @@ export default function AdminPage() {
                             <X size={14} />
                           </button>
                         </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Department Name *</label>
+                            <input
+                              value={d.name || ""}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], name: e.target.value };
+                                setDepartments(updated);
+                              }}
+                              placeholder="e.g. BS Computer Science"
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Category</label>
+                            <select
+                              value={d.category || "CS"}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], category: e.target.value };
+                                setDepartments(updated);
+                              }}
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            >
+                              {["CS", "Engineering", "Medical", "Business", "Arts", "Architecture", "Law", "Sciences", "Social Sciences", "Education", "Agriculture"].map((c) => (
+                                <option key={c} value={c}>{c}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Semester Fee (PKR)</label>
+                            <input
+                              type="number"
+                              value={d.semesterFee || ""}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], semesterFee: e.target.value };
+                                setDepartments(updated);
+                              }}
+                              placeholder="25000"
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Last Closing Merit %</label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={d.lastMerit?.[0]?.closing ?? d.lastMerit?.[0]?.closingPercentage ?? (typeof d.lastMerit === "number" ? d.lastMerit : "")}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                const val = parseFloat(e.target.value);
+                                updated[i] = {
+                                  ...updated[i],
+                                  lastMerit: e.target.value ? [{ year: 2025, closing: val, closingPercentage: val, quota: "merit" }] : [],
+                                };
+                                setDepartments(updated);
+                              }}
+                              placeholder="75.5"
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Merit Seats</label>
+                            <input
+                              type="number"
+                              value={d.seats?.merit ?? 0}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], seats: { ...updated[i].seats, merit: parseInt(e.target.value) || 0 } };
+                                setDepartments(updated);
+                              }}
+                              placeholder="60"
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Self-Finance Seats</label>
+                            <input
+                              type="number"
+                              value={d.seats?.selfFinance ?? 0}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], seats: { ...updated[i].seats, selfFinance: parseInt(e.target.value) || 0 } };
+                                setDepartments(updated);
+                              }}
+                              placeholder="30"
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {/* Add department form */}
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-slate-600 mb-3">
-                    Add Department
+                {/* Add NEW department form */}
+                <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                  <p className="text-xs font-semibold text-emerald-700 mb-3">
+                    ➕ Add New Department
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -1756,6 +1819,9 @@ export default function AdminPage() {
                           "Architecture",
                           "Law",
                           "Sciences",
+                          "Social Sciences",
+                          "Education",
+                          "Agriculture",
                         ].map((c) => (
                           <option key={c} value={c}>
                             {c}
@@ -1786,12 +1852,12 @@ export default function AdminPage() {
                       </label>
                       <input
                         type="number"
-                        value={deptForm.lastMerit[0].closing}
+                        value={deptForm.lastMerit[0]?.closing ?? ""}
                         onChange={(e) =>
                           setDeptForm((p) => ({
                             ...p,
                             lastMerit: [
-                              { year: 2024, closing: e.target.value },
+                              { year: 2025, closing: e.target.value },
                             ],
                           }))
                         }
