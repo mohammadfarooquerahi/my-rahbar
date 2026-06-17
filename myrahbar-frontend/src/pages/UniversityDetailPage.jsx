@@ -792,56 +792,15 @@ export default function UniversityDetailPage() {
 
                 {/* FEE */}
                 {activeTab === "Fee & Expenses" && (
-                  <div className="space-y-5">
-                    <h3
-                      className="font-semibold text-slate-800"
-                      style={{ fontFamily: "Sora" }}
-                    >
-                      Fee by Department
-                    </h3>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="bg-slate-50">
-                            <th className="text-left px-4 py-3 text-slate-600 font-medium border-b border-slate-200">
-                              Department
-                            </th>
-                            <th className="text-right px-4 py-3 text-slate-600 font-medium border-b border-slate-200">
-                              Per Semester
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {uni.departments?.map((d) => (
-                            <tr
-                              key={d.name}
-                              className="border-b border-slate-100 hover:bg-slate-50"
-                            >
-                              <td className="px-4 py-3 text-slate-700">
-                                {d.name}
-                              </td>
-                              <td
-                                className="px-4 py-3 text-right font-medium"
-                                style={{
-                                  fontFamily: "DM Mono",
-                                  color: "var(--navy)",
-                                }}
-                              >
-                                {formatFee(d.semesterFee)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                  <div className="space-y-6">
                     {uni.feeStructure?.length > 0 && (
-                      <div className="mt-6">
+                      <div>
                         <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
                           Other Fee Types
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {uni.feeStructure.map((fee, idx) => (
-                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center">
+                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex justify-between items-center shadow-sm">
                               <div>
                                 <p className="font-medium text-slate-700 text-sm">{fee.title}</p>
                                 {fee.description && <p className="text-xs text-slate-500 mt-0.5">{fee.description}</p>}
@@ -856,13 +815,13 @@ export default function UniversityDetailPage() {
                     )}
 
                     {uni.feeNotes?.length > 0 && (
-                      <div className="mt-6">
+                      <div>
                         <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
                           Fee Policies & Notes
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {uni.feeNotes.map((note, idx) => (
-                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-center">
+                            <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-center shadow-sm">
                               <p className="font-medium text-slate-700 text-sm mb-1">{note.title}</p>
                               <p className="text-xs text-slate-500 leading-relaxed">{note.description}</p>
                             </div>
@@ -871,7 +830,7 @@ export default function UniversityDetailPage() {
                       </div>
                     )}
 
-                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 shadow-sm">
                       <p className="text-sm font-medium text-orange-800 flex items-center gap-2">
                         <AlertCircle size={14} /> Hidden Charges Tip
                       </p>
@@ -880,6 +839,50 @@ export default function UniversityDetailPage() {
                         card, and sports fund. Always ask a current student before
                         applying.
                       </p>
+                    </div>
+
+                    <div>
+                      <h3
+                        className="font-semibold text-slate-800 mb-3"
+                        style={{ fontFamily: "Sora" }}
+                      >
+                        Fee by Department
+                      </h3>
+                      <div className="overflow-x-auto shadow-sm rounded-xl border border-slate-200">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-slate-50">
+                              <th className="text-left px-4 py-3 text-slate-600 font-medium border-b border-slate-200">
+                                Department
+                              </th>
+                              <th className="text-right px-4 py-3 text-slate-600 font-medium border-b border-slate-200">
+                                Per Semester
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {uni.departments?.map((d) => (
+                              <tr
+                                key={d.name}
+                                className="border-b border-slate-100 hover:bg-slate-50"
+                              >
+                                <td className="px-4 py-3 text-slate-700">
+                                  {d.name}
+                                </td>
+                                <td
+                                  className="px-4 py-3 text-right font-medium"
+                                  style={{
+                                    fontFamily: "DM Mono",
+                                    color: "var(--navy)",
+                                  }}
+                                >
+                                  {formatFee(d.semesterFee)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 )}
