@@ -94,6 +94,7 @@ const universitySchema = new mongoose.Schema(
     hostelFee: { type: Number, default: null },
     messFee: { type: Number, default: null },
     scholarships: [{ type: String }],
+    sources: [{ type: String }],  // AI verification source URLs
     departments: [departmentSchema],
 
     overallRating: { type: Number, default: 0 },

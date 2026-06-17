@@ -65,21 +65,34 @@ export default function UniversityDataCollector() {
         body: JSON.stringify({ universityName: searchQuery }),
       });
 
+      // Handle non-JSON error responses (e.g. HTML from proxy timeouts)
+      const contentType = res.headers.get("content-type") || "";
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Failed to fetch from server");
+        if (contentType.includes("application/json")) {
+          const errData = await res.json();
+          throw new Error(errData.message || "Server error");
+        } else {
+          const errText = await res.text();
+          console.error("Non-JSON error response:", errText.slice(0, 200));
+          throw new Error(`Server returned ${res.status}. The AI may be overloaded — please try again in 30 seconds.`);
+        }
+      }
+
+      if (!contentType.includes("application/json")) {
+        throw new Error("Server returned unexpected format. Please try again.");
       }
 
       const parsed = await res.json();
 
-      // Normalize fields if missing
+      // Normalize departments — preserve AI's seats object and lastMerit value
       parsed.departments = (parsed.departments || []).map((d) => ({
         name: d.name || "",
         category: d.category || "CS",
+        degreeLevel: d.degreeLevel || "BS",
         semesterFee: d.semesterFee || "",
-        lastMerit: d.lastMerit || "",
-        meritSeats: d.meritSeats || 0,
-        selfFinanceSeats: d.selfFinanceSeats || 0,
+        lastMerit: typeof d.lastMerit === "number" ? d.lastMerit : (Array.isArray(d.lastMerit) ? d.lastMerit[0]?.closingPercentage || "" : d.lastMerit || ""),
+        meritSeats: d.seats?.merit || d.meritSeats || 0,
+        selfFinanceSeats: d.seats?.selfFinance || d.selfFinanceSeats || 0,
       }));
 
       setFormData(parsed);
@@ -121,8 +134,10 @@ export default function UniversityDataCollector() {
         shortName: formData.shortName,
         type: (formData.type || "government").toLowerCase(),
         city: formData.city || "Karachi",
-        established: formData.establishedYear || null,
+        campuses: Array.isArray(formData.campuses) ? formData.campuses : [],
+        established: Number(formData.established || formData.establishedYear) || null,
         website: formData.website || formData.officialWebsite || "",
+        degreeLevels: Array.isArray(formData.degreeLevels) ? formData.degreeLevels : [],
         testRequired: formData.testRequired || formData.entryTest || "Own Entry Test",
         admissionTestType: formData.admissionTestType || "Own Test",
         admissionOpen: !!formData.admissionOpen,
