@@ -23,6 +23,10 @@
       "destination": "https://my-rahbar-production.up.railway.app/api/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap"
+    },
+    {
       "source": "/uploads/(.*)",
       "destination": "https://my-rahbar-production.up.railway.app/uploads/$1"
     },
