@@ -134,16 +134,18 @@ export default function BlogDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDesc} />
+        <title>{blog.title}</title>
+        <meta name="description" content={blog.excerpt} />
+        <link rel="canonical" href={`https://www.rahbars.com/blog/${blog.slug}`} />
+        <meta property="og:title" content={blog.title} />
+        <meta property="og:description" content={blog.excerpt} />
+        <meta property="og:url" content={`https://www.rahbars.com/blog/${blog.slug}`} />
+        
+        {/* Additional SEO metadata retained for completeness */}
         {keywords && <meta name="keywords" content={keywords} />}
         <meta name="author" content={blog.author?.name || "Rahbars Editorial Team"} />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={pageUrl} />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDesc} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={pageUrl} />
         <meta property="og:image" content={coverImg} />
         <meta property="og:site_name" content="Rahbars" />
         <meta property="article:section" content={blog.category} />

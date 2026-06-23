@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /api/blogs/
 
 # Disallow admin and auth routes
 Disallow: /admin

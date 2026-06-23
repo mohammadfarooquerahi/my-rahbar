@@ -24,7 +24,7 @@
     },
     {
       "source": "/sitemap.xml",
-      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap"
+      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml"
     },
     {
       "source": "/uploads/(.*)",

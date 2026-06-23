@@ -98,7 +98,7 @@ app.use("/api/news", newsRoutes);
 // 🌟 FIXED: Changed base path from "/api/ai" to "/api/ai-collect" to avoid conflict
 app.use("/api/ai-collect", aiCollectRoutes);
 
-app.use("/api/sitemap", sitemapRoutes);
+app.use("/api/sitemap.xml", sitemapRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
