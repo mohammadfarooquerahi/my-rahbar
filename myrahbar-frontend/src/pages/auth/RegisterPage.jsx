@@ -170,7 +170,7 @@ export default function RegisterPage() {
                     type={showPass ? "text" : "password"}
                     value={form.password}
                     onChange={(e) => update("password", e.target.value)}
-                    placeholder="Kam az kam 6 characters"
+                    placeholder="At least 6 characters"
                     required
                     className="w-full border border-slate-200 rounded-xl pl-9 pr-10 py-2.5 text-sm outline-none focus:border-blue-400"
                   />
