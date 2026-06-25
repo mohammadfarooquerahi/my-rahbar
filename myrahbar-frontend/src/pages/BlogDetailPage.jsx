@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify"; // VULN-03 FIX: Sanitize HTML to prevent stored XSS
 import {
   ArrowLeft, Calendar, Eye, Clock, Tag, Share2,
   ChevronRight, BookOpen, MessageCircle, Target, Calculator, Search
@@ -223,10 +224,10 @@ export default function BlogDetailPage() {
                 </p>
               )}
 
-              {/* Rich HTML Content */}
+              {/* Rich HTML Content — VULN-03 FIX: sanitized with DOMPurify */}
               <article
                 className="blog-content"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
               />
 
               {/* Tags */}

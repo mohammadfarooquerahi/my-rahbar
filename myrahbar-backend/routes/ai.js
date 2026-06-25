@@ -46,12 +46,25 @@ router.post("/chat", async (req, res) => {
       return res.status(400).json({ message: "Messages array required" });
     }
 
+    // VULN-12 FIX: Validate message objects — only allow user/assistant roles, block system injection
+    if (messages.length > 20) {
+      return res.status(400).json({ message: "Too many messages in request." });
+    }
+    const validRoles = ["user", "assistant"];
+    const sanitizedMessages = messages
+      .filter(m => m && typeof m.content === "string" && validRoles.includes(m.role))
+      .map(m => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
+
+    if (sanitizedMessages.length === 0) {
+      return res.status(400).json({ message: "No valid messages provided." });
+    }
+
     const systemPrompt = type === "career" ? CAREER_SYSTEM : EDU_SYSTEM;
 
     // Groq ke mutabiq system prompt ko messages array ke shuru mein add karein
     const formattedMessages = [
       { role: "system", content: systemPrompt },
-      ...messages,
+      ...sanitizedMessages,
     ];
 
     // Groq API Call

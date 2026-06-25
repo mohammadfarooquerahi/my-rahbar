@@ -16,7 +16,21 @@ const storage = multer.diskStorage({
     cb(null, `blog-${Date.now()}${path.extname(file.originalname)}`);
   }
 });
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  // VULN-14 FIX: Whitelist only safe image types to prevent malicious file uploads
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = /jpeg|jpg|png|gif|webp/;
+    const mimeOk = allowedMimes.test(file.mimetype);
+    const extOk = allowedMimes.test(path.extname(file.originalname).toLowerCase().slice(1));
+    if (mimeOk && extOk) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files (jpeg, jpg, png, gif, webp) are allowed."), false);
+    }
+  },
+});
 
 // Public routes
 router.get("/trending-topics", protect, adminOnly, getTrendingTopics);

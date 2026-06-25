@@ -1,5 +1,9 @@
 const University = require("../models/University");
 const Review = require("../models/Review");
+
+// VULN-05 FIX: Escape regex special chars to prevent ReDoS + NoSQL injection
+const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").slice(0, 100);
+
 // GET /api/universities
 const getAll = async (req, res) => {
   const { type, city, open, degree, dept, maxFee, maxMerit } = req.query;
@@ -7,16 +11,16 @@ const getAll = async (req, res) => {
   // FIX: Changed from { status: "approved" } to an empty object
   // This allows all universities to show on the Home Page regardless of status
   const filter = {};
-  if (type) filter.type = type;
-  if (city) filter.city = { $regex: new RegExp(`^${city}$`, "i") };
+  if (type) filter.type = escapeRegex(type);
+  if (city) filter.city = { $regex: new RegExp(`^${escapeRegex(city)}$`, "i") };
   if (open === "true") filter.admissionOpen = true;
   
   if (degree) {
-    filter.degreeLevels = { $regex: new RegExp(`^${degree}$`, "i") };
+    filter.degreeLevels = { $regex: new RegExp(`^${escapeRegex(degree)}$`, "i") };
   }
   
   if (dept) {
-    filter["departments.name"] = { $regex: new RegExp(dept, "i") };
+    filter["departments.name"] = { $regex: new RegExp(escapeRegex(dept), "i") };
   }
 
   if (maxFee) {

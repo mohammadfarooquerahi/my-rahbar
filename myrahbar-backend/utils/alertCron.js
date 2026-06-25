@@ -77,7 +77,7 @@ const sendDeadlineAlert = async (alert, daysLeft) => {
           <p style="color: #333; margin: 0 0 8px; font-size: 15px;">
             <strong>University:</strong> ${uniName}
           </p>
-          ${degreeLabel ? `<p style="color: #333; margin: 0 0 8px; font-size: 15px;"><strong>Program:</strong> ${alert.degreeLevel}</p>` : ""}
+          ${degreeLabel ? `<p style="color: #333; margin: 0 0 8px; font-size: 15px;"><strong>Program:</strong> ${alert.degreeLevel.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</p>` : ""}
           <p style="color: ${urgent ? "#e74c3c" : "#1545A5"}; margin: 0; font-size: 15px; font-weight: bold;">
             Deadline: ${daysLeft} ${daysLeft === 1 ? "day" : "days"} remaining
           </p>

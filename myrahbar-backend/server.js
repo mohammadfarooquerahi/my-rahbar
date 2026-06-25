@@ -52,7 +52,8 @@ app.use(compression());
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      // Allow localhost only in development
+      ...(process.env.NODE_ENV !== "production" ? ["http://localhost:5173"] : []),
       "https://rahbars.com",
       "https://www.rahbars.com",
       process.env.CLIENT_URL,
@@ -66,13 +67,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cookieTracker);
 
-// Static file serving for uploads
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
-// Serve uploaded files as static (Cleaned duplicate require)
+// Static file serving for uploads (single definition — removed duplicate)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Rate limiting — 100 requests per minute per IP
+// Rate limiting — 100 requests per minute per IP (global)
 const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
@@ -80,17 +78,35 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
+// VULN-07 FIX: Strict limiter for auth endpoints (prevent brute-force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 attempts per 15 min
+  message: { message: "Too many login attempts. Please wait 15 minutes and try again." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// VULN-07 FIX: Strict limiter for AI endpoints (prevent API cost abuse)
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // max 10 AI calls per minute per IP
+  message: { message: "AI rate limit reached. Please wait a moment." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // -------------------------
 // ROUTES CONFIGURATION
 // -------------------------
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes); // VULN-07: strict auth rate limit
 app.use("/api/universities", universityRoutes);
 app.use("/api/merit", meritRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/consult", consultRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/ai", aiRoutes);
+app.use("/api/ai", aiLimiter, aiRoutes); // VULN-07: strict AI rate limit
 app.use("/api/blogs", blogRoutes);
 app.use("/api/pastpapers", pastPaperRoutes);
 app.use("/api/news", newsRoutes);

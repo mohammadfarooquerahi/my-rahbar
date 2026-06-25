@@ -7,7 +7,13 @@ const cookieTracker = async (req, res, next) => {
   if (!sessionId) {
     sessionId = crypto.randomUUID();
     // Set cookie for 30 days
-    res.cookie("sessionId", sessionId, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    // VULN-10 FIX: Added secure + sameSite flags to prevent CSRF and cookie interception
+    res.cookie("sessionId", sessionId, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
   }
 
   try {

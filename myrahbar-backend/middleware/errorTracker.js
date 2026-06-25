@@ -22,7 +22,7 @@ const errorTracker = async (err, req, res, next) => {
   
   res.status(statusCode).json({
     message,
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    // VULN-13 FIX: Never expose stack traces to clients — log to DB only
   });
 };
 

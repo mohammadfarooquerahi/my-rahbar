@@ -16,11 +16,14 @@ const getBlogs = async (req, res) => {
 
   if (category && category !== "All") query.category = category;
   if (search) {
+    // VULN-06 FIX: Escape regex special chars and limit length to prevent ReDoS
+    if (search.length > 100) return res.status(400).json({ message: "Search query too long." });
+    const safeSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     query.$or = [
-      { title:    { $regex: search, $options: "i" } },
-      { excerpt:  { $regex: search, $options: "i" } },
-      { tags:     { $regex: search, $options: "i" } },
-      { keywords: { $regex: search, $options: "i" } },
+      { title:    { $regex: safeSearch, $options: "i" } },
+      { excerpt:  { $regex: safeSearch, $options: "i" } },
+      { tags:     { $regex: safeSearch, $options: "i" } },
+      { keywords: { $regex: safeSearch, $options: "i" } },
     ];
   }
 
@@ -1177,13 +1180,20 @@ const aiGenerateBlog = async (req, res) => {
   const Groq = require("groq-sdk");
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+  // VULN-02 FIX: Sanitize inputs before injecting into AI prompt (Prompt Injection prevention)
+  const sanitizeForPrompt = (str) => String(str || "").replace(/["\\`\n\r]/g, " ").slice(0, 200);
+  const safeTitle = sanitizeForPrompt(title);
+  const safeCategory = sanitizeForPrompt(category || "Admission Guide");
+  const safeKeywords = sanitizeForPrompt(keywords || title);
+  const safeContext = additionalContext ? sanitizeForPrompt(additionalContext) : null;
+
   const prompt = `You are an expert Pakistani educational content writer for Rahbars.com — Pakistan's #1 free university admission guide.
 
 Write a comprehensive, SEO-optimized blog article with the following details:
-- Title: "${title}"
-- Category: "${category || "Admission Guide"}"
-- Target keywords: ${keywords || title}
-${additionalContext ? `- Additional context: ${additionalContext}` : ""}
+- Title: "${safeTitle}"
+- Category: "${safeCategory}"
+- Target keywords: ${safeKeywords}
+${safeContext ? `- Additional context: ${safeContext}` : ""}
 
 IMPORTANT REQUIREMENTS:
 1. Write in English (professional but easy to understand for Pakistani FSc students)
