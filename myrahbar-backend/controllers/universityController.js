@@ -78,23 +78,42 @@ const getOne = async (req, res) => {
 
 // POST /api/universities/:id/reviews
 const addReview = async (req, res) => {
-  const { rating, text, category } = req.body;
+  try {
+    const { rating, text, category } = req.body;
 
-  if (!rating || !text) {
-    return res
-      .status(400)
-      .json({ message: "Rating and review text are required." });
+    if (!rating || !text) {
+      return res.status(400).json({ message: "Rating and review text are required." });
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    }
+
+    if (text.trim().length < 10) {
+      return res.status(400).json({ message: "Review must be at least 10 characters." });
+    }
+
+    // Check if user already reviewed this university
+    const existing = await Review.findOne({
+      universityId: req.params.id,
+      userId: req.user._id,
+    });
+    if (existing) {
+      return res.status(400).json({ message: "You have already submitted a review for this university." });
+    }
+
+    const review = await Review.create({
+      universityId: req.params.id,
+      userId: req.user._id,
+      rating: Number(rating),
+      text: text.trim(),
+      category: category || "overall",
+    });
+
+    res.status(201).json({ review, message: "Review submitted! It will appear after admin approval." });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to submit review." });
   }
-
-  const review = await Review.create({
-    universityId: req.params.id,
-    userId: req.user._id,
-    rating,
-    text,
-    category: category || "overall",
-  });
-
-  res.status(201).json({ review, message: "Review submitted for approval." });
 };
 
 // POST /api/universities/:id/charges (hidden charges)
@@ -114,14 +133,27 @@ const addCharge = async (req, res) => {
 
 // GET /api/universities/:id/reviews
 const getReviewsByUniversity = async (req, res) => {
-  const reviews = await Review.find({
-    universityId: req.params.id,
-    status: "approved",
-  })
-    .sort({ createdAt: -1 })
-    .populate("userId", "name profileImage");
+  try {
+    const reviews = await Review.find({
+      universityId: req.params.id,
+      status: "approved",
+    })
+      .sort({ createdAt: -1 })
+      .populate("userId", "name profileImage");
 
-  res.json({ reviews });
+    // Calculate average rating and category breakdown
+    const total = reviews.length;
+    const avgRating = total > 0
+      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / total).toFixed(1)
+      : 0;
+
+    const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach(r => { if (breakdown[r.rating] !== undefined) breakdown[r.rating]++; });
+
+    res.json({ reviews, total, avgRating: Number(avgRating), breakdown });
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch reviews." });
+  }
 };
 
 module.exports = {

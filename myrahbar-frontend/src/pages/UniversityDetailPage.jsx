@@ -100,15 +100,12 @@ function CompressorWidget() {
 
 const WHATSAPP = "923455589079";
 
-// Pakistani fake reviews shown when no real reviews exist
-const FAKE_REVIEWS = [
-  { _id: "f1", userId: { name: "Ali Hassan" }, rating: 5, text: "Bahut acha university hai. Faculty bohat helpful hai aur lab facilities bhi up to date hain. Mera pehla saal bohat acha raha alhamdulillah.", createdAt: "2025-03-10" },
-  { _id: "f2", userId: { name: "Fatima Malik" }, rating: 4, text: "Overall experience acha raha. Canteen ka khana improve ho sakta hai lekin baaki sab theek hai. Library resources bhi kaafi helpful hain.", createdAt: "2025-04-02" },
-  { _id: "f3", userId: { name: "Usman Ahmed" }, rating: 5, text: "Professors bohat experienced hain aur serious students ki madad karte hain. Campus bhi clean aur safe hai. Highly recommend!", createdAt: "2025-01-15" },
-  { _id: "f4", userId: { name: "Zainab Siddiqui" }, rating: 4, text: "Admission process thodi mushkil thi lekin baad mein sab sahi ho gaya. Online portal se bohot kaam asaan ho gaya hai. Good university!", createdAt: "2025-05-20" },
-  { _id: "f5", userId: { name: "Muhammad Bilal" }, rating: 5, text: "Sports facilities aur extra-curricular activities bohat achi hain. Merit system fair hai aur koi sifarish nahi chalti. Recommend karta hoon!", createdAt: "2025-02-28" },
-  { _id: "f6", userId: { name: "Hina Qureshi" }, rating: 4, text: "Faculty ka behavior bohat professional hai. Exams tough hote hain lekin padhoge toh pass zaroor hoge. Environment friendly hai.", createdAt: "2025-06-01" },
-  { _id: "f7", userId: { name: "Saad Khan" }, rating: 5, text: "IT labs aur research facilities shabdar hain. Professors genuinely students ki career guidance mein help karte hain. A+ experience!", createdAt: "2025-03-22" },
+const REVIEW_CATEGORIES = [
+  { value: "overall",  label: "Overall" },
+  { value: "faculty",  label: "Faculty" },
+  { value: "hostel",   label: "Hostel" },
+  { value: "fee",      label: "Fee" },
+  { value: "campus",   label: "Campus" },
 ];
 
 export default function UniversityDetailPage() {
@@ -121,7 +118,11 @@ export default function UniversityDetailPage() {
   const [deadlineFilter, setDeadlineFilter] = useState("All");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
+  const [reviewCategory, setReviewCategory] = useState("overall");
   const [reviewsList, setReviewsList] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ total: 0, avgRating: 0, breakdown: {} });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [papers, setPapers] = useState([]);
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -161,20 +162,14 @@ export default function UniversityDetailPage() {
       fetch("/api/universities/" + uni._id + "/reviews")
         .then((res) => res.json())
         .then((data) => {
-          const realReviews = data.reviews || [];
-          // Show fake Pakistani reviews if no real ones exist
-          if (realReviews.length === 0) {
-            // Show 5-8 fake reviews based on uni name hash
-            const hash = uni.name ? uni.name.charCodeAt(0) + uni.name.length : 5;
-            const count = 5 + (hash % 4); // 5 to 8
-            setReviewsList(FAKE_REVIEWS.slice(0, count));
-          } else {
-            setReviewsList(realReviews);
-          }
+          setReviewsList(data.reviews || []);
+          setReviewStats({
+            total: data.total || 0,
+            avgRating: data.avgRating || 0,
+            breakdown: data.breakdown || {},
+          });
         })
-        .catch(() => {
-          setReviewsList(FAKE_REVIEWS.slice(0, 5));
-        });
+        .catch(() => setReviewsList([]));
     }
   }, [activeTab, uni]);
 
@@ -183,12 +178,18 @@ export default function UniversityDetailPage() {
       toast.error("Please write your review first");
       return;
     }
+    if (reviewText.trim().length < 10) {
+      toast.error("Review must be at least 10 characters");
+      return;
+    }
     try {
+      setReviewSubmitting(true);
       const token = JSON.parse(localStorage.getItem("rahbar-auth") || "{}")
         ?.state?.token;
 
       if (!token) {
         toast.error("Please login to submit a review");
+        setReviewSubmitting(false);
         return;
       }
 
@@ -198,14 +199,19 @@ export default function UniversityDetailPage() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-        body: JSON.stringify({ rating, text: reviewText }),
+        body: JSON.stringify({ rating, text: reviewText.trim(), category: reviewCategory }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      toast.success("Review submitted for approval!");
+      toast.success("Review submitted! It will appear after admin approval.");
       setReviewText("");
+      setRating(5);
+      setReviewCategory("overall");
+      setReviewSubmitted(true);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to submit review");
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
@@ -935,99 +941,161 @@ export default function UniversityDetailPage() {
 
                 {/* REVIEWS */}
                 {activeTab === "Reviews" && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 bg-slate-50 rounded-xl p-4">
-                      <div className="text-center">
-                        <p
-                          className="text-4xl font-bold"
-                          style={{ fontFamily: "Sora", color: "var(--navy)" }}
-                        >
-                          {uni.overallRating || 0}
-                        </p>
-                        <div className="flex gap-0.5 mt-1 justify-center">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star
-                              key={i}
-                              size={12}
-                              className={
-                                i <= Math.round(uni.overallRating)
-                                  ? "text-amber-400"
-                                  : "text-slate-300"
-                              }
-                              fill="currentColor"
-                            />
-                          ))}
+                  <div className="space-y-6">
+
+                    {/* ── Rating Summary ── */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-5">
+                      <div className="flex items-center gap-6">
+                        {/* Big number */}
+                        <div className="text-center shrink-0">
+                          <p className="text-5xl font-black" style={{ color: "var(--navy)" }}>
+                            {reviewStats.avgRating || "—"}
+                          </p>
+                          <div className="flex gap-0.5 mt-1 justify-center">
+                            {[1,2,3,4,5].map((i) => (
+                              <Star key={i} size={14}
+                                className={i <= Math.round(reviewStats.avgRating) ? "text-amber-400" : "text-slate-300"}
+                                fill="currentColor" />
+                            ))}
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">{reviewStats.total} verified reviews</p>
                         </div>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                        {reviewsList.length || FAKE_REVIEWS.slice(0, 5).length} reviews
-                        </p>
+
+                        {/* Breakdown bars */}
+                        <div className="flex-1 space-y-1.5">
+                          {[5,4,3,2,1].map((star) => {
+                            const count = reviewStats.breakdown?.[star] || 0;
+                            const pct = reviewStats.total > 0 ? Math.round((count / reviewStats.total) * 100) : 0;
+                            return (
+                              <div key={star} className="flex items-center gap-2 text-xs">
+                                <span className="w-3 text-slate-500 shrink-0">{star}</span>
+                                <Star size={10} fill="currentColor" className="text-amber-400 shrink-0" />
+                                <div className="flex-1 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                  <div className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                                    style={{ width: pct + "%" }} />
+                                </div>
+                                <span className="w-6 text-slate-400 text-right shrink-0">{count}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <p className="text-sm text-slate-600 flex-1">
-                        Share your experience to help future students.
-                      </p>
                     </div>
 
-                    <div className="border border-slate-200 rounded-xl p-4">
-                      <p className="text-sm font-medium text-slate-700 mb-3">
-                        Write a Review
-                      </p>
-                      <div className="flex gap-1 mb-3">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <button key={i} onClick={() => setRating(i)}>
-                            <Star
-                              size={22}
-                              className={
-                                i <= rating
-                                  ? "text-amber-400"
-                                  : "text-slate-300"
-                              }
-                              fill={i <= rating ? "currentColor" : "none"}
-                            />
-                          </button>
-                        ))}
+                    {/* ── Write a Review Form ── */}
+                    {reviewSubmitted ? (
+                      <div className="border border-emerald-200 bg-emerald-50 rounded-2xl p-5 text-center">
+                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <p className="font-semibold text-emerald-800 text-sm">Review Submitted!</p>
+                        <p className="text-xs text-emerald-600 mt-1">Your review is pending admin approval and will appear here once approved.</p>
                       </div>
-                      <textarea
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                        placeholder="Share your experience about faculty, campus, fees..."
-                        rows={3}
-                        className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-blue-400 resize-none"
-                      />
-                      <button
-                        onClick={submitReview}
-                        className="mt-2 px-4 py-2 text-sm font-medium text-white rounded-xl"
-                        style={{ background: "var(--navy)" }}
-                      >
-                        Submit Review
-                      </button>
-                    </div>
+                    ) : (
+                      <div className="border border-slate-200 rounded-2xl p-5 bg-white shadow-sm">
+                        <p className="text-sm font-bold text-slate-800 mb-4">✍️ Write a Review</p>
 
-                    <div className="space-y-4 mt-8 border-t border-slate-100 pt-8">
-                      <h3 className="font-semibold text-slate-800 text-lg mb-4">Student Reviews</h3>
+                        {/* Star Rating */}
+                        <div className="mb-4">
+                          <p className="text-xs text-slate-500 mb-1.5">Your Rating</p>
+                          <div className="flex gap-1">
+                            {[1,2,3,4,5].map((i) => (
+                              <button key={i} onClick={() => setRating(i)}
+                                className="transition-transform hover:scale-110 active:scale-95">
+                                <Star size={28}
+                                  className={i <= rating ? "text-amber-400" : "text-slate-300"}
+                                  fill={i <= rating ? "currentColor" : "none"} />
+                              </button>
+                            ))}
+                            <span className="ml-2 text-sm font-bold text-amber-500 self-center">{rating}.0</span>
+                          </div>
+                        </div>
+
+                        {/* Category */}
+                        <div className="mb-4">
+                          <p className="text-xs text-slate-500 mb-1.5">Category</p>
+                          <div className="flex flex-wrap gap-2">
+                            {REVIEW_CATEGORIES.map((cat) => (
+                              <button key={cat.value}
+                                onClick={() => setReviewCategory(cat.value)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
+                                  reviewCategory === cat.value
+                                    ? "bg-blue-600 text-white border-blue-600"
+                                    : "bg-white text-slate-600 border-slate-200 hover:border-blue-400"
+                                }`}>
+                                {cat.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Text */}
+                        <div className="mb-4">
+                          <p className="text-xs text-slate-500 mb-1.5">Your Review</p>
+                          <textarea
+                            value={reviewText}
+                            onChange={(e) => setReviewText(e.target.value)}
+                            placeholder="Share your experience about faculty, campus, fees, hostel..."
+                            rows={3}
+                            className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-blue-400 resize-none transition-colors"
+                          />
+                          <p className="text-xs text-slate-400 mt-1">{reviewText.length} characters (min 10)</p>
+                        </div>
+
+                        <button
+                          onClick={submitReview}
+                          disabled={reviewSubmitting}
+                          className="px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90 active:scale-95"
+                          style={{ background: "var(--navy)" }}>
+                          {reviewSubmitting ? "Submitting..." : "Submit Review"}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* ── Reviews List ── */}
+                    <div className="space-y-3">
+                      <h3 className="font-bold text-slate-800 text-base">
+                        Student Reviews
+                        {reviewStats.total > 0 && (
+                          <span className="ml-2 text-xs font-normal text-slate-400">({reviewStats.total} approved)</span>
+                        )}
+                      </h3>
+
                       {reviewsList.length === 0 ? (
-                        <div className="text-center py-10 bg-slate-50 rounded-2xl border border-slate-100">
-                          <MessageCircle size={32} className="mx-auto text-slate-300 mb-2" />
-                          <p className="text-sm font-medium text-slate-600">No reviews yet</p>
-                          <p className="text-xs text-slate-500">Be the first to share your experience!</p>
+                        <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-100">
+                          <MessageCircle size={36} className="mx-auto text-slate-300 mb-3" />
+                          <p className="text-sm font-semibold text-slate-600">No reviews yet</p>
+                          <p className="text-xs text-slate-400 mt-1">Be the first to share your experience!</p>
                         </div>
                       ) : (
                         reviewsList.map((rev) => (
-                          <div key={rev._id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                            <div className="flex items-center justify-between mb-3">
+                          <div key={rev._id} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-3">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
-                                  {rev.userId?.name?.slice(0, 2) || "AN"}
+                                {/* Avatar */}
+                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                                  style={{ background: "var(--navy)" }}>
+                                  {rev.userId?.name?.charAt(0)?.toUpperCase() || "A"}
                                 </div>
                                 <div>
                                   <p className="text-sm font-semibold text-slate-800">{rev.userId?.name || "Anonymous"}</p>
-                                  <p className="text-xs text-slate-500">{new Date(rev.createdAt).toLocaleDateString()}</p>
+                                  <p className="text-xs text-slate-400">
+                                    {new Date(rev.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" })}
+                                    {rev.category && rev.category !== "overall" && (
+                                      <span className="ml-2 capitalize bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-xs">
+                                        {rev.category}
+                                      </span>
+                                    )}
+                                  </p>
                                 </div>
                               </div>
-                              <div className="flex items-center bg-amber-50 px-2.5 py-1 rounded-lg text-amber-500">
-                                <Star size={14} fill="currentColor" />
-                                <span className="text-sm font-bold ml-1">{rev.rating}.0</span>
+                              {/* Star badge */}
+                              <div className="flex items-center gap-1 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg shrink-0">
+                                <Star size={12} fill="currentColor" className="text-amber-400" />
+                                <span className="text-sm font-bold text-amber-600">{rev.rating}</span>
                               </div>
                             </div>
+                            {/* Review text */}
                             <p className="text-sm text-slate-700 leading-relaxed">{rev.text}</p>
                           </div>
                         ))
