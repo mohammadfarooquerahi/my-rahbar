@@ -333,18 +333,40 @@ export default function HomePage() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 mb-5 fade-up-1 leading-[1.08] tracking-tight">
+          <h1
+            className="fade-up-1 mb-5 tracking-tight"
+            style={{
+              fontFamily: "'Sora', sans-serif",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
+              fontWeight: 800,
+              lineHeight: 1.15,
+              color: "#0f172a",
+            }}
+          >
             Your Gateway to the
             <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600">
+            <span
+              className="text-transparent bg-clip-text"
+              style={{ backgroundImage: "linear-gradient(90deg, #2563eb, #6366f1, #7c3aed)" }}
+            >
               Right University.
             </span>
           </h1>
 
-          <p className="text-slate-700 text-base sm:text-lg md:text-xl mb-10 max-w-2xl mx-auto fade-up-2 leading-relaxed">
-            Rahbars helps Pakistani students find, compare, and get admitted to their ideal university.
-            Calculate your aggregate, check merit lists, download past papers, and get
-            expert counseling — all in one place, completely free.
+          <p
+            className="fade-up-2 mb-10 mx-auto"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
+              fontWeight: 400,
+              lineHeight: 1.75,
+              color: "#475569",
+              maxWidth: "520px",
+            }}
+          >
+            Find, compare & get admitted to your ideal university — with AI tools,
+            merit calculator and expert counseling.{" "}
+            <span style={{ color: "#2563eb", fontWeight: 600 }}>100% free.</span>
           </p>
 
           {/* Search Bar - 2 Step Glassmorphism (Compact Size) */}
