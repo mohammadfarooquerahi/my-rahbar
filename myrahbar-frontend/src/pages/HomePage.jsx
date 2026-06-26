@@ -479,78 +479,102 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Tools & Features grid */}
-      <section className="py-16" style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 50%, #f0f0ff 100%)" }}>
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
-            <Target size={12} />
-            TOOLS & FEATURES
+      {/* ── TOOLS & FEATURES ── Premium Section */}
+      <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0a0f2e 0%, #0f1f5c 50%, #0a0f2e 100%)" }}>
+        {/* Subtle grid background */}
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+
+          {/* Header */}
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full mb-5 backdrop-blur-sm">
+              <Target size={12} />
+              TOOLS &amp; FEATURES
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: "Sora" }}>
+              Everything You Need to<br />
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #a78bfa)" }}>
+                Get Admitted
+              </span>
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto text-base">
+              From finding the right university to getting admitted — all tools in one place, completely free.
+            </p>
           </div>
-          <h2
-            className="text-4xl font-black mb-3"
-            style={{ fontFamily: "Sora", color: "var(--navy)" }}
-          >
-            Everything You Need
-          </h2>
-          <p className="text-slate-500 max-w-xl mx-auto">
-            From finding the right university to getting admitted — all tools in
-            one place to help you succeed.
-          </p>
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {tools.map((t, i) => (
-              <Link
-                key={i}
-                to={t.to}
-                className="card-hover group relative bg-white rounded-2xl p-6 border-2 border-white/80 hover:border-transparent overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
-              >
-                {/* Animated Gradient Background on Hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none rounded-2xl"
-                  style={{ background: `linear-gradient(135deg, transparent, ${t.color})` }}
-                />
-                {/* Tag badge */}
-                <span
-                  className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-full"
-                  style={{ background: t.bg, color: t.color }}
-                >
-                  {t.tag}
-                </span>
+          {/* Big Hero Card (Smart Uni Finder) */}
+          <Link to="/find-university"
+            className="group block rounded-3xl p-8 md:p-10 mb-6 relative overflow-hidden border border-white/10 hover:border-blue-400/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20"
+            style={{ background: "linear-gradient(135deg, #1e3a8a22, #1e40af44)" }}>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" style={{ background: "linear-gradient(135deg, #1d4ed820, #7c3aed20)" }} />
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 shadow-xl group-hover:scale-110 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)" }}>
+                <Search size={32} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="bg-blue-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">Most Used</span>
+                  <span className="text-blue-400 text-xs">⭐ #1 Tool</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-black text-white mb-2" style={{ fontFamily: "Sora" }}>Smart University Finder</h3>
+                <p className="text-slate-400 text-base max-w-xl">Answer 10 simple questions — get matched to your perfect university with merit prediction and fee breakdown instantly.</p>
+              </div>
+              <div className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl transition-colors shrink-0 group-hover:translate-x-1 duration-300">
+                Find University <ChevronRight size={18} />
+              </div>
+            </div>
+          </Link>
 
-                {/* Icon with title */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
-                    style={{ background: t.bg, color: t.color }}
-                  >
+          {/* 4-card grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            {[
+              { icon: <Calculator size={22} className="text-white" />, title: "Aggregate Calculator", desc: "Enter your marks — see if you qualify instantly", to: "/merit-calculator", tag: "Tool", gradient: "linear-gradient(135deg, #10b981, #059669)" },
+              { icon: <BookOpen size={22} className="text-white" />, title: "Compare Universities", desc: "Side by side comparison of fee, merit and facilities", to: "/compare", tag: "New", gradient: "linear-gradient(135deg, #6366f1, #4f46e5)" },
+              { icon: <FileText size={22} className="text-white" />, title: "Past Papers", desc: "Download official papers and practice for entry tests", to: "/past-papers", tag: "Hot", gradient: "linear-gradient(135deg, #ec4899, #db2777)" },
+              { icon: <FileText size={22} className="text-white" />, title: "Document Compressor", desc: "Compress docs to exact university size requirements", to: "/document-tools", tag: "Tool", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+            ].map((t, i) => (
+              <Link key={i} to={t.to}
+                className="group relative rounded-2xl p-5 border border-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+                style={{ background: "rgba(255,255,255,0.04)" }}>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "rgba(255,255,255,0.03)" }} />
+                <div className="relative z-10">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: t.gradient }}>
                     {t.icon}
                   </div>
-                  <h3
-                    className="font-bold text-slate-800 text-base leading-tight"
-                    style={{ fontFamily: "Sora" }}
-                  >
-                    {t.title}
-                  </h3>
-                </div>
-
-                <p className="text-sm text-slate-500 leading-relaxed mb-5">
-                  {t.desc}
-                </p>
-
-                {/* CTA */}
-                <div
-                  className="flex items-center gap-1.5 text-sm font-bold w-fit px-4 py-2 rounded-xl transition-all duration-300 group-hover:translate-x-1 group-hover:shadow-md"
-                  style={{ backgroundColor: t.bg, color: t.color }}
-                >
-                  {t.cta} <ChevronRight size={15} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">{t.tag}</span>
+                  <h3 className="font-bold text-white text-sm mb-2 leading-snug" style={{ fontFamily: "Sora" }}>{t.title}</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed mb-4">{t.desc}</p>
+                  <div className="flex items-center gap-1 text-blue-400 text-xs font-semibold group-hover:gap-2 transition-all">
+                    Open Tool <ChevronRight size={13} />
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
+
+          {/* Bottom row: Counseling full-width card */}
+          <Link to="/counseling"
+            className="group block rounded-3xl p-7 relative overflow-hidden border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20"
+            style={{ background: "linear-gradient(135deg, #4c1d9520, #7c3aed30)" }}>
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-xl group-hover:scale-110 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #8b5cf6, #7c3aed)" }}>
+                <Headphones size={24} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <span className="bg-purple-500/30 border border-purple-400/30 text-purple-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide mb-2 inline-block">Expert Help</span>
+                <h3 className="text-xl font-black text-white" style={{ fontFamily: "Sora" }}>1-on-1 Expert Counseling</h3>
+                <p className="text-slate-400 text-sm mt-1">Get personalized admission advice from a real expert — tailored for your marks, budget & goals.</p>
+              </div>
+              <div className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-2xl transition-colors shrink-0">
+                Book Session <ChevronRight size={16} />
+              </div>
+            </div>
+          </Link>
+
         </div>
       </section>
+
 
       {/* Featured universities */}
       <section className="bg-white dark:bg-card py-16">
