@@ -303,7 +303,7 @@ export default function HomePage() {
 
       {/* Premium Hero Section */}
       <section
-        className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-24 hero-gradient-bg"
+        className="relative overflow-hidden pt-4 pb-10 md:pt-8 md:pb-16 hero-gradient-bg"
         style={{
           fontFamily: "'Poppins', sans-serif",
         }}
@@ -327,7 +327,7 @@ export default function HomePage() {
 
         <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-full mb-8 fade-up shadow-lg shadow-violet-200/60">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-full mb-4 fade-up shadow-lg shadow-violet-200/60">
             <span className="text-base">⚡</span>
             Next-Gen Admission Platform — 100% Free for Every Student
           </div>
