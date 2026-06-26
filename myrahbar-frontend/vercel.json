@@ -27,6 +27,14 @@
       "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml"
     },
     {
+      "source": "/sitemap-blogs.xml",
+      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/blogs"
+    },
+    {
+      "source": "/sitemap-main.xml",
+      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/main"
+    },
+    {
       "source": "/uploads/(.*)",
       "destination": "https://my-rahbar-production.up.railway.app/uploads/$1"
     },
