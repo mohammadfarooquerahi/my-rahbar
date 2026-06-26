@@ -59,10 +59,7 @@ export default function Footer() {
                 className="p-2.5 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1" title="Email">
                 <Mail size={18} />
               </a>
-              <a href="https://wa.me/923455589079" target="_blank" rel="noreferrer"
-                className="p-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-xl shadow-sm transition-all duration-300 hover:-translate-y-1" title="WhatsApp">
-                <MessageCircle size={18} />
-              </a>
+
             </div>
           </div>
 
@@ -110,10 +107,7 @@ export default function Footer() {
                 className="flex items-center gap-2 hover:text-blue-600 transition-colors">
                 <Mail size={14} /> rahbarsofficial@gmail.com
               </a>
-              <a href="https://wa.me/923455589079"
-                className="flex items-center gap-2 hover:text-blue-600 transition-colors">
-                <MessageCircle size={14} /> +92 345 5589079
-              </a>
+
               <p className="text-slate-500 text-xs mt-4">Karachi, Pakistan</p>
             </div>
           </div>
