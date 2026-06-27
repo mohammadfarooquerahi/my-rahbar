@@ -99,14 +99,24 @@ const universitySchema = new mongoose.Schema(
 
     overallRating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
-    
-    isVerified: { type: Boolean, default: false },
+
+    // Merit & Fee ranges (e.g. merit 78-82, fee 76000-80000)
+    meritRange: {
+      min: { type: Number, default: null },
+      max: { type: Number, default: null },
+    },
+    feeRange: {
+      min: { type: Number, default: null },
+      max: { type: Number, default: null },
+    },
+
 
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "approved",
     },
+    isVerified: { type: Boolean, default: false },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true },

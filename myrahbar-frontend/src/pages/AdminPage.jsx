@@ -73,6 +73,8 @@ const EMPTY_UNI = {
   hostelAvailable: false,
   hostelFee: "",
   messFee: "",
+  meritRange: { min: "", max: "" },
+  feeRange: { min: "", max: "" },
   aggregateFormula: { matric: 0.1, fsc: 0.4, test: 0.5 },
   scholarships: "",
   requiredDocuments: "",
@@ -521,6 +523,8 @@ export default function AdminPage() {
       hostelAvailable: uni.hostelAvailable,
       hostelFee: uni.hostelFee || "",
       messFee: uni.messFee || "",
+      meritRange: { min: uni.meritRange?.min ?? "", max: uni.meritRange?.max ?? "" },
+      feeRange: { min: uni.feeRange?.min ?? "", max: uni.feeRange?.max ?? "" },
       aggregateFormula: uni.aggregateFormula,
       scholarships: uni.scholarships?.join(", ") || "",
       requiredDocuments: uni.requiredDocuments?.join(", ") || "",
@@ -544,6 +548,14 @@ export default function AdminPage() {
       admissionFee: parseInt(uniForm.admissionFee) || 0,
       hostelFee: parseInt(uniForm.hostelFee) || null,
       messFee: parseInt(uniForm.messFee) || null,
+      meritRange: {
+        min: parseFloat(uniForm.meritRange?.min) || null,
+        max: parseFloat(uniForm.meritRange?.max) || null,
+      },
+      feeRange: {
+        min: parseInt(uniForm.feeRange?.min) || null,
+        max: parseInt(uniForm.feeRange?.max) || null,
+      },
       scholarships: uniForm.scholarships
         .split(",")
         .map((s) => s.trim())
@@ -1376,6 +1388,42 @@ export default function AdminPage() {
                       onChange={(e) => setUniForm((p) => ({ ...p, admissionFee: e.target.value }))}
                       placeholder="e.g. 3500"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                  </div>
+
+                  {/* Merit Range */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-2">📊 Merit Range (e.g. 78 – 82)</label>
+                    <div className="flex items-center gap-2">
+                      <input type="number" step="0.01"
+                        value={uniForm.meritRange?.min ?? ""}
+                        onChange={(e) => setUniForm(p => ({ ...p, meritRange: { ...p.meritRange, min: e.target.value } }))}
+                        placeholder="Min (e.g. 78)"
+                        className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                      <span className="text-slate-400 font-bold">–</span>
+                      <input type="number" step="0.01"
+                        value={uniForm.meritRange?.max ?? ""}
+                        onChange={(e) => setUniForm(p => ({ ...p, meritRange: { ...p.meritRange, max: e.target.value } }))}
+                        placeholder="Max (e.g. 82)"
+                        className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
+                  </div>
+
+                  {/* Fee Range */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-2">💰 Fee Range / Semester (PKR)</label>
+                    <div className="flex items-center gap-2">
+                      <input type="number"
+                        value={uniForm.feeRange?.min ?? ""}
+                        onChange={(e) => setUniForm(p => ({ ...p, feeRange: { ...p.feeRange, min: e.target.value } }))}
+                        placeholder="Min (e.g. 76000)"
+                        className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                      <span className="text-slate-400 font-bold">–</span>
+                      <input type="number"
+                        value={uniForm.feeRange?.max ?? ""}
+                        onChange={(e) => setUniForm(p => ({ ...p, feeRange: { ...p.feeRange, max: e.target.value } }))}
+                        placeholder="Max (e.g. 80000)"
+                        className="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
+                    </div>
                   </div>
                 </div>
 

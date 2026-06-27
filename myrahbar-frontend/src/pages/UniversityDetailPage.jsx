@@ -799,6 +799,43 @@ export default function UniversityDetailPage() {
                 {/* FEE */}
                 {activeTab === "Fee & Expenses" && (
                   <div className="space-y-6">
+
+                    {/* Merit Range Banner */}
+                    {(uni.meritRange?.min || uni.meritRange?.max) && (
+                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-lg">
+                        <div className="flex items-center justify-between flex-wrap gap-3">
+                          <div>
+                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-1">📊 Merit Range (Closing Aggregate)</p>
+                            <p className="text-3xl font-black" style={{ fontFamily: "DM Mono" }}>
+                              {uni.meritRange.min ?? "?"} <span className="text-blue-300">–</span> {uni.meritRange.max ?? "?"}
+                            </p>
+                          </div>
+                          <div className="bg-white/15 rounded-xl px-4 py-2 text-center">
+                            <p className="text-xs text-blue-200">Based on last year data</p>
+                            <p className="text-sm font-bold">Verify before applying</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Fee Range Banner */}
+                    {(uni.feeRange?.min || uni.feeRange?.max) && (
+                      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-5 text-white shadow-lg">
+                        <div className="flex items-center justify-between flex-wrap gap-3">
+                          <div>
+                            <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wide mb-1">💰 Semester Fee Range</p>
+                            <p className="text-3xl font-black" style={{ fontFamily: "DM Mono" }}>
+                              {formatFee(uni.feeRange.min)} <span className="text-emerald-300">–</span> {formatFee(uni.feeRange.max)}
+                            </p>
+                          </div>
+                          <div className="bg-white/15 rounded-xl px-4 py-2 text-center">
+                            <p className="text-xs text-emerald-200">Per semester estimate</p>
+                            <p className="text-sm font-bold">May vary by program</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {uni.feeStructure?.length > 0 && (
                       <div>
                         <h3 className="font-semibold text-slate-800 mb-3" style={{ fontFamily: "Sora" }}>
