@@ -431,7 +431,7 @@ export default function UniversityDetailPage() {
                           className="text-amber-400"
                           fill="currentColor"
                         />
-                        {uni.overallRating} · {reviewsList.length || FAKE_REVIEWS.slice(0, 5).length} reviews
+                        {uni.overallRating} · {reviewStats.total} reviews
                       </span>
                       <span className="flex items-center gap-1">
                         <BookOpen size={13} />

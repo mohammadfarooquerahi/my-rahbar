@@ -32,9 +32,16 @@ const upload = multer({
   },
 });
 
-// Public routes
+// Public routes — optionalAuth reads the token if present (for admin status filter)
+const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return next();
+  // Reuse protect logic but don't block if no token
+  protect(req, res, () => next());
+};
+
 router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
-router.get("/", getBlogs);
+router.get("/", optionalAuth, getBlogs);
 router.get("/:slug", getBlogBySlug);
 
 // Admin only routes

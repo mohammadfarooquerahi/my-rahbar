@@ -455,7 +455,8 @@ export default function AdminPage() {
         setPastPapers(data || []);
       }
       if (activeTab === "Blogs") {
-        const res = await fetch("/api/blogs", { headers });
+        // Admin fetches ALL blogs (draft + published) with status param
+        const res = await fetch("/api/blogs?limit=100&status=all", { headers });
         const data = await res.json();
         setBlogs(data.blogs || []);
       }

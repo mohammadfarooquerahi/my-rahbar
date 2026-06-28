@@ -6,9 +6,12 @@ const slugify = require("slugify");
 const getBlogs = async (req, res) => {
   const { category, search, page = 1, limit = 12, status } = req.query;
 
-  // Admins can see drafts too, public only sees published
   const query = {};
-  if (req.user?.role === "admin" && status) {
+
+  // Admin with status=all sees every blog; otherwise only published
+  if (req.user?.role === "admin" && status === "all") {
+    // no status filter — return all
+  } else if (req.user?.role === "admin" && status) {
     query.status = status;
   } else {
     query.status = "published";
@@ -37,6 +40,7 @@ const getBlogs = async (req, res) => {
 
   res.json({ blogs, totalPages: Math.ceil(total / limit), currentPage: Number(page), total });
 };
+
 
 // ─── GET /api/blogs/:slug ────────────────────────────────────────────────────
 const getBlogBySlug = async (req, res) => {
