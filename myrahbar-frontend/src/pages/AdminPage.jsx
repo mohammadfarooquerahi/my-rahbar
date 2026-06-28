@@ -770,7 +770,7 @@ export default function AdminPage() {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
             {
               label: "Universities",
@@ -821,7 +821,7 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-5 flex-wrap">
+        <div className="flex gap-2 mb-5 overflow-x-auto pb-2 whitespace-nowrap" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -834,7 +834,7 @@ export default function AdminPage() {
                 }
               }}
               className={
-                "px-4 py-2 text-sm font-medium rounded-xl border transition-colors " +
+                "shrink-0 px-4 py-2 text-sm font-medium rounded-xl border transition-colors " +
                 (activeTab === tab
                   ? "border-blue-500 bg-blue-50 text-blue-700"
                   : "border-slate-200 text-slate-600 hover:bg-slate-50")
@@ -857,7 +857,7 @@ export default function AdminPage() {
             >
               System Overview
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
                 <p className="text-3xl font-black text-blue-600 mb-2">
                   {dashboardStats.totalUsers}
@@ -1629,7 +1629,7 @@ export default function AdminPage() {
                 <p className="text-sm font-semibold text-slate-700 mb-3 pb-1 border-b border-slate-100">
                   Aggregate Formula (must add up to 1.0)
                 </p>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {["matric", "fsc", "test"].map((key) => (
                     <div key={key}>
                       <label className="block text-xs text-slate-500 mb-1 uppercase">
@@ -2586,7 +2586,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Type + Priority */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
                       Type

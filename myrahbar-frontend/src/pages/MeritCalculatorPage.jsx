@@ -293,7 +293,7 @@ export default function MeritCalculatorPage() {
                 {/* Matric row */}
                 <div className="bg-slate-50 rounded-xl p-4">
                   <p className="text-xs font-semibold text-slate-600 mb-3">Matric / O-Levels</p>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
                       <input type="number" value={matricObt} onChange={(e) => setMatricObt(e.target.value)} placeholder="e.g. 900" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
@@ -311,7 +311,7 @@ export default function MeritCalculatorPage() {
                 {/* FSc row */}
                 <div className="bg-slate-50 rounded-xl p-4">
                   <p className="text-xs font-semibold text-slate-600 mb-3">Intermediate / FSc / A-Levels</p>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
                       <input type="number" value={fscObt} onChange={(e) => setFscObt(e.target.value)} placeholder="e.g. 950" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
@@ -329,7 +329,7 @@ export default function MeritCalculatorPage() {
                 {/* Test row */}
                 <div className="bg-slate-50 rounded-xl p-4">
                   <p className="text-xs font-semibold text-slate-600 mb-3">Entry Test (if applicable)</p>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-xs text-slate-400 mb-1">Obtained Marks</label>
                       <input type="number" value={testObt} onChange={(e) => setTestObt(e.target.value)} placeholder="e.g. 72" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400" />
