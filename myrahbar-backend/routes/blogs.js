@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog } = require("../controllers/blogController");
-const { protect, adminOnly } = require("../middleware/auth");
+const { protect, adminOnly, optionalAuth } = require("../middleware/auth");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -32,14 +32,7 @@ const upload = multer({
   },
 });
 
-// Public routes — optionalAuth reads the token if present (for admin status filter)
-const optionalAuth = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return next();
-  // Reuse protect logic but don't block if no token
-  protect(req, res, () => next());
-};
-
+// Public routes — optionalAuth populates req.user if token valid, never blocks public
 router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
 router.get("/", optionalAuth, getBlogs);
 router.get("/:slug", getBlogBySlug);
