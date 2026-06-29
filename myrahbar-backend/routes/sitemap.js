@@ -53,10 +53,15 @@ router.get("/main", async (req, res) => {
       { url: "/merit-calculator",changefreq: "monthly",priority: "0.8" },
       { url: "/compare",        changefreq: "monthly", priority: "0.8" },
       { url: "/blog",           changefreq: "daily",   priority: "0.9" },
+      { url: "/news",           changefreq: "daily",   priority: "0.9" },
       { url: "/career-match",   changefreq: "monthly", priority: "0.8" },
       { url: "/past-papers",    changefreq: "weekly",  priority: "0.8" },
       { url: "/document-tools", changefreq: "monthly", priority: "0.8" },
       { url: "/counseling",     changefreq: "monthly", priority: "0.7" },
+      { url: "/about",          changefreq: "monthly", priority: "0.6" },
+      { url: "/contact",        changefreq: "monthly", priority: "0.6" },
+      { url: "/privacy",        changefreq: "yearly",  priority: "0.4" },
+      { url: "/terms",          changefreq: "yearly",  priority: "0.4" },
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
