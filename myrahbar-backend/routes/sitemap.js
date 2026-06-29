@@ -79,11 +79,21 @@ router.get("/main", async (req, res) => {
       const lastMod = uni.updatedAt
         ? new Date(uni.updatedAt).toISOString().split("T")[0]
         : new Date().toISOString().split("T")[0];
+      
+      // University Main Page
       xml += `  <url>\n`;
       xml += `    <loc>${BASE_URL}/university/${uni.slug}</loc>\n`;
       xml += `    <lastmod>${lastMod}</lastmod>\n`;
       xml += `    <changefreq>weekly</changefreq>\n`;
       xml += `    <priority>0.9</priority>\n`;
+      xml += `  </url>\n`;
+
+      // University Merit Calculator Page
+      xml += `  <url>\n`;
+      xml += `    <loc>${BASE_URL}/${uni.slug}/merit-cal</loc>\n`;
+      xml += `    <lastmod>${lastMod}</lastmod>\n`;
+      xml += `    <changefreq>monthly</changefreq>\n`;
+      xml += `    <priority>0.8</priority>\n`;
       xml += `  </url>\n`;
     }
 
