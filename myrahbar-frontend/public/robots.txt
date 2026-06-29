@@ -9,4 +9,4 @@ Disallow: /register
 Disallow: /profile
 Disallow: /api/
 
-Sitemap: https://rahbars.com/sitemap.xml
+Sitemap: https://www.rahbars.com/sitemap.xml
