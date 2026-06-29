@@ -3,7 +3,11 @@ const router = express.Router();
 const University = require("../models/University");
 const Blog = require("../models/Blog");
 
-const BASE_URL = process.env.CLIENT_URL || "https://rahbars.com";
+// Use www.rahbars.com to match Google Search Console property
+let BASE_URL = process.env.CLIENT_URL || "https://www.rahbars.com";
+if (BASE_URL === "https://rahbars.com") {
+  BASE_URL = "https://www.rahbars.com";
+}
 
 // ── GET /api/sitemap.xml ─────────────────────────────────────────────────────
 // Main sitemap index — references sub-sitemaps
