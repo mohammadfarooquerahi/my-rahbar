@@ -502,47 +502,54 @@ export default function HomePage() {
       )}
 
       {/* ── TOOLS & FEATURES ── Premium Section */}
-      <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0a0f2e 0%, #0f1f5c 50%, #0a0f2e 100%)" }}>
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+      <section className="py-24 relative overflow-hidden">
+        {/* Premium background: soft white with radial gradient orbs */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, #f8faff 0%, #eef2ff 40%, #fdf4ff 70%, #f0fdf4 100%)" }} />
+        {/* Decorative blurred orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-30 blur-3xl pointer-events-none" style={{ background: "radial-gradient(circle, #6366f1 0%, transparent 70%)" }} />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: "radial-gradient(circle, #8b5cf6 0%, transparent 70%)" }} />
+        <div className="absolute top-1/2 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: "radial-gradient(circle, #3b82f6 0%, transparent 70%)" }} />
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
 
           {/* Header */}
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full mb-5 backdrop-blur-sm">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 border text-xs font-bold px-4 py-2 rounded-full mb-5" style={{ background: "linear-gradient(135deg, #eef2ff, #fdf4ff)", borderColor: "#c7d2fe", color: "#6366f1" }}>
               <Target size={12} />
               TOOLS &amp; FEATURES
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: "Sora" }}>
-              Everything You Need to<br />
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #a78bfa)" }}>
+            <h2 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: "Sora", color: "#0f172a" }}>
+              Everything You Need to{" "}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)" }}>
                 Get Admitted
               </span>
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-base">
+            <p className="text-slate-500 max-w-xl mx-auto text-base">
               From finding the right university to getting admitted — all tools in one place, completely free.
             </p>
           </div>
 
           {/* Big Hero Card (Smart Uni Finder) */}
           <Link to="/find-university"
-            className="group block rounded-3xl p-8 md:p-10 mb-6 relative overflow-hidden border border-white/10 hover:border-blue-400/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20"
-            style={{ background: "linear-gradient(135deg, #1e3a8a22, #1e40af44)" }}>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" style={{ background: "linear-gradient(135deg, #1d4ed820, #7c3aed20)" }} />
+            className="group block rounded-3xl p-8 md:p-10 mb-6 relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
+            style={{ background: "linear-gradient(135deg, #fff 0%, #eef2ff 100%)", border: "1.5px solid #c7d2fe", boxShadow: "0 4px 32px 0 rgba(99,102,241,0.08)" }}>
+            {/* Top accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" style={{ background: "linear-gradient(90deg, #6366f1, #8b5cf6, #3b82f6)" }} />
+            {/* Hover glow */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" style={{ background: "linear-gradient(135deg, #eef2ff80, #fdf4ff80)" }} />
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 shadow-xl group-hover:scale-110 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)" }}>
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 shadow-xl group-hover:scale-110 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #6366f1, #4f46e5)" }}>
                 <Search size={32} className="text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-blue-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">Most Used</span>
-                  <span className="text-blue-400 text-xs">⭐ #1 Tool</span>
+                  <span className="text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}>Most Used</span>
+                  <span className="text-indigo-500 text-xs font-semibold">⭐ #1 Tool</span>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-2" style={{ fontFamily: "Sora" }}>Smart University Finder</h3>
-                <p className="text-slate-400 text-base max-w-xl">Answer 10 simple questions — get matched to your perfect university with merit prediction and fee breakdown instantly.</p>
+                <h3 className="text-2xl md:text-3xl font-black mb-2" style={{ fontFamily: "Sora", color: "#0f172a" }}>Smart University Finder</h3>
+                <p className="text-slate-500 text-base max-w-xl">Answer 10 simple questions — get matched to your perfect university with merit prediction and fee breakdown instantly.</p>
               </div>
-              <div className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl transition-colors shrink-0 group-hover:translate-x-1 duration-300">
+              <div className="flex items-center gap-2 text-white font-bold px-6 py-3 rounded-2xl transition-all shrink-0 group-hover:translate-x-1 duration-300 shadow-lg group-hover:shadow-indigo-300/50" style={{ background: "linear-gradient(135deg, #6366f1, #4f46e5)" }}>
                 Find University <ChevronRight size={18} />
               </div>
             </div>
@@ -551,23 +558,26 @@ export default function HomePage() {
           {/* 4-card grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {[
-              { icon: <Calculator size={22} className="text-white" />, title: "Aggregate Calculator", desc: "Enter your marks — see if you qualify instantly", to: "/merit-calculator", tag: "Tool", gradient: "linear-gradient(135deg, #10b981, #059669)" },
-              { icon: <BookOpen size={22} className="text-white" />, title: "Compare Universities", desc: "Side by side comparison of fee, merit and facilities", to: "/compare", tag: "New", gradient: "linear-gradient(135deg, #6366f1, #4f46e5)" },
-              { icon: <FileText size={22} className="text-white" />, title: "Past Papers", desc: "Download official papers and practice for entry tests", to: "/past-papers", tag: "Hot", gradient: "linear-gradient(135deg, #ec4899, #db2777)" },
-              { icon: <FileText size={22} className="text-white" />, title: "Document Compressor", desc: "Compress docs to exact university size requirements", to: "/document-tools", tag: "Tool", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+              { icon: <Calculator size={22} className="text-white" />, title: "Aggregate Calculator", desc: "Enter your marks — see if you qualify instantly", to: "/merit-calculator", tag: "Tool", gradient: "linear-gradient(135deg, #10b981, #059669)", accent: "#d1fae5", border: "#6ee7b7", tagColor: "#065f46" },
+              { icon: <BookOpen size={22} className="text-white" />, title: "Compare Universities", desc: "Side by side comparison of fee, merit and facilities", to: "/compare", tag: "New", gradient: "linear-gradient(135deg, #6366f1, #4f46e5)", accent: "#eef2ff", border: "#c7d2fe", tagColor: "#4338ca" },
+              { icon: <FileText size={22} className="text-white" />, title: "Past Papers", desc: "Download official papers and practice for entry tests", to: "/past-papers", tag: "Hot 🔥", gradient: "linear-gradient(135deg, #ec4899, #db2777)", accent: "#fdf2f8", border: "#fbcfe8", tagColor: "#be185d" },
+              { icon: <FileText size={22} className="text-white" />, title: "Document Compressor", desc: "Compress docs to exact university size requirements", to: "/document-tools", tag: "Tool", gradient: "linear-gradient(135deg, #f59e0b, #d97706)", accent: "#fffbeb", border: "#fde68a", tagColor: "#92400e" },
             ].map((t, i) => (
               <Link key={i} to={t.to}
-                className="group relative rounded-2xl p-5 border border-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.04)" }}>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "rgba(255,255,255,0.03)" }} />
-                <div className="relative z-10">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300" style={{ background: t.gradient }}>
+                className="group relative rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 overflow-hidden bg-white"
+                style={{ border: `1.5px solid ${t.border}`, boxShadow: "0 2px 16px 0 rgba(0,0,0,0.05)" }}>
+                {/* Top color accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: t.gradient }} />
+                {/* Subtle bg tint on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: t.accent }} />
+                <div className="relative z-10 pt-2">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300" style={{ background: t.gradient }}>
                     {t.icon}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">{t.tag}</span>
-                  <h3 className="font-bold text-white text-sm mb-2 leading-snug" style={{ fontFamily: "Sora" }}>{t.title}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed mb-4">{t.desc}</p>
-                  <div className="flex items-center gap-1 text-blue-400 text-xs font-semibold group-hover:gap-2 transition-all">
+                  <span className="text-[10px] font-bold uppercase tracking-wider mb-1.5 inline-block px-2 py-0.5 rounded-full" style={{ color: t.tagColor, background: t.accent, border: `1px solid ${t.border}` }}>{t.tag}</span>
+                  <h3 className="font-bold text-slate-800 text-sm mb-2 leading-snug" style={{ fontFamily: "Sora" }}>{t.title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed mb-4">{t.desc}</p>
+                  <div className="flex items-center gap-1 text-xs font-bold group-hover:gap-2 transition-all" style={{ color: t.tagColor }}>
                     Open Tool <ChevronRight size={13} />
                   </div>
                 </div>
@@ -577,18 +587,19 @@ export default function HomePage() {
 
           {/* Bottom row: Counseling full-width card */}
           <Link to="/counseling"
-            className="group block rounded-3xl p-7 relative overflow-hidden border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20"
-            style={{ background: "linear-gradient(135deg, #4c1d9520, #7c3aed30)" }}>
+            className="group block rounded-3xl p-7 relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
+            style={{ background: "linear-gradient(135deg, #fdf4ff 0%, #f5f3ff 100%)", border: "1.5px solid #e9d5ff", boxShadow: "0 4px 32px 0 rgba(139,92,246,0.08)" }}>
+            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" style={{ background: "linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b)" }} />
             <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-xl group-hover:scale-110 transition-transform duration-300" style={{ background: "linear-gradient(135deg, #8b5cf6, #7c3aed)" }}>
                 <Headphones size={24} className="text-white" />
               </div>
               <div className="flex-1">
-                <span className="bg-purple-500/30 border border-purple-400/30 text-purple-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide mb-2 inline-block">Expert Help</span>
-                <h3 className="text-xl font-black text-white" style={{ fontFamily: "Sora" }}>1-on-1 Expert Counseling</h3>
-                <p className="text-slate-400 text-sm mt-1">Get personalized admission advice from a real expert — tailored for your marks, budget & goals.</p>
+                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide mb-2 inline-block" style={{ background: "#ede9fe", color: "#6d28d9", border: "1px solid #c4b5fd" }}>Expert Help</span>
+                <h3 className="text-xl font-black" style={{ fontFamily: "Sora", color: "#0f172a" }}>1-on-1 Expert Counseling</h3>
+                <p className="text-slate-500 text-sm mt-1">Get personalized admission advice from a real expert — tailored for your marks, budget &amp; goals.</p>
               </div>
-              <div className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-2xl transition-colors shrink-0">
+              <div className="flex items-center gap-2 text-white font-bold px-6 py-3 rounded-2xl transition-all shrink-0 shadow-lg group-hover:shadow-purple-300/50" style={{ background: "linear-gradient(135deg, #8b5cf6, #7c3aed)" }}>
                 Book Session <ChevronRight size={16} />
               </div>
             </div>
