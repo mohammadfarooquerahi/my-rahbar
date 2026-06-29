@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const departmentSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { type: String, required: true },
-  degreeLevel: { type: String, enum: ["BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"], default: "BS" },
+  degreeLevel: { type: String, enum: ["BS", "MS", "MPhil", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"], default: "BS" },
   seats: {
     merit: { type: Number, default: 0 },
     selfFinance: { type: Number, default: 0 },
@@ -22,12 +22,18 @@ const departmentSchema = new mongoose.Schema({
 
 const admissionDeadlineSchema = new mongoose.Schema({
   round: { type: String, default: "Round 1" },
-  degreeLevel: { type: String, enum: ["BS", "MS", "PhD", "BBA", "MBA", "MBBS", "BDS", "All"], default: "All" },
+  degreeLevel: { type: String, enum: ["BS", "MS", "MPhil", "PhD", "BBA", "MBA", "MBBS", "BDS", "All"], default: "All" },
   testDate: { type: String },
   testCities: [{ type: String }],
   resultDate: { type: String },
   deadline: { type: String },
   note: { type: String, default: "" },
+  eligibilityCriteria: { type: String, default: "" },
+  aggregateFormula: {
+    matric: { type: Number, default: 0.1 },
+    fsc: { type: Number, default: 0.4 },
+    test: { type: Number, default: 0.5 },
+  }
 });
 
 const universitySchema = new mongoose.Schema(

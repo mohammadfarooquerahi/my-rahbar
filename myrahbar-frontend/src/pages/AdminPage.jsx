@@ -557,11 +557,11 @@ export default function AdminPage() {
         min: parseInt(uniForm.feeRange?.min) || null,
         max: parseInt(uniForm.feeRange?.max) || null,
       },
-      scholarships: uniForm.scholarships
+      scholarships: (typeof uniForm.scholarships === "string" ? uniForm.scholarships : "")
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      requiredDocuments: uniForm.requiredDocuments
+      requiredDocuments: (typeof uniForm.requiredDocuments === "string" ? uniForm.requiredDocuments : "")
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
@@ -1428,47 +1428,77 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Advanced Deadlines */}
-                <div className="mt-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-slate-600">📅 Advanced Deadlines (Rounds & Tests)</p>
+                {/* Admission Programs & Deadlines */}
+                <div className="mt-4 p-4 border border-slate-200 rounded-xl bg-slate-50/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-semibold text-slate-700">📅 Admission Programs & Deadlines</p>
                     <button type="button"
-                      onClick={() => setUniForm(p => ({ ...p, admissionDeadlines: [...(p.admissionDeadlines||[]), { round: "Round 1", degreeLevel: "BS", testDate: "", testCities: [], resultDate: "", deadline: "", note: "" }] }))}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-800">+ Add Deadline Round</button>
+                      onClick={() => setUniForm(p => ({ ...p, admissionDeadlines: [...(p.admissionDeadlines||[]), { round: "Fall", degreeLevel: "BS", testDate: "", testCities: [], resultDate: "", deadline: "", note: "", eligibilityCriteria: "", aggregateFormula: {matric: 0.1, fsc: 0.4, test: 0.5} }] }))}
+                      className="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg shadow-sm">+ Add Program</button>
                   </div>
                   {(uniForm.admissionDeadlines || []).map((dl, i) => (
-                    <div key={i} className="flex flex-col gap-2 mb-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                      <div className="flex items-center gap-2">
-                        <input type="text" placeholder="Round (e.g. Round 1)" value={dl.round || ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].round = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
-                        <select value={dl.degreeLevel}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].degreeLevel = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400 bg-white">
-                          {["BS","MS","PhD","BBA","MBA","MBBS","BDS","All"].map(d => <option key={d}>{d}</option>)}
-                        </select>
-                        <input type="date" title="Application Deadline" value={dl.deadline || ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
-                        <button type="button"
-                          onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
-                          className="text-red-400 hover:text-red-600 text-xs font-bold p-2">✕</button>
+                    <div key={i} className="flex flex-col gap-3 mb-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm relative">
+                      <button type="button"
+                        onClick={() => setUniForm(p => ({...p, admissionDeadlines: (p.admissionDeadlines||[]).filter((_,j)=>j!==i)}))}
+                        className="absolute top-2 right-2 text-slate-400 hover:text-red-500 font-bold p-1 bg-slate-50 rounded-md">✕</button>
+                      
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Session / Round</label>
+                          <input type="text" placeholder="e.g. Fall 2026" value={dl.round || ""}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].round = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Program Level</label>
+                          <select value={dl.degreeLevel}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].degreeLevel = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400 bg-white">
+                            {["BS","MS","MPhil","PhD","BBA","MBA","MBBS","BDS","All"].map(d => <option key={d}>{d}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Last Date</label>
+                          <input type="date" value={dl.deadline || ""}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].deadline = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Test Date</label>
+                          <input type="date" value={dl.testDate ? dl.testDate.split("T")[0] : ""}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].testDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input type="date" title="Test Date" value={dl.testDate ? dl.testDate.split("T")[0] : ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].testDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
-                        <input type="date" title="Result Date" value={dl.resultDate ? dl.resultDate.split("T")[0] : ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].resultDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="w-1/4 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
-                        <input type="text" placeholder="Test Cities (comma separated)" value={dl.testCities ? dl.testCities.join(", ") : ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].testCities = e.target.value.split(",").map(c=>c.trim()).filter(Boolean); setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="flex-1 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Eligibility Criteria (Specific to this program)</label>
+                          <input type="text" placeholder="e.g. 60% in Pre-Medical" value={dl.eligibilityCriteria || ""}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].eligibilityCriteria = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Merit / Result Date</label>
+                          <input type="date" value={dl.resultDate ? dl.resultDate.split("T")[0] : ""}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].resultDate = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" />
+                        </div>
                       </div>
+
                       <div>
-                         <input type="text" placeholder="Note (optional)" value={dl.note || ""}
-                          onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].note = e.target.value; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
-                          className="w-full border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-blue-400" />
+                        <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Aggregate Weights (Matric, FSc, Test)</label>
+                        <div className="flex gap-2">
+                          <input type="number" step="0.01" max="1" placeholder="Matric (e.g. 0.1)" value={dl.aggregateFormula?.matric ?? 0.1}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].aggregateFormula = {...(arr[i].aggregateFormula||{}), matric: parseFloat(e.target.value)}; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-1/3 border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" title="Matric Weight" />
+                          <input type="number" step="0.01" max="1" placeholder="FSc (e.g. 0.4)" value={dl.aggregateFormula?.fsc ?? 0.4}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].aggregateFormula = {...(arr[i].aggregateFormula||{}), fsc: parseFloat(e.target.value)}; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-1/3 border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" title="FSc Weight" />
+                          <input type="number" step="0.01" max="1" placeholder="Test (e.g. 0.5)" value={dl.aggregateFormula?.test ?? 0.5}
+                            onChange={e => { const arr = [...(uniForm.admissionDeadlines||[])]; arr[i].aggregateFormula = {...(arr[i].aggregateFormula||{}), test: parseFloat(e.target.value)}; setUniForm(p => ({...p, admissionDeadlines: arr})); }}
+                            className="w-1/3 border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-blue-400" title="Entry Test Weight" />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1727,7 +1757,7 @@ export default function AdminPage() {
                             <X size={14} />
                           </button>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-2">
                           <div>
                             <label className="block text-xs text-slate-500 mb-1">Department Name *</label>
                             <input
@@ -1742,20 +1772,39 @@ export default function AdminPage() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-slate-500 mb-1">Category</label>
+                            <label className="block text-xs text-slate-500 mb-1">Degree Level</label>
                             <select
-                              value={d.category || "CS"}
+                              value={d.degreeLevel || "BS"}
+                              onChange={(e) => {
+                                const updated = [...departments];
+                                updated[i] = { ...updated[i], degreeLevel: e.target.value };
+                                setDepartments(updated);
+                              }}
+                              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
+                            >
+                              {["BS", "MS", "MPhil", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"].map((dl) => (
+                                <option key={dl} value={dl}>{dl}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Category</label>
+                            <input
+                              list={`category-list-${i}`}
+                              value={d.category || ""}
                               onChange={(e) => {
                                 const updated = [...departments];
                                 updated[i] = { ...updated[i], category: e.target.value };
                                 setDepartments(updated);
                               }}
+                              placeholder="e.g. CS"
                               className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none bg-white focus:border-blue-400"
-                            >
+                            />
+                            <datalist id={`category-list-${i}`}>
                               {["CS", "Engineering", "Medical", "Business", "Arts", "Architecture", "Law", "Sciences", "Social Sciences", "Education", "Agriculture"].map((c) => (
-                                <option key={c} value={c}>{c}</option>
+                                <option key={c} value={c} />
                               ))}
-                            </select>
+                            </datalist>
                           </div>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
