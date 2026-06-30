@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const departmentSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { type: String, required: true },
-  degreeLevel: { type: String, enum: ["BS", "MS", "MPhil", "PhD", "BBA", "MBA", "MBBS", "BDS", "Other"], default: "BS" },
+  degreeLevel: { type: String, default: "BS" },
   seats: {
     merit: { type: Number, default: 0 },
     selfFinance: { type: Number, default: 0 },
@@ -22,7 +22,7 @@ const departmentSchema = new mongoose.Schema({
 
 const admissionDeadlineSchema = new mongoose.Schema({
   round: { type: String, default: "Round 1" },
-  degreeLevel: { type: String, enum: ["BS", "MS", "MPhil", "PhD", "BBA", "MBA", "MBBS", "BDS", "All"], default: "All" },
+  degreeLevel: { type: String, default: "All" },
   testDate: { type: String },
   testCities: [{ type: String }],
   resultDate: { type: String },
@@ -78,7 +78,6 @@ const universitySchema = new mongoose.Schema(
     // Structured test type badge
     admissionTestType: {
       type: String,
-      enum: ["Own Test", "HEC-NAT", "NTS", "SAT", "MDCAT", "ECAT", "NUMS", "None", "Multiple"],
       default: "Own Test",
     },
 
