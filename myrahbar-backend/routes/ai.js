@@ -6,7 +6,7 @@ const router = express.Router();
 // Groq ko initialize karein (Yeh automatically aap ki .env se GROQ_API_KEY utha lega)
 const groq = new Groq();
 
-const EDU_SYSTEM = `You are MyRahbar AI, a helpful guide for Pakistani students.
+const EDU_SYSTEM = `You are Rahbars AI, a helpful guide for Pakistani students.
 You ONLY answer questions about:
 - Universities in Pakistan especially Karachi
 - Admission process, merit, aggregate calculation
