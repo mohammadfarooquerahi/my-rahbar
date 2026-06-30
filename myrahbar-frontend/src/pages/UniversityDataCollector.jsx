@@ -954,7 +954,6 @@ export default function UniversityDataCollector() {
             <button
               style={{ ...s.btn, ...s.btnGreen }}
               onClick={submitToBackend}
-              disabled={totalWeight !== "1.00"}
             >
               ✅ Submit for Approval
             </button>
