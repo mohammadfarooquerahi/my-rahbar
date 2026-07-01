@@ -506,6 +506,17 @@ export default function UniversityDetailPage() {
                 {/* OVERVIEW */}
                 {activeTab === "Overview" && (
                   <div className="space-y-6">
+                    {/* University Description / Overview */}
+                    {uni.description && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                        <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
+                          📖 About {uni.shortName || uni.name}
+                        </h4>
+                        <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                          {uni.description}
+                        </p>
+                      </div>
+                    )}
                     {uni.eligibilityCriteria && (
                       <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
                         <h4 className="font-semibold text-blue-800 mb-1 flex items-center gap-2">

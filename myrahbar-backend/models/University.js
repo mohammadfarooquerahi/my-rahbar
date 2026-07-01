@@ -56,6 +56,7 @@ const universitySchema = new mongoose.Schema(
     admissionProcess: { type: String, default: "" },
     requiredDocuments: [{ type: String }],
     eligibilityCriteria: { type: String, default: "" },  // e.g. "Intermediate 65%"
+    description: { type: String, default: "" },          // Admin overview/extra notes
 
     aggregateFormula: {
       matric: { type: Number, default: 0.1 },

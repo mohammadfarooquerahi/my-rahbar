@@ -61,6 +61,7 @@ const EMPTY_UNI = {
   admissionDeadline: "",
   admissionDeadlines: [],
   admissionTestType: "Own Test",
+  description: "",
   testRequired: "",
   testDetails: {
     totalMcqs: 0,
@@ -511,6 +512,7 @@ export default function AdminPage() {
       website: uni.website,
       admissionOpen: uni.admissionOpen,
       eligibilityCriteria: uni.eligibilityCriteria || "",
+      description: uni.description || "",
       admissionDeadline: uni.admissionDeadline
         ? new Date(uni.admissionDeadline).toISOString().split("T")[0]
         : "",
@@ -1322,6 +1324,21 @@ export default function AdminPage() {
                       }
                       placeholder="e.g. Intermediate (Pre-Engineering/Computer Science) with minimum 60% marks"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400"
+                    />
+                  </div>
+                  {/* University Overview/Description */}
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-slate-500 mb-1">
+                      📝 University Overview / Description <span className="text-slate-400">(shown on university page)</span>
+                    </label>
+                    <textarea
+                      rows={5}
+                      value={uniForm.description || ""}
+                      onChange={(e) =>
+                        setUniForm((p) => ({ ...p, description: e.target.value }))
+                      }
+                      placeholder="Write a brief overview of the university — history, ranking, notable programs, campus life, etc."
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-blue-400 resize-y"
                     />
                   </div>
                   <div className="sm:col-span-2">

@@ -88,6 +88,7 @@ const parseExcelRow = (row) => {
       return {
         name: parts[0] || "Unknown",
         category: parts[0] || "General",
+        degreeLevel: parts[4] || "BS",
         seats: { merit: Number(parts[1]) || 0, selfFinance: 0 },
         semesterFee: Number(parts[2]) || 0,
         lastMerit: parts[3] ? [{ year: 2024, closing: Number(parts[3]) }] : [],
@@ -99,6 +100,24 @@ const parseExcelRow = (row) => {
   const requiredDocuments = docsStr ? docsStr.split(",").map(d => d.trim()).filter(Boolean) : [];
   const schStr = row["Scholarships"] || row["scholarships"] || "";
 
+  // Auto-compute admissionOpen: if deadline is provided and in the future -> open
+  const deadlineStr = row["Admission Deadline"] || row["admissionDeadline"] || row["Deadline"] || "";
+  let admissionOpen = false;
+  let admissionDeadline = undefined;
+  if (deadlineStr) {
+    const d = new Date(deadlineStr);
+    if (!isNaN(d.getTime())) {
+      admissionDeadline = d;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      d.setHours(0, 0, 0, 0);
+      admissionOpen = d >= today;
+    }
+  } else {
+    // If no deadline column, fall back to explicit Yes/No column
+    admissionOpen = String(row["Admission Open"] || row["admissionOpen"] || "").toLowerCase() === "yes";
+  }
+
   return {
     name: name.trim(),
     slug,
@@ -107,7 +126,9 @@ const parseExcelRow = (row) => {
     city: (row["City"] || row["city"] || "Karachi").trim(),
     website: (row["Website"] || row["website"] || "").trim(),
     established: Number(row["Established"] || row["established"]) || undefined,
-    admissionOpen: String(row["Admission Open"] || row["admissionOpen"] || "").toLowerCase() === "yes",
+    description: (row["Description"] || row["description"] || "").trim(),
+    admissionOpen,
+    admissionDeadline,
     admissionFee: Number(row["Admission Fee"] || row["admissionFee"]) || 0,
     testRequired: (row["Test Required"] || row["testRequired"] || "Own Entry Test").trim(),
     admissionTestType: (row["Test Type"] || row["admissionTestType"] || "Own Test").trim(),
