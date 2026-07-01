@@ -30,21 +30,25 @@ export default function Logo({ size = "md", layout = "horizontal" }) {
         className={`${heightClass} w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0`}
       />
       <div className={`flex flex-col ${isVertical ? "items-center mt-1" : "items-start justify-center"} shrink-0`}>
-        {/* 'Rahbars' matching the image style: Capital R, dark royal blue, wide, rounded feel */}
+        {/* 'Rahbars' with Premium Font */}
         <span 
-          className={`font-black text-[#1545A5] ${fontClass}`}
+          className={`font-extrabold text-slate-900 ${fontClass}`}
           style={{ 
-            fontFamily: "'Varela Round', 'Nunito', 'Sora', sans-serif", 
+            fontFamily: "'Outfit', sans-serif", 
             lineHeight: "1",
-            letterSpacing: "0.02em"
+            letterSpacing: "-0.03em"
           }}
         >
-          Rahbars
+          Rahbars<span className="text-blue-600">.</span>
         </span>
-        {/* Tagline matching the image: very small, uppercase, wide tracking, no dashes, same blue color */}
+        {/* Tagline with Premium tracking and font */}
         <span 
-          className="font-bold text-[#1545A5] tracking-[0.25em] whitespace-nowrap mt-1"
-          style={{ fontSize: size === "sm" ? "0.4rem" : size === "md" ? "0.45rem" : "0.6rem" }}
+          className="font-semibold text-slate-500 whitespace-nowrap uppercase mt-0.5"
+          style={{ 
+            fontFamily: "'Inter', sans-serif",
+            letterSpacing: "0.25em",
+            fontSize: size === "sm" ? "0.4rem" : size === "md" ? "0.45rem" : "0.55rem" 
+          }}
         >
           LEARN. GROW. SUCCEED.
         </span>
