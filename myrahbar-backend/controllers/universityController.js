@@ -5,31 +5,41 @@ const Review = require("../models/Review");
 const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").slice(0, 100);
 
 
-// ─── Helper: auto-compute admissionOpen from deadlines ───────────────────────
+// ─── Helper: auto-compute admissionOpen from ALL deadline fields ──────────────
 const enrichAdmissionStatus = (uni) => {
   const uniObj = uni.toObject ? uni.toObject() : { ...uni };
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const deadlines = uniObj.admissionDeadlines || [];
+  const perProgramDeadlines = uniObj.admissionDeadlines || [];
+  const legacyDeadline = uniObj.admissionDeadline; // old single-date field
 
-  if (deadlines.length === 0) {
-    // No per-degree deadlines — keep admissionOpen as stored by admin
+  // If no deadline info at all — keep admin's manual value
+  if (perProgramDeadlines.length === 0 && !legacyDeadline) {
     return uniObj;
   }
 
-  // Find deadlines that are today or in the future
-  const activeDeadlines = deadlines.filter((dl) => {
-    if (!dl.deadline) return false;
-    const d = new Date(dl.deadline);
+  let isOpen = false;
+
+  // Check per-program deadlines (BS, MS, PhD etc.)
+  if (perProgramDeadlines.length > 0) {
+    const hasUpcoming = perProgramDeadlines.some((dl) => {
+      if (!dl.deadline) return false;
+      const d = new Date(dl.deadline);
+      d.setHours(0, 0, 0, 0);
+      return d >= today;
+    });
+    isOpen = hasUpcoming;
+  }
+
+  // If no per-program deadlines, fall back to legacy single deadline
+  if (perProgramDeadlines.length === 0 && legacyDeadline) {
+    const d = new Date(legacyDeadline);
     d.setHours(0, 0, 0, 0);
-    return d >= today;
-  });
+    isOpen = d >= today;
+  }
 
-  // Auto-set admissionOpen based on upcoming deadlines
-  uniObj.admissionOpen = activeDeadlines.length > 0;
-  uniObj.activeDeadlines = activeDeadlines;
-
+  uniObj.admissionOpen = isOpen;
   return uniObj;
 };
 
