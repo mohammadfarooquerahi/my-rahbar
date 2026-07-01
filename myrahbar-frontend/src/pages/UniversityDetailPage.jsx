@@ -294,12 +294,15 @@ export default function UniversityDetailPage() {
 
   const uniId = uni._id || uni.id;
   const watched = isWatched(uniId);
-  let closestDeadlineDays = daysUntilDeadline(uni.admissionDeadline);
+
+  // Trust the backend's auto-computed admissionOpen (set by enrichAdmissionStatus).
+  // Also compute closestDeadlineDays for the sidebar deadline label.
+  let closestDeadlineDays = null;
   if (uni.admissionDeadlines?.length > 0) {
     uni.admissionDeadlines.forEach(dl => {
       if (dl.deadline) {
         const d = daysUntilDeadline(dl.deadline);
-        if (d !== null && d >= 0) {
+        if (d !== null) {
           if (closestDeadlineDays === null || d < closestDeadlineDays) {
             closestDeadlineDays = d;
           }
@@ -307,7 +310,13 @@ export default function UniversityDetailPage() {
       }
     });
   }
-  const isActuallyOpen = uni.admissionOpen || (closestDeadlineDays !== null && closestDeadlineDays >= 0);
+  // Fall back to legacy admissionDeadline field
+  if (closestDeadlineDays === null && uni.admissionDeadline) {
+    closestDeadlineDays = daysUntilDeadline(uni.admissionDeadline);
+  }
+
+  // Use backend's computed value directly — don't override it on frontend
+  const isActuallyOpen = uni.admissionOpen === true;
   const days = closestDeadlineDays;
   const dl = deadlineLabel(days);
 

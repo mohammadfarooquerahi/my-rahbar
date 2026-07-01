@@ -57,15 +57,12 @@ export default function UniversityCard({ uni }) {
   };
 
   let closestDeadlineDays = null;
-  if (uni.admissionDeadline) {
-    const days = daysUntilDeadline(uni.admissionDeadline);
-    if (days !== null && days >= 0) closestDeadlineDays = days;
-  }
+  // Keep closestDeadlineDays for display label only (showing days left)
   if (uni.admissionDeadlines?.length > 0) {
     uni.admissionDeadlines.forEach(dl => {
       if (dl.deadline) {
         const days = daysUntilDeadline(dl.deadline);
-        if (days !== null && days >= 0) {
+        if (days !== null) {
           if (closestDeadlineDays === null || days < closestDeadlineDays) {
             closestDeadlineDays = days;
           }
@@ -73,8 +70,12 @@ export default function UniversityCard({ uni }) {
       }
     });
   }
+  if (closestDeadlineDays === null && uni.admissionDeadline) {
+    closestDeadlineDays = daysUntilDeadline(uni.admissionDeadline);
+  }
 
-  const isActuallyOpen = uni.admissionOpen || (closestDeadlineDays !== null && closestDeadlineDays >= 0);
+  // Trust backend's auto-computed value — don't re-derive on frontend
+  const isActuallyOpen = uni.admissionOpen === true;
   const daysLeft = closestDeadlineDays;
 
   let feeRange = "N/A";
