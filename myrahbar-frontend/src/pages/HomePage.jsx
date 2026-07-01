@@ -219,259 +219,199 @@ export default function HomePage() {
         <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
-      {/* Ticker - deadline & features bar */}
-      <div
-        className="text-blue-800 text-xs py-2 overflow-hidden border-b border-blue-100"
-        style={{ background: "#EFF6FF" }}
-      >
-        <div className="ticker-wrap">
-          <div className="ticker">
-            {/* Features */}
-            {[
-              {
-                icon: "🎯",
-                text: "Smart University Finder — Answer 10 questions, get matched instantly",
-              },
-              {
-                icon: "📊",
-                text: "Live Merit Calculator — Know your chances before applying",
-              },
-              {
-                icon: "📄",
-                text: "Document Compressor — Compress to any university size requirement",
-              },
-              {
-                icon: "🤖",
-                text: "AI Career Counselor — Ask anything about careers in Pakistan",
-              },
-              {
-                icon: "🔔",
-                text: "WhatsApp Deadline Alerts — Never miss an admission deadline",
-              },
-              ...openUnis.map((u) => ({
-                icon: "⏰",
-                text:
-                  u.shortName +
-                  " — " +
-                  deadlineLabel(daysUntilDeadline(u.admissionDeadline)).text,
-              })),
-            ].map((item, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-2 mr-12 text-blue-700"
-              >
-                <span>{item.icon}</span>
-                <span className="font-medium">{item.text}</span>
-                <span className="text-blue-300 ml-4">•</span>
-              </span>
-            ))}
-            {/* Repeat for seamless loop */}
-            {[
-              {
-                icon: "🎯",
-                text: "Smart University Finder — Answer 10 questions, get matched instantly",
-              },
-              {
-                icon: "📊",
-                text: "Live Merit Calculator — Know your chances before applying",
-              },
-              {
-                icon: "📄",
-                text: "Document Compressor — Compress to any university size requirement",
-              },
-              {
-                icon: "🤖",
-                text: "AI Career Counselor — Ask anything about careers in Pakistan",
-              },
-              {
-                icon: "🔔",
-                text: "WhatsApp Deadline Alerts — Never miss an admission deadline",
-              },
-            ].map((item, i) => (
-              <span
-                key={"r" + i}
-                className="inline-flex items-center gap-2 mr-12 text-blue-700"
-              >
-                <span>{item.icon}</span>
-                <span className="font-medium">{item.text}</span>
-                <span className="text-blue-300 ml-4">•</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Premium Hero Section */}
+      {/* ── HERO SECTION — Dark Premium ── */}
       <section
-        className="relative overflow-hidden pt-4 pb-10 md:pt-8 md:pb-16 hero-gradient-bg"
         style={{
-          fontFamily: "'Poppins', sans-serif",
+          background: "linear-gradient(135deg, #0a0f1e 0%, #0d1730 40%, #0a0e1a 70%, #10162a 100%)",
+          position: "relative",
+          overflow: "hidden",
+          minHeight: "92vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 16px 60px",
+          fontFamily: "'Inter', 'Poppins', sans-serif",
         }}
       >
-        {/* Subtle mesh gradient background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-10 blur-[100px] bg-blue-500" />
-          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full opacity-10 blur-[120px] bg-purple-600" />
-          <div className="absolute bottom-[-20%] left-[20%] w-[50%] h-[50%] rounded-full opacity-10 blur-[100px] bg-emerald-500" />
-          
-          {/* Light mode grid */}
-          <div
-            className="absolute inset-0 opacity-100"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
+        {/* Animated grid background */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: "linear-gradient(rgba(59, 130, 246, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.06) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }} />
+
+        {/* Glowing orbs */}
+        <div style={{ position: "absolute", top: "-10%", left: "-5%", width: "45%", height: "60%", borderRadius: "50%", background: "radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "-10%", right: "-5%", width: "40%", height: "50%", borderRadius: "50%", background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translateX(-50%)", width: "60%", height: "40%", borderRadius: "50%", background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)", filter: "blur(100px)", pointerEvents: "none" }} />
+
+        {/* Floating badges — decorative */}
+        <div style={{ position: "absolute", top: "15%", left: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatA 4s ease-in-out infinite" }} className="hidden lg:flex">
+          <span style={{ fontSize: "20px" }}>🎓</span>
+          <div>
+            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>University Matched</p>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "#f1f5f9", margin: 0 }}>FAST NUCES</p>
+          </div>
+        </div>
+        <div style={{ position: "absolute", top: "25%", right: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatB 5s ease-in-out infinite" }} className="hidden lg:flex">
+          <span style={{ fontSize: "20px" }}>📊</span>
+          <div>
+            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>Aggregate Score</p>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "#34d399", margin: 0 }}>81.4% ✓ Eligible</p>
+          </div>
+        </div>
+        <div style={{ position: "absolute", bottom: "25%", left: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatC 6s ease-in-out infinite" }} className="hidden lg:flex">
+          <span style={{ fontSize: "20px" }}>⏰</span>
+          <div>
+            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>Deadline Alert</p>
+            <p style={{ fontSize: "13px", fontWeight: 700, color: "#f59e0b", margin: 0 }}>NUST — 3 days left</p>
+          </div>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 text-center z-10">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-full mb-4 fade-up shadow-lg shadow-violet-200/60">
-            <span className="text-base">⚡</span>
-            Next-Gen Admission Platform — 100% Free for Every Student
+        {/* Center Content */}
+        <div style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: "800px", width: "100%" }}>
+
+          {/* Eyebrow label */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.35)", borderRadius: "100px", padding: "8px 20px", marginBottom: "28px" }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#818cf8", display: "inline-block", boxShadow: "0 0 8px #818cf8", animation: "pulse 2s infinite" }} />
+            <span style={{ fontSize: "12px", fontWeight: 600, color: "#a5b4fc", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Pakistan's #1 Admission Platform — 100% Free
+            </span>
           </div>
 
-          {/* Headline */}
-          <h1
-            className="fade-up-1 mb-5 tracking-tight"
-            style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              fontWeight: 800,
-              lineHeight: 1.15,
-              color: "#0f172a",
-            }}
-          >
-            Your Gateway to the
-            <br className="hidden sm:block" />
-            <span
-              className="text-transparent bg-clip-text"
-              style={{ backgroundImage: "linear-gradient(90deg, #2563eb, #6366f1, #7c3aed)" }}
-            >
-              Right University.
+          {/* Main Headline */}
+          <h1 style={{ fontSize: "clamp(2.2rem, 6vw, 4.2rem)", fontWeight: 800, lineHeight: 1.1, color: "#f8fafc", margin: "0 0 20px", letterSpacing: "-0.02em" }}>
+            Where Pakistani students
+            <br />
+            <span style={{
+              background: "linear-gradient(90deg, #818cf8, #c084fc, #e879f9)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              find their dream university
             </span>
           </h1>
 
-          <p
-            className="fade-up-2 mb-10 mx-auto"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
-              fontWeight: 400,
-              lineHeight: 1.75,
-              color: "#475569",
-              maxWidth: "520px",
-            }}
-          >
-            Find, compare & get admitted to your ideal university — with AI tools,
-            merit calculator and expert counseling.{" "}
-            <span style={{ color: "#2563eb", fontWeight: 600 }}>100% free.</span>
+          {/* Sub headline — emotional, honest */}
+          <p style={{ fontSize: "clamp(1rem, 2.2vw, 1.2rem)", color: "#94a3b8", lineHeight: 1.75, maxWidth: "560px", margin: "0 auto 40px", fontWeight: 400 }}>
+            Stop guessing. Enter your marks, field and budget — we'll show you
+            exactly which universities you qualify for.
+            <span style={{ color: "#818cf8", fontWeight: 600 }}> In under 2 minutes.</span>
           </p>
 
-          {/* Search Bar - 2 Step Glassmorphism (Compact Size) */}
+          {/* Search Bar */}
           <form
             onSubmit={handleSearch}
-            className="fade-up-3 max-w-2xl mx-auto mb-8 relative group"
+            style={{ maxWidth: "640px", margin: "0 auto 28px", position: "relative" }}
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-            <div className="relative flex flex-col sm:flex-row items-center bg-white backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl p-1.5 gap-1.5 transition-all">
-              <div className="flex-1 w-full flex items-center border-b sm:border-b-0 sm:border-r border-slate-200 px-3 py-1.5 sm:py-0">
-                <select 
-                  value={degreeLevel} 
-                  onChange={(e) => setDegreeLevel(e.target.value)} 
-                  className="w-full py-1.5 bg-transparent text-slate-900 outline-none text-sm font-medium cursor-pointer"
+            <div style={{
+              display: "flex", alignItems: "center", flexWrap: "nowrap",
+              background: "rgba(255,255,255,0.06)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: "16px",
+              padding: "6px",
+              boxShadow: "0 0 0 1px rgba(99,102,241,0.2), 0 20px 60px rgba(0,0,0,0.4)",
+              gap: "6px",
+              flexDirection: "row",
+            }}>
+              <div style={{ flex: "0 0 auto", borderRight: "1px solid rgba(255,255,255,0.1)", paddingRight: "6px" }}>
+                <select
+                  value={degreeLevel}
+                  onChange={(e) => setDegreeLevel(e.target.value)}
+                  style={{
+                    background: "transparent", border: "none", outline: "none",
+                    color: degreeLevel ? "#f1f5f9" : "#64748b",
+                    fontSize: "14px", fontWeight: 500, padding: "10px 8px",
+                    cursor: "pointer", minWidth: "140px",
+                  }}
                 >
-                  <option value="" disabled>Select Degree Level</option>
-                  <option value="BS">BS / Undergraduate</option>
-                  <option value="MS">MS / MPhil</option>
-                  <option value="PhD">PhD / Doctorate</option>
-                  <option value="Other">Other (Diplomas/Certificates)</option>
+                  <option value="" style={{ background: "#1e293b" }}>🎓 Degree Level</option>
+                  <option value="BS" style={{ background: "#1e293b" }}>BS / Undergraduate</option>
+                  <option value="MS" style={{ background: "#1e293b" }}>MS / MPhil</option>
+                  <option value="PhD" style={{ background: "#1e293b" }}>PhD / Doctorate</option>
+                  <option value="Other" style={{ background: "#1e293b" }}>Diploma / Other</option>
                 </select>
               </div>
-              <div className="flex-1 w-full flex items-center px-3 py-1.5 sm:py-0">
-                <Search size={16} className="text-blue-600 mr-2 shrink-0" />
+              <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px", padding: "0 8px" }}>
+                <Search size={16} style={{ color: "#6366f1", flexShrink: 0 }} />
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search university name, program, city..."
-                  className="w-full py-1.5 bg-transparent text-slate-900 outline-none text-sm font-medium placeholder:text-slate-400"
+                  placeholder="Search university, program, city..."
+                  style={{
+                    background: "transparent", border: "none", outline: "none",
+                    color: "#f1f5f9", fontSize: "14px", width: "100%",
+                    fontFamily: "inherit",
+                  }}
                 />
               </div>
               <button
                 type="submit"
-                className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-white text-sm font-bold btn-press shrink-0 bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
+                style={{
+                  background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                  color: "#fff", border: "none", borderRadius: "12px",
+                  padding: "12px 24px", fontSize: "14px", fontWeight: 700,
+                  cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0,
+                  boxShadow: "0 4px 20px rgba(99,102,241,0.5)",
+                  transition: "all 0.2s",
+                }}
               >
-                Find Universities
+                Search →
               </button>
             </div>
           </form>
 
-          {/* Quick tags */}
-          <div className="fade-up-4 flex flex-wrap justify-center gap-2 sm:gap-2.5 mb-12">
-            {[
-              "MBBS",
-              "BDS",
-              "CA",
-              "Software Engineering",
-              "DPT",
-              "Pharm-D",
-            ].map((tag) => (
+          {/* Popular searches */}
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", marginBottom: "60px" }}>
+            <span style={{ fontSize: "12px", color: "#475569", paddingTop: "6px" }}>Popular:</span>
+            {["MBBS", "Software Engineering", "BBA", "NUST", "FAST", "Architecture"].map((tag) => (
               <button
                 key={tag}
                 onClick={() => navigate("/search?q=" + tag)}
-                className="text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-4 py-2 rounded-full transition-all hover:scale-105 shadow-sm"
+                style={{
+                  fontSize: "12px", fontWeight: 500,
+                  color: "#94a3b8", background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.1)", borderRadius: "100px",
+                  padding: "5px 14px", cursor: "pointer", transition: "all 0.2s",
+                }}
+                onMouseEnter={e => { e.target.style.color = "#f1f5f9"; e.target.style.borderColor = "rgba(99,102,241,0.5)"; }}
+                onMouseLeave={e => { e.target.style.color = "#94a3b8"; e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
               >
                 {tag}
               </button>
             ))}
           </div>
 
-          {/* Stats — Colorful Glass Boxes */}
-          <div className="fade-up-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-8 border-t border-slate-200">
-            {stats.map((s, i) => {
-              const colors = [
-                {
-                  bg: "bg-blue-50/50",
-                  border: "border-blue-100",
-                  text: "from-blue-600 to-indigo-600",
-                },
-                {
-                  bg: "bg-purple-50/50",
-                  border: "border-purple-100",
-                  text: "from-purple-600 to-pink-600",
-                },
-                {
-                  bg: "bg-emerald-50/50",
-                  border: "border-emerald-100",
-                  text: "from-emerald-600 to-teal-600",
-                },
-                {
-                  bg: "bg-orange-50/50",
-                  border: "border-orange-100",
-                  text: "from-orange-600 to-red-600",
-                },
-              ];
-              const c = colors[i % 4];
-              return (
-                <div
-                  key={i}
-                  className={`group ${c.bg} backdrop-blur-md rounded-2xl p-4 sm:p-6 border ${c.border} shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300`}
-                >
-                  <p
-                    className={`text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br ${c.text} transition-all duration-300`}
-                  >
-                    {s.value}
-                  </p>
-                  <p className="text-[10px] sm:text-xs text-slate-500 mt-1.5 font-bold tracking-wide uppercase">
-                    {s.label}
-                  </p>
-                </div>
-              );
-            })}
+          {/* Stats row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "32px" }}>
+            {[
+              { value: "100+", label: "Universities" },
+              { value: "5,000+", label: "Students Helped" },
+              { value: "150+", label: "Departments" },
+              { value: "Free", label: "Always" },
+            ].map((s, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <p style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, color: "#f8fafc", margin: "0 0 4px", letterSpacing: "-0.02em" }}>{s.value}</p>
+                <p style={{ fontSize: "11px", color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: 0 }}>{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* Bottom wave */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "80px", background: "linear-gradient(to bottom, transparent, #f8fafc)", pointerEvents: "none" }} />
+
+        <style>{`
+          @keyframes floatA { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+          @keyframes floatB { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+          @keyframes floatC { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+          @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        `}</style>
       </section>
+
 
       {/* Saved universities — show when logged in and has saved */}
       {isLoggedIn && savedFull.length > 0 && (
