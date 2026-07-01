@@ -91,121 +91,118 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm text-slate-900">
-        <div className="max-w-7xl mx-auto px-3 md:px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
-          {/* Logo */}
-          <Logo size="md" />
+      <nav className="sticky top-0 z-50 bg-white text-slate-900 shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+          
+          {/* Logo & Main Links Group */}
+          <div className="flex items-center gap-8 lg:gap-12">
+            {/* Logo */}
+            <Logo size="md" />
 
-          {/* Search - desktop only */}
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 max-w-sm items-center bg-slate-100 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-xl px-3 gap-2 transition-all"
-          >
-            <Search size={14} className="text-slate-400 shrink-0" />
-            <input
-              value={searchText}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="FAST, NED, Dow, Habib..."
-              className="flex-1 bg-transparent py-2 text-sm outline-none text-slate-800 placeholder:text-slate-400"
-            />
-          </form>
+            {/* Desktop nav links — Zipper minimal style */}
+            <div className="hidden lg:flex items-center gap-6">
+              {mainLinks.slice(1, 5).map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className={
+                    "text-[14px] font-semibold transition-colors " +
+                    (isActive(l.to)
+                      ? "text-black"
+                      : "text-slate-600 hover:text-black")
+                  }
+                >
+                  {l.label}
+                </Link>
+              ))}
 
-          {/* Desktop nav links */}
-          <div className="hidden lg:flex items-center gap-0.5">
-            {mainLinks.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className={
-                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all " +
-                  (isActive(l.to)
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:text-blue-700 hover:bg-blue-50")
-                }
-              >
-                {l.icon}
-                {l.label}
-              </Link>
-            ))}
+              {/* More Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setMoreOpen(!moreOpen)}
+                  className={`flex items-center gap-1 text-[14px] font-semibold transition-colors ${
+                    moreOpen || moreLinks.some((l) => isActive(l.to))
+                      ? "text-black"
+                      : "text-slate-600 hover:text-black"
+                  }`}
+                >
+                  Resources
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform text-slate-400 ml-0.5 ${moreOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
 
-            {/* More Dropdown */}
-            <div className="relative ml-1" ref={dropdownRef}>
-              <button
-                onClick={() => setMoreOpen(!moreOpen)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  moreOpen || moreLinks.some((l) => isActive(l.to))
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:text-blue-700 hover:bg-blue-50"
-                }`}
-              >
-                More{" "}
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform ${moreOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {moreOpen && (
-                <div className="absolute top-full right-0 mt-2 w-44 bg-white border border-slate-200 shadow-xl rounded-xl py-2 flex flex-col z-50">
-                  {moreLinks.map((l) => (
+                {moreOpen && (
+                  <div className="absolute top-full left-0 mt-3 w-56 bg-white border border-slate-100 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] rounded-2xl py-2 flex flex-col z-50">
+                    {moreLinks.map((l) => (
+                      <Link
+                        key={l.to}
+                        to={l.to}
+                        onClick={() => setMoreOpen(false)}
+                        className={
+                          "flex items-center gap-2.5 px-5 py-2.5 text-[14px] font-medium transition-colors " +
+                          (isActive(l.to)
+                            ? "bg-slate-50 text-black"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-black")
+                        }
+                      >
+                        <span className="text-slate-400">{l.icon}</span>
+                        {l.label}
+                      </Link>
+                    ))}
                     <Link
-                      key={l.to}
-                      to={l.to}
-                      onClick={() => setMoreOpen(false)}
-                      className={
-                        "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors " +
-                        (isActive(l.to)
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-slate-700 hover:bg-blue-50 hover:text-blue-700")
-                      }
+                        to="/document-tools"
+                        onClick={() => setMoreOpen(false)}
+                        className="flex items-center gap-2.5 px-5 py-2.5 text-[14px] font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-black"
                     >
-                      {l.icon}
-                      {l.label}
+                      <span className="text-slate-400"><FileText size={18} /></span>
+                      Document Tools
                     </Link>
-                  ))}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-1">
-            {/* AI Chat icon — mobile only — beautiful chat bubble */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* AI Chat icon — mobile only */}
             <Link
               to="/career-match"
-              className="lg:hidden relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white hover:opacity-90 active:scale-95 transition-all shadow-md shadow-indigo-200"
+              className="lg:hidden relative flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all"
               title="AI Career Chat"
             >
-              <MessageSquare size={17} fill="white" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+              <MessageSquare size={18} strokeWidth={2} />
+              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
             </Link>
 
             {isLoggedIn ? (
               <>
                 <Link
                   to="/watchlist"
-                  className="relative hidden sm:flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  className="relative hidden sm:flex items-center justify-center w-10 h-10 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-colors"
                   title="Watchlist"
                 >
                   <Heart size={18} />
                   {universities.length > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-black text-white text-[10px] rounded-full flex items-center justify-center font-bold">
                       {universities.length}
                     </span>
                   )}
                 </Link>
                 <Link
                   to="/profile"
-                  className="flex items-center gap-1.5 bg-slate-100 hover:bg-blue-50 border border-transparent hover:border-blue-200 px-2 py-1 rounded-xl transition-all"
+                  className="flex items-center gap-2 pl-1 pr-3 py-1 bg-white border border-slate-200 hover:border-slate-300 rounded-full transition-all"
                   title="Profile"
                 >
                   <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                    style={{ background: "var(--navy)" }}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0"
+                    style={{ background: "#0f172a" }}
                   >
                     {(user?.fullName || user?.name || "U").slice(0, 1).toUpperCase()}
                   </div>
-                  <span className="text-xs font-semibold text-slate-700 hidden md:block max-w-[80px] truncate">
+                  <span className="text-[13px] font-semibold text-slate-800 hidden md:block max-w-[80px] truncate">
                     {(user?.fullName || user?.name || "User").split(" ")[0]}
                   </span>
                 </Link>
@@ -214,14 +211,14 @@ export default function Navbar() {
               <>
                 <Link
                   to="/auth/login"
-                  className="text-xs font-semibold text-slate-600 hover:text-blue-700 px-2 py-1.5 hidden md:block"
+                  className="text-[14px] font-semibold text-slate-600 hover:text-black px-2 hidden md:block"
                 >
                   Login
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="hidden sm:block text-xs font-bold text-white px-3 py-2 rounded-xl transition-all shadow-sm hover:shadow-md"
-                  style={{ background: "linear-gradient(135deg, #1e3a8a, #3b82f6)" }}
+                  className="hidden sm:flex items-center justify-center text-[14px] font-bold text-black px-6 py-2.5 rounded-full transition-transform hover:scale-105 active:scale-95"
+                  style={{ background: "#ccff00" }}
                 >
                   Sign Up
                 </Link>
@@ -231,10 +228,10 @@ export default function Navbar() {
             {/* Hamburger — always visible on mobile */}
             <button
               onClick={() => setMenuOpen(true)}
-              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition-all ml-0.5 shadow-sm"
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 active:scale-95 transition-all ml-1"
               aria-label="Open Menu"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
           </div>
         </div>
