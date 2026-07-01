@@ -105,36 +105,36 @@ export default function UniversityCard({ uni }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group relative">
       
-      {/* ── LEFT: Image Area ── */}
-      <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-100 flex-shrink-0">
-        <img 
-          src={uni.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600"} 
-          alt={uni.name} 
-          className="w-full h-full object-cover"
-        />
+      {/* ── LEFT: Image / Logo Area ── */}
+      <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-50 flex-shrink-0 flex items-center justify-center border-r border-slate-100">
+        {uni.image ? (
+          <img 
+            src={uni.image} 
+            alt={uni.name} 
+            className="w-full h-full object-cover"
+          />
+        ) : uni.website ? (
+          <img 
+            src={`https://logo.clearbit.com/${uni.website.replace(/^https?:\/\//, '').split('/')[0]}`} 
+            alt={uni.name}
+            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+            className="w-32 h-32 object-contain mix-blend-multiply opacity-90 transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : null}
         
-        {/* Badges overlaid on top left */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
-          <span
-            className={
-              "text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm " +
-              (uni.type === "government"
-                ? "bg-blue-600 text-white"
-                : "bg-purple-600 text-white")
-            }
-          >
-            {uni.type === "government" ? "Govt" : "Private"}
-          </span>
-          <span
-            className={
-              "text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm " +
-              (isActuallyOpen
-                ? "bg-emerald-500 text-white"
-                : "bg-red-500 text-white")
-            }
-          >
-            {isActuallyOpen ? "● Open" : "Closed"}
-          </span>
+        {/* Fallback if no image and no logo loads */}
+        <div 
+          className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white"
+          style={{
+            display: (uni.image || uni.website) ? 'none' : 'flex',
+            background: "linear-gradient(135deg, var(--navy), #3b82f6)",
+            fontFamily: "Sora",
+          }}
+        >
+          <div className="w-16 h-16 border-2 border-white/20 rounded-2xl mb-3 flex items-center justify-center text-2xl font-black bg-white/10 backdrop-blur-sm">
+            {uni.shortName ? uni.shortName.slice(0, 2) : uni.name?.slice(0, 2)}
+          </div>
+          <span className="font-bold text-xl tracking-wide leading-tight">{uni.shortName || uni.name}</span>
         </div>
 
         {/* Mobile Heart Button */}
@@ -152,6 +152,14 @@ export default function UniversityCard({ uni }) {
         {/* Top Row: Title, location, fee, days left */}
         <div className="flex flex-col xl:flex-row xl:justify-between items-start gap-2 xl:gap-4 mb-4">
           <div className="flex-1">
+            <div className="flex flex-wrap gap-2 mb-2">
+              <span className={"text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm " + (uni.type === "government" ? "bg-blue-600 text-white" : "bg-purple-600 text-white")}>
+                {uni.type === "government" ? "Govt" : "Private"}
+              </span>
+              <span className={"text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm " + (isActuallyOpen ? "bg-emerald-500 text-white" : "bg-red-500 text-white")}>
+                {isActuallyOpen ? "● Open" : "Closed"}
+              </span>
+            </div>
             <h3 className="text-[18px] md:text-[20px] font-bold text-slate-900 leading-tight mb-1" style={{ fontFamily: "Sora" }}>
               {uni.name}
             </h3>

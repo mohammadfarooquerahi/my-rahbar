@@ -415,7 +415,7 @@ export default function HomePage() {
               View All <ArrowRight size={13} />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
             {savedFull.slice(0, 3).map((uni) => (
               <UniversityCard key={uni.id} uni={uni} />
             ))}
@@ -558,7 +558,7 @@ export default function HomePage() {
               See All Universities <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex flex-col gap-5 max-w-4xl mx-auto w-full">
             {featured.map((uni) => (
               <UniversityCard key={uni.id} uni={uni} />
             ))}
