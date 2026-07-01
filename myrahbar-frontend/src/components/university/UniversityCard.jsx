@@ -103,125 +103,132 @@ export default function UniversityCard({ uni }) {
     : null;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col md:flex-row transition-all duration-300 hover:shadow-lg group relative">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group relative">
       
-      {/* Optional Top-Left Marker (like the image's red line) */}
-      <div className="absolute left-0 top-6 bottom-6 w-1 bg-orange-400 hidden md:block rounded-r-md z-10" />
-
-      {/* ── LEFT: Image / Logo Area ── */}
-      <div className="w-full md:w-[300px] md:min-w-[300px] h-52 md:h-auto relative bg-slate-100 flex-shrink-0">
-        {uni.image ? (
-          <img src={uni.image} alt={uni.name} className="w-full h-full object-cover" />
-        ) : (
-          <div 
-            className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white"
-            style={{
-              background: "linear-gradient(135deg, var(--navy), #3b82f6)",
-              fontFamily: "Sora",
-            }}
-          >
-            <div className="w-16 h-16 border-2 border-white/20 rounded-2xl mb-3 flex items-center justify-center text-2xl font-black bg-white/10 backdrop-blur-sm">
-              {uni.shortName ? uni.shortName.slice(0, 2) : uni.name?.slice(0, 2)}
-            </div>
-            <span className="font-bold text-xl tracking-wide">{uni.shortName || uni.name}</span>
-          </div>
-        )}
+      {/* ── LEFT: Image Area ── */}
+      <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-100 flex-shrink-0">
+        <img 
+          src={uni.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600"} 
+          alt={uni.name} 
+          className="w-full h-full object-cover"
+        />
         
-        {/* Mobile Heart Button (Absolute top right on image for mobile) */}
+        {/* Badges overlaid on top left */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+          <span
+            className={
+              "text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm " +
+              (uni.type === "government"
+                ? "bg-blue-600 text-white"
+                : "bg-purple-600 text-white")
+            }
+          >
+            {uni.type === "government" ? "Govt" : "Private"}
+          </span>
+          <span
+            className={
+              "text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded shadow-sm " +
+              (isActuallyOpen
+                ? "bg-emerald-500 text-white"
+                : "bg-red-500 text-white")
+            }
+          >
+            {isActuallyOpen ? "● Open" : "Closed"}
+          </span>
+        </div>
+
+        {/* Mobile Heart Button */}
         <button
           onClick={toggleWatch}
-          className="md:hidden absolute top-3 right-3 p-2 bg-white rounded-full shadow-md z-10"
+          className="sm:hidden absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md z-10"
         >
           <Heart size={18} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} />
         </button>
       </div>
 
       {/* ── RIGHT: Content Area ── */}
-      <div className="flex-1 p-5 md:p-6 flex flex-col">
+      <div className="flex-1 p-4 sm:p-5 flex flex-col">
         
-        {/* Top Row: Title & Fee */}
-        <div className="flex flex-col md:flex-row md:justify-between items-start gap-4 mb-5">
-          <div>
-            <h3 className="text-xl md:text-[22px] font-bold text-slate-800 leading-tight mb-1" style={{ fontFamily: "Sora" }}>
+        {/* Top Row: Title, location, fee, days left */}
+        <div className="flex flex-col xl:flex-row xl:justify-between items-start gap-2 xl:gap-4 mb-4">
+          <div className="flex-1">
+            <h3 className="text-[18px] md:text-[20px] font-bold text-slate-900 leading-tight mb-1" style={{ fontFamily: "Sora" }}>
               {uni.name}
             </h3>
-            <p className="text-[14px] text-slate-400 font-medium">
-              By {uni.city || "Karachi"} {uni.province ? `, ${uni.province}` : ""}
+            <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
+              <MapPin size={14} className="text-slate-400" /> 
+              {uni.city || "Karachi"} {uni.province ? `, ${uni.province}` : ""}
             </p>
           </div>
-          
-          <div className="md:text-right flex flex-col md:items-end">
-            <div className="text-[18px] font-bold text-slate-800 whitespace-nowrap">
-              PKR {feeRange}
+
+          <div className="xl:text-right flex flex-col xl:items-end shrink-0 w-full xl:w-auto mt-2 xl:mt-0 pt-2 xl:pt-0 border-t xl:border-none border-slate-100">
+            <div className="text-[16px] font-bold text-slate-800 whitespace-nowrap">
+              PKR {feeRange} <span className="text-xs text-slate-400 font-normal">/ sem</span>
             </div>
             {isActuallyOpen ? (
-              <div className="text-[13px] font-bold text-red-500 mt-1 whitespace-nowrap">
-                {daysLeft === 0 ? "Deadline Today" : daysLeft ? `${daysLeft} Days Left` : "Admissions Open"}
+              <div className="text-[12px] font-bold text-emerald-600 mt-0.5 whitespace-nowrap flex items-center xl:justify-end gap-1">
+                {daysLeft === 0 ? <><Clock size={12}/> Deadline Today</> : daysLeft ? <><Clock size={12}/> {daysLeft} Days Left</> : "Admissions Open"}
               </div>
             ) : (
-              <div className="text-[13px] font-bold text-slate-400 mt-1 whitespace-nowrap">
+              <div className="text-[12px] font-medium text-slate-400 mt-0.5 whitespace-nowrap">
                 Admissions Closed
               </div>
             )}
           </div>
         </div>
 
-        {/* Middle Row: Tabular Details */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 mb-6 text-[14px] border-l-2 border-slate-100 pl-4 py-1">
-          <div className="flex items-start gap-2">
-            <span className="text-slate-400 min-w-[70px]">Details :</span>
-            <span className="font-medium text-slate-700 capitalize">{uni.type || "Private"} Sector, {topCategory}</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-slate-400 min-w-[70px]">Status :</span>
-            <span className="font-medium text-slate-700">
-              {isActuallyOpen ? "Accepting Applications" : "Not Accepting Applications"}
+        {/* Middle Row: Badges / Tags */}
+        <div className="flex flex-wrap items-center gap-2 mb-4 text-[12px]">
+          <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">
+            <BookOpen size={13} />
+            {topCategory}
+          </span>
+          {uni.testRequired && (
+            <span className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-md">
+              <Calendar size={13} />
+              {uni.testRequired} {uni.testDate && `(${formatDeadlineDate(uni.testDate)})`}
             </span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-slate-400 min-w-[70px]">Deadline :</span>
-            <span className="font-medium text-slate-700">{deadlineFormatted || "TBA"}</span>
-          </div>
+          )}
+          {uni.admissionDeadline && deadlineFormatted && (
+            <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">
+              Deadline: <span className="font-semibold text-slate-800">{deadlineFormatted}</span>
+            </span>
+          )}
         </div>
 
-        {/* Spacer to push bottom row down if height is large */}
+        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Bottom Row: Icons & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+        {/* Bottom Row: Quick Stats & Buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 pt-4 border-t border-slate-100">
           
-          {/* Quick Icons (like Bed/Bath in real estate) */}
-          <div className="flex items-center gap-6 text-slate-400 text-[13px] font-medium">
-            <div className="flex items-center gap-1.5">
-              <BookOpen size={18} strokeWidth={1.5} />
+          <div className="flex flex-wrap items-center gap-4 text-slate-500 text-[13px] font-medium">
+            <div className="flex items-center gap-1">
+              <BookOpen size={15} className="text-slate-400"/>
               <span>{uni.departments?.length || 5}+ Depts</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Star size={18} strokeWidth={1.5} />
-              <span>{rating} Rating</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Users size={18} strokeWidth={1.5} />
-              <span>Co-ed</span>
+            <div className="flex items-center gap-1">
+              <Star size={15} className="text-amber-400" fill="currentColor"/>
+              <span className="text-slate-700 font-bold">{rating}</span>
+              <span className="hidden lg:inline text-slate-400 text-[11px]">({reviewCount})</span>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3">
-            {/* Desktop Heart Button */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={toggleWatch}
-              className="hidden md:flex items-center justify-center w-[46px] h-[46px] rounded border border-slate-300 hover:border-slate-400 hover:bg-slate-50 transition-colors"
+              className="hidden sm:flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-colors shrink-0"
               title={watched ? "Remove from watchlist" : "Add to watchlist"}
             >
-              <Heart size={20} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} strokeWidth={1.5} />
+              <Heart size={18} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} strokeWidth={2} />
             </button>
             
             <Link
               to={`/university/${uni.slug}`}
-              className="flex-1 sm:flex-none text-center px-10 py-3 bg-[#fbb03b] hover:bg-[#f59e0b] text-white text-[15px] font-bold rounded shadow-sm transition-colors"
+              className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-bold rounded-lg shadow-sm transition-all duration-300"
             >
               View Details
+              <ArrowRight size={14} />
             </Link>
           </div>
 
