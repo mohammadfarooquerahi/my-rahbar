@@ -220,16 +220,13 @@ export default function HomePage() {
       </Helmet>
 
       {/* ── HERO SECTION — Clean & Realistic ── */}
-      <section style={{
-        background: "linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "85vh",
-        display: "flex",
-        alignItems: "center",
-        padding: "80px 16px 60px",
-        fontFamily: "'Inter', sans-serif",
-      }}>
+      <section 
+        className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-80px)] py-10 md:py-16 px-4 flex items-center relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)",
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
 
         {/* Subtle dot pattern background */}
         <div style={{
