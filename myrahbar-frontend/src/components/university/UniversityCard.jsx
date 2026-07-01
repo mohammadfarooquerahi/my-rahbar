@@ -94,7 +94,7 @@ export default function UniversityCard({ uni }) {
   const categories = [
     ...new Set((uni.departments || []).map((d) => d.category)),
   ];
-  const topCategory = categories.length > 0 ? categories[0] : "General";
+  const displayCategories = categories.length > 0 ? categories.slice(0, 2).join(", ") + (categories.length > 2 ? ", ..." : "") : "General";
 
   const rating = getFakeRating(uni.name);
   const reviewCount = getFakeReviewCount(uni.name);
@@ -103,64 +103,42 @@ export default function UniversityCard({ uni }) {
     : null;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group relative">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative">
       
-      {/* ── LEFT: Image / Logo Area ── */}
-      <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-50 flex-shrink-0 flex items-center justify-center border-r border-slate-100">
-        {uni.image ? (
-          <img 
-            src={uni.image} 
-            alt={uni.name} 
-            className="w-full h-full object-cover"
-          />
-        ) : uni.website ? (
-          <img 
-            src={`https://logo.clearbit.com/${uni.website.replace(/^https?:\/\//, '').split('/')[0]}`} 
-            alt={uni.name}
-            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-            className="w-32 h-32 object-contain mix-blend-multiply opacity-90 transition-transform duration-500 group-hover:scale-110"
-          />
-        ) : null}
+      {/* ── LEFT: Image Area with Gradient Overlay ── */}
+      <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-900 flex-shrink-0 border-r border-slate-100 overflow-hidden">
+        <img 
+          src={uni.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600"} 
+          alt={uni.name} 
+          className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105"
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent pointer-events-none" />
         
-        {/* Fallback if no image and no logo loads */}
-        <div 
-          className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white"
-          style={{
-            display: (uni.image || uni.website) ? 'none' : 'flex',
-            background: "linear-gradient(135deg, var(--navy), #3b82f6)",
-            fontFamily: "Sora",
-          }}
-        >
-          <div className="w-16 h-16 border-2 border-white/20 rounded-2xl mb-3 flex items-center justify-center text-2xl font-black bg-white/10 backdrop-blur-sm">
-            {uni.shortName ? uni.shortName.slice(0, 2) : uni.name?.slice(0, 2)}
-          </div>
-          <span className="font-bold text-xl tracking-wide leading-tight">{uni.shortName || uni.name}</span>
-        </div>
-
         {/* Mobile Heart Button */}
         <button
           onClick={toggleWatch}
-          className="sm:hidden absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md z-10"
+          className="sm:hidden absolute top-3 right-3 p-2 bg-white/20 backdrop-blur-md rounded-full shadow-md z-10 border border-white/20 hover:bg-white/40 transition-colors"
         >
-          <Heart size={18} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} />
+          <Heart size={18} className={watched ? "text-red-500" : "text-white"} fill={watched ? "currentColor" : "none"} />
         </button>
       </div>
 
       {/* ── RIGHT: Content Area ── */}
-      <div className="flex-1 p-4 sm:p-5 flex flex-col">
+      <div className="flex-1 p-5 md:p-6 flex flex-col">
         
         {/* Top Row: Title, location, fee, days left */}
-        <div className="flex flex-col xl:flex-row xl:justify-between items-start gap-2 xl:gap-4 mb-4">
+        <div className="flex flex-col xl:flex-row xl:justify-between items-start gap-3 xl:gap-4 mb-4">
           <div className="flex-1">
             <div className="flex flex-wrap gap-2 mb-2">
-              <span className={"text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm " + (uni.type === "government" ? "bg-blue-600 text-white" : "bg-purple-600 text-white")}>
+              <span className={"text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded shadow-sm " + (uni.type === "government" ? "bg-blue-600 text-white" : "bg-purple-600 text-white")}>
                 {uni.type === "government" ? "Govt" : "Private"}
               </span>
-              <span className={"text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow-sm " + (isActuallyOpen ? "bg-emerald-500 text-white" : "bg-red-500 text-white")}>
+              <span className={"text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded shadow-sm " + (isActuallyOpen ? "bg-emerald-500 text-white" : "bg-red-500 text-white")}>
                 {isActuallyOpen ? "● Open" : "Closed"}
               </span>
             </div>
-            <h3 className="text-[18px] md:text-[20px] font-bold text-slate-900 leading-tight mb-1" style={{ fontFamily: "Sora" }}>
+            <h3 className="text-[19px] md:text-[21px] font-bold text-slate-900 leading-tight mb-1.5" style={{ fontFamily: "Sora" }}>
               {uni.name}
             </h3>
             <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
@@ -169,16 +147,16 @@ export default function UniversityCard({ uni }) {
             </p>
           </div>
 
-          <div className="xl:text-right flex flex-col xl:items-end shrink-0 w-full xl:w-auto mt-2 xl:mt-0 pt-2 xl:pt-0 border-t xl:border-none border-slate-100">
-            <div className="text-[16px] font-bold text-slate-800 whitespace-nowrap">
-              PKR {feeRange} <span className="text-xs text-slate-400 font-normal">/ sem</span>
+          <div className="xl:text-right flex flex-col xl:items-end shrink-0 w-full xl:w-auto mt-2 xl:mt-0 pt-3 xl:pt-0 border-t xl:border-none border-slate-100">
+            <div className="text-[17px] font-bold text-slate-800 whitespace-nowrap">
+              PKR {feeRange} <span className="text-[11px] text-slate-400 font-normal uppercase tracking-wider">/ sem</span>
             </div>
             {isActuallyOpen ? (
-              <div className="text-[12px] font-bold text-emerald-600 mt-0.5 whitespace-nowrap flex items-center xl:justify-end gap-1">
-                {daysLeft === 0 ? <><Clock size={12}/> Deadline Today</> : daysLeft ? <><Clock size={12}/> {daysLeft} Days Left</> : "Admissions Open"}
+              <div className="text-[12px] font-bold text-emerald-600 mt-1 whitespace-nowrap flex items-center xl:justify-end gap-1.5 bg-emerald-50 px-2 py-1 rounded-md w-fit xl:w-auto">
+                {daysLeft === 0 ? <><Clock size={13}/> Deadline Today</> : daysLeft ? <><Clock size={13}/> {daysLeft} Days Left</> : "Admissions Open"}
               </div>
             ) : (
-              <div className="text-[12px] font-medium text-slate-400 mt-0.5 whitespace-nowrap">
+              <div className="text-[12px] font-medium text-slate-400 mt-1 whitespace-nowrap bg-slate-50 px-2 py-1 rounded-md w-fit xl:w-auto">
                 Admissions Closed
               </div>
             )}
@@ -186,19 +164,19 @@ export default function UniversityCard({ uni }) {
         </div>
 
         {/* Middle Row: Badges / Tags */}
-        <div className="flex flex-wrap items-center gap-2 mb-4 text-[12px]">
-          <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">
-            <BookOpen size={13} />
-            {topCategory}
+        <div className="flex flex-wrap items-center gap-2.5 mb-4 text-[12.5px]">
+          <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1 rounded-md font-medium">
+            <BookOpen size={14} className="text-slate-400" />
+            {displayCategories}
           </span>
           {uni.testRequired && (
-            <span className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-md">
-              <Calendar size={13} />
+            <span className="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-semibold px-3 py-1 rounded-md">
+              <Calendar size={14} />
               {uni.testRequired} {uni.testDate && `(${formatDeadlineDate(uni.testDate)})`}
             </span>
           )}
           {uni.admissionDeadline && deadlineFormatted && (
-            <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">
+            <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1 rounded-md font-medium">
               Deadline: <span className="font-semibold text-slate-800">{deadlineFormatted}</span>
             </span>
           )}
