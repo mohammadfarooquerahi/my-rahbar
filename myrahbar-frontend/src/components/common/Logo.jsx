@@ -30,24 +30,24 @@ export default function Logo({ size = "md", layout = "horizontal" }) {
         className={`${heightClass} w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0`}
       />
       <div className={`flex flex-col ${isVertical ? "items-center mt-1" : "items-start justify-center"} shrink-0`}>
-        {/* 'Rahbars' with Premium Font */}
+        {/* 'Rahbars' with Proper Font */}
         <span 
-          className={`font-extrabold text-slate-900 ${fontClass}`}
+          className={`font-bold text-slate-800 ${fontClass}`}
           style={{ 
             fontFamily: "'Outfit', sans-serif", 
             lineHeight: "1",
-            letterSpacing: "-0.03em"
+            letterSpacing: "-0.01em"
           }}
         >
           Rahbars<span className="text-blue-600">.</span>
         </span>
-        {/* Tagline with Premium tracking and font */}
+        {/* Tagline with Proper tracking and font */}
         <span 
-          className="font-semibold text-slate-500 whitespace-nowrap uppercase mt-0.5"
+          className="font-medium text-slate-500 whitespace-nowrap uppercase mt-1"
           style={{ 
             fontFamily: "'Inter', sans-serif",
-            letterSpacing: "0.25em",
-            fontSize: size === "sm" ? "0.4rem" : size === "md" ? "0.45rem" : "0.55rem" 
+            letterSpacing: "0.15em",
+            fontSize: size === "sm" ? "0.45rem" : size === "md" ? "0.5rem" : "0.6rem" 
           }}
         >
           LEARN. GROW. SUCCEED.
