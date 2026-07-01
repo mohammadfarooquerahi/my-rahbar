@@ -219,198 +219,183 @@ export default function HomePage() {
         <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
-      {/* ── HERO SECTION — Dark Premium ── */}
-      <section
-        style={{
-          background: "linear-gradient(135deg, #0a0f1e 0%, #0d1730 40%, #0a0e1a 70%, #10162a 100%)",
-          position: "relative",
-          overflow: "hidden",
-          minHeight: "92vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "80px 16px 60px",
-          fontFamily: "'Inter', 'Poppins', sans-serif",
-        }}
-      >
-        {/* Animated grid background */}
+      {/* ── HERO SECTION — Clean & Realistic ── */}
+      <section style={{
+        background: "linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)",
+        position: "relative",
+        overflow: "hidden",
+        minHeight: "85vh",
+        display: "flex",
+        alignItems: "center",
+        padding: "80px 16px 60px",
+        fontFamily: "'Inter', sans-serif",
+      }}>
+
+        {/* Subtle dot pattern background */}
         <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: "linear-gradient(rgba(59, 130, 246, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.06) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.4,
+          backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
         }} />
 
-        {/* Glowing orbs */}
-        <div style={{ position: "absolute", top: "-10%", left: "-5%", width: "45%", height: "60%", borderRadius: "50%", background: "radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "-10%", right: "-5%", width: "40%", height: "50%", borderRadius: "50%", background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translateX(-50%)", width: "60%", height: "40%", borderRadius: "50%", background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)", filter: "blur(100px)", pointerEvents: "none" }} />
+        <div style={{ maxWidth:"1200px", margin:"0 auto", width:"100%", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"48px", alignItems:"center", position:"relative", zIndex:10 }} className="hero-grid">
 
-        {/* Floating badges — decorative */}
-        <div style={{ position: "absolute", top: "15%", left: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatA 4s ease-in-out infinite" }} className="hidden lg:flex">
-          <span style={{ fontSize: "20px" }}>🎓</span>
-          <div>
-            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>University Matched</p>
-            <p style={{ fontSize: "13px", fontWeight: 700, color: "#f1f5f9", margin: 0 }}>FAST NUCES</p>
-          </div>
-        </div>
-        <div style={{ position: "absolute", top: "25%", right: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatB 5s ease-in-out infinite" }} className="hidden lg:flex">
-          <span style={{ fontSize: "20px" }}>📊</span>
-          <div>
-            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>Aggregate Score</p>
-            <p style={{ fontSize: "13px", fontWeight: 700, color: "#34d399", margin: 0 }}>81.4% ✓ Eligible</p>
-          </div>
-        </div>
-        <div style={{ position: "absolute", bottom: "25%", left: "5%", background: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "10px 16px", display: "flex", alignItems: "center", gap: "8px", animation: "floatC 6s ease-in-out infinite" }} className="hidden lg:flex">
-          <span style={{ fontSize: "20px" }}>⏰</span>
-          <div>
-            <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0 }}>Deadline Alert</p>
-            <p style={{ fontSize: "13px", fontWeight: 700, color: "#f59e0b", margin: 0 }}>NUST — 3 days left</p>
-          </div>
-        </div>
-
-        {/* Center Content */}
-        <div style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: "800px", width: "100%" }}>
-
-          {/* Eyebrow label */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.35)", borderRadius: "100px", padding: "8px 20px", marginBottom: "28px" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#818cf8", display: "inline-block", boxShadow: "0 0 8px #818cf8", animation: "pulse 2s infinite" }} />
-            <span style={{ fontSize: "12px", fontWeight: 600, color: "#a5b4fc", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              Pakistan's #1 Admission Platform — 100% Free
-            </span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 style={{ fontSize: "clamp(2.2rem, 6vw, 4.2rem)", fontWeight: 800, lineHeight: 1.1, color: "#f8fafc", margin: "0 0 20px", letterSpacing: "-0.02em" }}>
-            Where Pakistani students
-            <br />
-            <span style={{
-              background: "linear-gradient(90deg, #818cf8, #c084fc, #e879f9)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>
-              find their dream university
-            </span>
-          </h1>
-
-          {/* Sub headline — emotional, honest */}
-          <p style={{ fontSize: "clamp(1rem, 2.2vw, 1.2rem)", color: "#94a3b8", lineHeight: 1.75, maxWidth: "560px", margin: "0 auto 40px", fontWeight: 400 }}>
-            Stop guessing. Enter your marks, field and budget — we'll show you
-            exactly which universities you qualify for.
-            <span style={{ color: "#818cf8", fontWeight: 600 }}> In under 2 minutes.</span>
-          </p>
-
-          {/* Search Bar */}
-          <form
-            onSubmit={handleSearch}
-            style={{ maxWidth: "640px", margin: "0 auto 28px", position: "relative" }}
-          >
-            <div style={{
-              display: "flex", alignItems: "center", flexWrap: "nowrap",
-              background: "rgba(255,255,255,0.06)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "16px",
-              padding: "6px",
-              boxShadow: "0 0 0 1px rgba(99,102,241,0.2), 0 20px 60px rgba(0,0,0,0.4)",
-              gap: "6px",
-              flexDirection: "row",
-            }}>
-              <div style={{ flex: "0 0 auto", borderRight: "1px solid rgba(255,255,255,0.1)", paddingRight: "6px" }}>
-                <select
-                  value={degreeLevel}
-                  onChange={(e) => setDegreeLevel(e.target.value)}
-                  style={{
-                    background: "transparent", border: "none", outline: "none",
-                    color: degreeLevel ? "#f1f5f9" : "#64748b",
-                    fontSize: "14px", fontWeight: 500, padding: "10px 8px",
-                    cursor: "pointer", minWidth: "140px",
-                  }}
-                >
-                  <option value="" style={{ background: "#1e293b" }}>🎓 Degree Level</option>
-                  <option value="BS" style={{ background: "#1e293b" }}>BS / Undergraduate</option>
-                  <option value="MS" style={{ background: "#1e293b" }}>MS / MPhil</option>
-                  <option value="PhD" style={{ background: "#1e293b" }}>PhD / Doctorate</option>
-                  <option value="Other" style={{ background: "#1e293b" }}>Diploma / Other</option>
-                </select>
-              </div>
-              <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px", padding: "0 8px" }}>
-                <Search size={16} style={{ color: "#6366f1", flexShrink: 0 }} />
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search university, program, city..."
-                  style={{
-                    background: "transparent", border: "none", outline: "none",
-                    color: "#f1f5f9", fontSize: "14px", width: "100%",
-                    fontFamily: "inherit",
-                  }}
-                />
-              </div>
-              <button
-                type="submit"
-                style={{
-                  background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-                  color: "#fff", border: "none", borderRadius: "12px",
-                  padding: "12px 24px", fontSize: "14px", fontWeight: 700,
-                  cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0,
-                  boxShadow: "0 4px 20px rgba(99,102,241,0.5)",
-                  transition: "all 0.2s",
-                }}
-              >
-                Search →
-              </button>
+          {/* LEFT — Copy */}
+          <div style={{ paddingRight: "20px" }}>
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"8px", background:"#eef2ff", color:"#4f46e5", border:"1px solid #c7d2fe", borderRadius:"6px", padding:"4px 12px", marginBottom:"24px", fontWeight: 600, fontSize: "13px" }}>
+              <span style={{ width:"6px", height:"6px", borderRadius:"50%", background:"#4f46e5", display:"inline-block" }} />
+              Pakistan's Official Admission Platform
             </div>
-          </form>
 
-          {/* Popular searches */}
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", marginBottom: "60px" }}>
-            <span style={{ fontSize: "12px", color: "#475569", paddingTop: "6px" }}>Popular:</span>
-            {["MBBS", "Software Engineering", "BBA", "NUST", "FAST", "Architecture"].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => navigate("/search?q=" + tag)}
-                style={{
-                  fontSize: "12px", fontWeight: 500,
-                  color: "#94a3b8", background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.1)", borderRadius: "100px",
-                  padding: "5px 14px", cursor: "pointer", transition: "all 0.2s",
-                }}
-                onMouseEnter={e => { e.target.style.color = "#f1f5f9"; e.target.style.borderColor = "rgba(99,102,241,0.5)"; }}
-                onMouseLeave={e => { e.target.style.color = "#94a3b8"; e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
-              >
-                {tag}
-              </button>
-            ))}
+            <h1 style={{ fontSize:"clamp(2.5rem, 4.5vw, 4rem)", fontWeight:800, lineHeight:1.1, color:"#0f172a", margin:"0 0 24px", letterSpacing:"-0.03em" }}>
+              Find your <span style={{ color:"#2563eb" }}>university</span>
+              <br />
+              without the guesswork.
+            </h1>
+
+            <p style={{ fontSize:"1.1rem", color:"#475569", lineHeight:1.7, margin:"0 0 40px", maxWidth:"500px" }}>
+              Search programs, calculate your exact merit score, and track admission deadlines across Pakistan. All the data you need to make the right choice, in one place.
+            </p>
+
+            {/* Search bar — Solid, realistic */}
+            <form onSubmit={handleSearch} style={{ marginBottom:"32px", maxWidth: "540px" }}>
+              <div style={{
+                background:"#ffffff",
+                border:"1px solid #cbd5e1",
+                borderRadius:"12px",
+                padding:"8px",
+                boxShadow:"0 10px 30px -10px rgba(0,0,0,0.08)",
+                display:"flex",
+                alignItems:"center",
+                gap:"8px",
+              }}>
+                <div style={{ borderRight:"1px solid #e2e8f0", paddingRight:"8px", flexShrink:0 }}>
+                  <select
+                    value={degreeLevel}
+                    onChange={(e) => setDegreeLevel(e.target.value)}
+                    style={{ background:"transparent", border:"none", outline:"none", color: degreeLevel ? "#0f172a" : "#64748b", fontSize:"14px", fontWeight:500, padding:"10px", cursor:"pointer", minWidth:"140px" }}
+                  >
+                    <option value="">All Degree Levels</option>
+                    <option value="BS">BS / Undergraduate</option>
+                    <option value="MS">MS / MPhil</option>
+                    <option value="PhD">PhD / Doctorate</option>
+                  </select>
+                </div>
+                <div style={{ flex:1, display:"flex", alignItems:"center", gap:"8px", padding:"0 8px" }}>
+                  <Search size={18} style={{ color:"#94a3b8", flexShrink:0 }} />
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search university, program, or city..."
+                    style={{ background:"transparent", border:"none", outline:"none", color:"#0f172a", fontSize:"15px", width:"100%", fontFamily:"inherit" }}
+                  />
+                </div>
+                <button type="submit" style={{
+                  background:"#2563eb", color:"#ffffff", border:"none",
+                  borderRadius:"8px", padding:"12px 24px",
+                  fontSize:"15px", fontWeight:600, cursor:"pointer",
+                  flexShrink:0, transition: "background 0.2s"
+                }} onMouseOver={e => e.currentTarget.style.background = "#1d4ed8"} onMouseOut={e => e.currentTarget.style.background = "#2563eb"}>
+                  Search
+                </button>
+              </div>
+            </form>
+
+            <div style={{ display:"flex", gap:"32px", borderTop:"1px solid #e2e8f0", paddingTop:"32px" }}>
+              <div>
+                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>100+</p>
+                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Universities</p>
+              </div>
+              <div>
+                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>150+</p>
+                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Programs</p>
+              </div>
+              <div>
+                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>5k+</p>
+                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Students Guided</p>
+              </div>
+            </div>
           </div>
 
-          {/* Stats row */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "32px" }}>
-            {[
-              { value: "100+", label: "Universities" },
-              { value: "5,000+", label: "Students Helped" },
-              { value: "150+", label: "Departments" },
-              { value: "Free", label: "Always" },
-            ].map((s, i) => (
-              <div key={i} style={{ textAlign: "center" }}>
-                <p style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, color: "#f8fafc", margin: "0 0 4px", letterSpacing: "-0.02em" }}>{s.value}</p>
-                <p style={{ fontSize: "11px", color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: 0 }}>{s.label}</p>
+          {/* RIGHT — Realistic Dashboard Preview */}
+          <div style={{ position:"relative", display:"flex", justifyContent:"flex-end" }} className="hero-right">
+            
+            {/* The main UI mock */}
+            <div style={{ 
+              background:"#ffffff", 
+              border:"1px solid #e2e8f0", 
+              borderRadius:"16px", 
+              width:"100%", 
+              maxWidth:"480px", 
+              boxShadow:"0 25px 50px -12px rgba(0,0,0,0.15)",
+              overflow:"hidden"
+            }}>
+              {/* Window Header */}
+              <div style={{ background:"#f8fafc", borderBottom:"1px solid #e2e8f0", padding:"12px 16px", display:"flex", alignItems:"center", gap:"8px" }}>
+                <div style={{ display:"flex", gap:"6px" }}>
+                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#ef4444" }} />
+                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#f59e0b" }} />
+                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#10b981" }} />
+                </div>
+                <div style={{ marginLeft:"auto", fontSize:"12px", color:"#64748b", fontWeight:500 }}>Merit Predictor</div>
               </div>
-            ))}
+              
+              {/* Window Content */}
+              <div style={{ padding:"24px" }}>
+                <p style={{ fontSize:"13px", color:"#64748b", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 16px" }}>Top Matches for You</p>
+                
+                {[
+                  { name:"FAST NUCES", location:"Lahore", code:"BSCS", score:"82.4%", status:"Eligible", statusColor:"#10b981", statusBg:"#ecfdf5" },
+                  { name:"NUST", location:"Islamabad", code:"SE", score:"79.1%", status:"Borderline", statusColor:"#f59e0b", statusBg:"#fffbeb" },
+                  { name:"COMSATS", location:"Islamabad", code:"BSCS", score:"85.2%", status:"Safe", statusColor:"#3b82f6", statusBg:"#eff6ff" },
+                ].map((item, i) => (
+                  <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px", border:"1px solid #f1f5f9", borderRadius:"12px", marginBottom:"12px", background: i === 0 ? "#f8fafc" : "#ffffff" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:"12px" }}>
+                      <div style={{ width:"40px", height:"40px", borderRadius:"8px", background:"#f1f5f9", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700, color:"#334155", fontSize:"14px" }}>
+                        {item.name[0]}
+                      </div>
+                      <div>
+                        <p style={{ fontWeight:600, color:"#0f172a", fontSize:"14px", margin:0 }}>{item.name}</p>
+                        <p style={{ color:"#64748b", fontSize:"12px", margin:"4px 0 0" }}>{item.location} • {item.code}</p>
+                      </div>
+                    </div>
+                    <div style={{ textAlign:"right" }}>
+                      <p style={{ fontWeight:700, color:"#0f172a", fontSize:"15px", margin:0 }}>{item.score}</p>
+                      <span style={{ display:"inline-block", padding:"2px 8px", borderRadius:"4px", background:item.statusBg, color:item.statusColor, fontSize:"11px", fontWeight:600, marginTop:"4px" }}>
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                <div style={{ marginTop:"20px", display:"flex", gap:"12px" }}>
+                  <div style={{ flex:1, height:"36px", background:"#f1f5f9", borderRadius:"6px" }} />
+                  <div style={{ width:"100px", height:"36px", background:"#2563eb", borderRadius:"6px" }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Overlapping realistic alert */}
+            <div style={{ position:"absolute", bottom:"-20px", left:"-20px", background:"#ffffff", border:"1px solid #e2e8f0", borderRadius:"12px", padding:"16px", boxShadow:"0 10px 25px -5px rgba(0,0,0,0.1)", display:"flex", gap:"12px", alignItems:"flex-start", maxWidth:"260px" }}>
+              <div style={{ color:"#ef4444", marginTop:"2px" }}><Bell size={18} /></div>
+              <div>
+                <p style={{ fontSize:"13px", fontWeight:600, color:"#0f172a", margin:"0 0 4px" }}>Application Closing</p>
+                <p style={{ fontSize:"12px", color:"#64748b", margin:"0 0 8px", lineHeight:1.4 }}>UET Lahore BS Engineering admissions close tomorrow.</p>
+                <span style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer" }}>Apply Now →</span>
+              </div>
+            </div>
+            
           </div>
         </div>
-
-        {/* Bottom wave */}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "80px", background: "linear-gradient(to bottom, transparent, #f8fafc)", pointerEvents: "none" }} />
 
         <style>{`
-          @keyframes floatA { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-          @keyframes floatB { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-          @keyframes floatC { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-          @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+          @media(max-width:900px){
+            .hero-grid{ grid-template-columns:1fr !important; gap:40px !important; }
+            .hero-right{ justify-content:center !important; margin-top:20px; }
+          }
         `}</style>
       </section>
+
 
 
       {/* Saved universities — show when logged in and has saved */}
