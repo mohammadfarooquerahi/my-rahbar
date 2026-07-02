@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Star, Heart, ArrowRight, Calendar, BookOpen, Clock, Users } from "lucide-react";
 import { useWatchlistStore } from "../../store/index";
@@ -41,6 +42,36 @@ function formatDeadlineDate(dateStr) {
 
 export default function UniversityCard({ uni }) {
   const { isWatched, addUniversity, removeUniversity } = useWatchlistStore();
+  const [wikiImage, setWikiImage] = useState(null);
+
+  useEffect(() => {
+    // Only fetch if we don't have an image from the database
+    if (!uni.image && uni.name) {
+      const fetchWikiImage = async () => {
+        try {
+          // Attempt to find the university page on Wikipedia
+          const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(uni.name + " University Pakistan")}&utf8=&format=json&origin=*`);
+          const searchData = await searchRes.json();
+          if (searchData.query?.search?.length > 0) {
+            const title = searchData.query.search[0].title;
+            // Fetch main image for this page
+            const imageRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
+            const imageData = await imageRes.json();
+            const pages = imageData.query?.pages;
+            if (pages) {
+              const pageId = Object.keys(pages)[0];
+              if (pageId !== "-1" && pages[pageId].thumbnail) {
+                setWikiImage(pages[pageId].thumbnail.source);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to fetch wiki image", e);
+        }
+      };
+      fetchWikiImage();
+    }
+  }, [uni.image, uni.name]);
 
   if (!uni) return null;
 
@@ -102,7 +133,7 @@ export default function UniversityCard({ uni }) {
     ? formatDeadlineDate(uni.admissionDeadline)
     : null;
 
-  // Array of high quality Unsplash university/campus images
+  // Array of high quality Unsplash university/campus images as ultimate fallback
   const placeholderImages = [
     "1541339907198-e08756dedf3f",
     "1523050854058-8df90110c9f1",
@@ -113,7 +144,7 @@ export default function UniversityCard({ uni }) {
     "1607237138185-eedd9c632b0b",
     "1517486808906-6ca8b3f04846"
   ];
-  const displayImage = uni.image || `https://images.unsplash.com/photo-${placeholderImages[hashString(uni.name) % placeholderImages.length]}?auto=format&fit=crop&q=80&w=600`;
+  const displayImage = uni.image || wikiImage || `https://images.unsplash.com/photo-${placeholderImages[hashString(uni.name) % placeholderImages.length]}?auto=format&fit=crop&q=80&w=600`;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative">
