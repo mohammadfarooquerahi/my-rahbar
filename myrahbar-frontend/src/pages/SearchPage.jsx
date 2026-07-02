@@ -341,7 +341,7 @@ export default function SearchPage() {
         )}
 
         {!loadingUnis && results.length > 0 && (
-          <div className="flex flex-col gap-5 max-w-4xl mx-auto w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
             {results.map((uni) => (
               <UniversityCard key={uni._id || uni.id} uni={uni} />
             ))}

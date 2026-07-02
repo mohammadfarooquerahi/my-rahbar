@@ -102,13 +102,26 @@ export default function UniversityCard({ uni }) {
     ? formatDeadlineDate(uni.admissionDeadline)
     : null;
 
+  // Array of high quality Unsplash university/campus images
+  const placeholderImages = [
+    "1541339907198-e08756dedf3f",
+    "1523050854058-8df90110c9f1",
+    "1562774053716-65f018d09ce4",
+    "1498243691581-b145c3f54a5a",
+    "1525921429624-479b67ef8956",
+    "1503676260728-1c00da094a0b",
+    "1607237138185-eedd9c632b0b",
+    "1517486808906-6ca8b3f04846"
+  ];
+  const displayImage = uni.image || `https://images.unsplash.com/photo-${placeholderImages[hashString(uni.name) % placeholderImages.length]}?auto=format&fit=crop&q=80&w=600`;
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col sm:flex-row transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative">
       
       {/* ── LEFT: Image Area with Gradient Overlay ── */}
       <div className="w-full sm:w-[260px] md:w-[280px] h-[200px] sm:h-auto relative bg-slate-900 flex-shrink-0 border-r border-slate-100 overflow-hidden">
         <img 
-          src={uni.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600"} 
+          src={displayImage} 
           alt={uni.name} 
           className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105"
         />
