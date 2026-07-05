@@ -346,7 +346,13 @@ export default function HomePage() {
                   { name:"NUST", location:"Islamabad", code:"SE", score:"79.1%", status:"Borderline", statusColor:"#f59e0b", statusBg:"#fffbeb" },
                   { name:"COMSATS", location:"Islamabad", code:"BSCS", score:"85.2%", status:"Safe", statusColor:"#3b82f6", statusBg:"#eff6ff" },
                 ].map((item, i) => (
-                  <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px", border:"1px solid #f1f5f9", borderRadius:"12px", marginBottom:"12px", background: i === 0 ? "#f8fafc" : "#ffffff" }}>
+                  <Link 
+                    key={i} 
+                    to={`/search?q=${encodeURIComponent(item.name)}`}
+                    style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px", border:"1px solid #f1f5f9", borderRadius:"12px", marginBottom:"12px", background: i === 0 ? "#f8fafc" : "#ffffff", textDecoration: "none", transition: "all 0.2s" }}
+                    onMouseOver={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+                    onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#f1f5f9"; }}
+                  >
                     <div style={{ display:"flex", alignItems:"center", gap:"12px" }}>
                       <div style={{ width:"40px", height:"40px", borderRadius:"8px", background:"#f1f5f9", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700, color:"#334155", fontSize:"14px" }}>
                         {item.name[0]}
@@ -362,7 +368,7 @@ export default function HomePage() {
                         {item.status}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
 
                 <div style={{ marginTop:"20px", display:"flex", gap:"12px" }}>
