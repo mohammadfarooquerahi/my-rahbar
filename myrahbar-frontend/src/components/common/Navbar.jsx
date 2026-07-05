@@ -217,8 +217,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="hidden sm:flex items-center justify-center text-[14px] font-bold text-black px-6 py-2.5 rounded-full transition-transform hover:scale-105 active:scale-95"
-                  style={{ background: "#ccff00" }}
+                  className="hidden sm:flex items-center justify-center text-[14px] font-bold text-white bg-slate-900 hover:bg-slate-800 px-6 py-2.5 rounded-full transition-transform hover:scale-105 active:scale-95 shadow-sm"
                 >
                   Sign Up
                 </Link>
@@ -342,8 +341,7 @@ export default function Navbar() {
             <Link
               to="/auth/register"
               onClick={() => setMenuOpen(false)}
-              className="block w-full text-center py-3 text-sm font-bold text-white rounded-xl shadow-md transition-all hover:shadow-lg"
-              style={{ background: "linear-gradient(135deg, #1e3a8a, #3b82f6)" }}
+              className="block w-full text-center py-3 text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-md transition-all hover:shadow-lg"
             >
               Sign Up — It's Free
             </Link>
