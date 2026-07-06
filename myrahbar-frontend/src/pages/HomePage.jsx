@@ -298,18 +298,35 @@ export default function HomePage() {
               </div>
             </form>
 
-            <div style={{ display:"flex", gap:"32px", borderTop:"1px solid #e2e8f0", paddingTop:"32px" }}>
-              <div>
-                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>100+</p>
-                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Universities</p>
+            <div className="flex flex-wrap gap-4 mt-8 pt-8 border-t border-slate-200">
+              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>100+</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Universities</p>
+                </div>
               </div>
-              <div>
-                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>150+</p>
-                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Programs</p>
+
+              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>150+</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Programs</p>
+                </div>
               </div>
-              <div>
-                <p style={{ fontSize:"1.5rem", fontWeight:700, color:"#0f172a", margin:0 }}>5k+</p>
-                <p style={{ fontSize:"13px", color:"#64748b", margin:"4px 0 0" }}>Students Guided</p>
+
+              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                <div className="w-11 h-11 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                  <Users size={20} />
+                </div>
+                <div>
+                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>5k+</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Guided</p>
+                </div>
               </div>
             </div>
           </div>
