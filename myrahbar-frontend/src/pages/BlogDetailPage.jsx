@@ -265,17 +265,74 @@ export default function BlogDetailPage() {
               )}
 
               {/* Official Links */}
-              <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5">
-                <p className="text-sm font-bold text-slate-800 mb-3">🔗 Official Resources</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <a href="https://hec.gov.pk" target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 bg-white border border-slate-200 px-4 py-2 rounded-xl hover:border-blue-300 transition-all">
-                    HEC Official Website <ChevronRight size={12} />
-                  </a>
-                  <a href="https://pmc.gov.pk" target="_blank" rel="noreferrer" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 bg-white border border-slate-200 px-4 py-2 rounded-xl hover:border-blue-300 transition-all">
-                    PMC / PMDC <ChevronRight size={12} />
-                  </a>
-                </div>
-              </div>
+              {(() => {
+                // Dictionary of official resources and their trigger keywords
+                const resourcesMap = [
+                  {
+                    name: "PMC / PMDC Official",
+                    url: "https://pmc.gov.pk",
+                    triggers: ["pmc", "pmdc", "mdcat", "mbbs", "bds", "medical", "nums", "uhs", "dow"],
+                  },
+                  {
+                    name: "PEC (Pakistan Engineering Council)",
+                    url: "https://pec.org.pk",
+                    triggers: ["pec", "engineering", "ecat", "uet", "nust", "neduet", "fast", "giki"],
+                  },
+                  {
+                    name: "HEC (Higher Education Commission)",
+                    url: "https://hec.gov.pk",
+                    triggers: ["hec", "university", "degree", "attestation", "scholarship", "ranking"],
+                  },
+                  {
+                    name: "NTS Official",
+                    url: "https://www.nts.org.pk",
+                    triggers: ["nts", "nat", "gat", "comsats", "testing"],
+                  },
+                  {
+                    name: "Federal Board (FBISE)",
+                    url: "https://www.fbise.edu.pk",
+                    triggers: ["fbise", "federal board", "matric", "fsc", "hssc", "ssc"],
+                  },
+                  {
+                    name: "LUMS Official",
+                    url: "https://lums.edu.pk",
+                    triggers: ["lums", "sat", "lcat", "sbasse"],
+                  }
+                ];
+
+                const contentText = [
+                  blog.title,
+                  blog.category,
+                  ...(blog.tags || []),
+                  ...(blog.keywords || [])
+                ].join(" ").toLowerCase();
+
+                let matchedResources = resourcesMap.filter(res => 
+                  res.triggers.some(trigger => contentText.includes(trigger))
+                );
+
+                // Fallback to HEC if nothing specific matches
+                if (matchedResources.length === 0) {
+                  matchedResources = [resourcesMap.find(r => r.name.includes("HEC"))];
+                }
+
+                // Limit to max 3 resources to keep it clean
+                matchedResources = matchedResources.slice(0, 3);
+
+                return (
+                  <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <p className="text-sm font-bold text-slate-800 mb-3">🔗 Official Resources & References</p>
+                    <div className="flex flex-wrap gap-3">
+                      {matchedResources.map((res, i) => (
+                        <a key={i} href={res.url} target="_blank" rel="noreferrer" 
+                           className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 bg-white border border-slate-200 px-4 py-2 rounded-xl hover:border-blue-300 transition-all">
+                          {res.name} <ChevronRight size={12} />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* FAQs */}
               {blog.faqs?.length > 0 && (
