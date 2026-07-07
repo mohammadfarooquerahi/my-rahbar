@@ -401,7 +401,7 @@ export default function HomePage() {
               <div>
                 <p style={{ fontSize:"13px", fontWeight:600, color:"#0f172a", margin:"0 0 4px" }}>Application Closing</p>
                 <p style={{ fontSize:"12px", color:"#64748b", margin:"0 0 8px", lineHeight:1.4 }}>UET Lahore BS Engineering admissions close tomorrow.</p>
-                <span style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer" }}>Apply Now →</span>
+                <Link to="/search?q=UET%20Lahore" style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer", textDecoration:"none" }} onMouseOver={e => e.currentTarget.style.textDecoration="underline"} onMouseOut={e => e.currentTarget.style.textDecoration="none"}>Apply Now →</Link>
               </div>
             </div>
             
