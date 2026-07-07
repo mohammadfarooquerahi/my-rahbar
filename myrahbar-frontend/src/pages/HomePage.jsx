@@ -28,8 +28,193 @@ import { Helmet } from "react-helmet-async";
 // import removed
 import UniversityCard from "../components/university/UniversityCard";
 import { deadlineLabel, daysUntilDeadline } from "../utils/merit";
+import { calculateAggregate } from "../utils/merit";
 import { useWatchlistStore, useAuthStore } from "../store";
 import Logo from "../components/common/Logo";
+
+// ── Hero Merit Widget ─────────────────────────────────────────────────────────
+function HeroMeritWidget({ universities }) {
+  const [matric, setMatric] = useState("");
+  const [fsc, setFsc] = useState("");
+  const [test, setTest] = useState("");
+
+  // Derive top 3 university matches based on marks
+  const matches = useMemo(() => {
+    const m = parseFloat(matric);
+    const f = parseFloat(fsc);
+    const t = parseFloat(test);
+    const hasMarks = !isNaN(m) && m > 0 && !isNaN(f) && f > 0;
+    if (!hasMarks || universities.length === 0) return [];
+
+    const hasTest = !isNaN(t) && t > 0;
+
+    return universities
+      .map((uni) => {
+        const formula = uni.aggregateFormula || { matric: 0.1, fsc: 0.4, test: 0.5 };
+
+        // If no test score given, estimate: redistribute test weight equally to matric+fsc
+        let agg;
+        if (hasTest) {
+          agg = calculateAggregate(m, f, t, formula);
+        } else {
+          // Estimate: normalise matric/fsc only by their combined weight
+          const combinedWeight = (formula.matric || 0) + (formula.fsc || 0);
+          if (combinedWeight === 0) return null;
+          agg = ((m * (formula.matric || 0) + f * (formula.fsc || 0)) / combinedWeight) * 100;
+          agg = Math.round(agg * 100) / 100;
+        }
+
+        // Find the latest merit data across all departments
+        let bestDept = null;
+        let closestMerit = null;
+        let closestDiff = Infinity;
+        (uni.departments || []).forEach((dept) => {
+          const merit = (dept.lastMerit || []).find((m) => m.closing);
+          if (merit) {
+            const diff = Math.abs(agg - merit.closing);
+            if (diff < closestDiff) {
+              closestDiff = diff;
+              closestMerit = merit.closing;
+              bestDept = dept;
+            }
+          }
+        });
+
+        // Status logic
+        let status, statusColor, statusBg;
+        if (closestMerit !== null) {
+          const diff = agg - closestMerit;
+          if (diff >= 3)   { status = "Safe";       statusColor = "#3b82f6"; statusBg = "#eff6ff"; }
+          else if (diff >= 0) { status = "Eligible";   statusColor = "#10b981"; statusBg = "#ecfdf5"; }
+          else if (diff >= -5) { status = "Borderline"; statusColor = "#f59e0b"; statusBg = "#fffbeb"; }
+          else               { status = "Below Merit"; statusColor = "#ef4444"; statusBg = "#fef2f2"; }
+        } else {
+          status = "No Data"; statusColor = "#94a3b8"; statusBg = "#f8fafc";
+        }
+
+        return {
+          name: uni.shortName || uni.name,
+          fullName: uni.name,
+          slug: uni.slug,
+          city: uni.city || "",
+          dept: bestDept?.name || (uni.departments?.[0]?.name) || "All Programs",
+          agg,
+          hasTest,
+          status, statusColor, statusBg,
+          closestMerit,
+        };
+      })
+      .filter(Boolean)
+      // Sort: Safe → Eligible → Borderline → Below Merit → No Data
+      .sort((a, b) => {
+        const order = { "Safe": 0, "Eligible": 1, "Borderline": 2, "Below Merit": 3, "No Data": 4 };
+        return (order[a.status] ?? 5) - (order[b.status] ?? 5);
+      })
+      .slice(0, 3);
+  }, [matric, fsc, test, universities]);
+
+  const hasInput = parseFloat(matric) > 0 && parseFloat(fsc) > 0;
+
+  return (
+    <div style={{ padding: "20px" }}>
+      {/* Marks Input Row */}
+      <p style={{ fontSize:"11px", color:"#64748b", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 10px" }}>Enter Your Marks</p>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"8px", marginBottom:"16px" }}>
+        <div>
+          <label style={{ fontSize:"10px", fontWeight:600, color:"#94a3b8", display:"block", marginBottom:"4px" }}>Matric %</label>
+          <input
+            type="number" min="0" max="100" step="0.1"
+            value={matric}
+            onChange={e => setMatric(e.target.value)}
+            placeholder="e.g. 85"
+            style={{ width:"100%", padding:"8px 10px", border:"1px solid #e2e8f0", borderRadius:"8px", fontSize:"13px", fontWeight:600, color:"#0f172a", outline:"none", boxSizing:"border-box" }}
+            onFocus={e => e.target.style.borderColor = "#2563eb"}
+            onBlur={e => e.target.style.borderColor = "#e2e8f0"}
+          />
+        </div>
+        <div>
+          <label style={{ fontSize:"10px", fontWeight:600, color:"#94a3b8", display:"block", marginBottom:"4px" }}>FSc / A-Level %</label>
+          <input
+            type="number" min="0" max="100" step="0.1"
+            value={fsc}
+            onChange={e => setFsc(e.target.value)}
+            placeholder="e.g. 78"
+            style={{ width:"100%", padding:"8px 10px", border:"1px solid #e2e8f0", borderRadius:"8px", fontSize:"13px", fontWeight:600, color:"#0f172a", outline:"none", boxSizing:"border-box" }}
+            onFocus={e => e.target.style.borderColor = "#2563eb"}
+            onBlur={e => e.target.style.borderColor = "#e2e8f0"}
+          />
+        </div>
+        <div>
+          <label style={{ fontSize:"10px", fontWeight:600, color:"#94a3b8", display:"block", marginBottom:"4px" }}>Test % <span style={{ color:"#cbd5e1", fontWeight:400 }}>(optional)</span></label>
+          <input
+            type="number" min="0" max="100" step="0.1"
+            value={test}
+            onChange={e => setTest(e.target.value)}
+            placeholder="e.g. 75"
+            style={{ width:"100%", padding:"8px 10px", border:"1px solid #e2e8f0", borderRadius:"8px", fontSize:"13px", fontWeight:600, color:"#0f172a", outline:"none", boxSizing:"border-box" }}
+            onFocus={e => e.target.style.borderColor = "#2563eb"}
+            onBlur={e => e.target.style.borderColor = "#e2e8f0"}
+          />
+        </div>
+      </div>
+
+      {/* Results */}
+      <p style={{ fontSize:"11px", color:"#64748b", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 10px", display:"flex", alignItems:"center", gap:"6px" }}>
+        Top Matches for You
+        {hasInput && !parseFloat(test) && (
+          <span style={{ fontSize:"9px", fontWeight:600, color:"#f59e0b", background:"#fffbeb", border:"1px solid #fde68a", borderRadius:"4px", padding:"1px 5px" }}>Estimated (no test)</span>
+        )}
+      </p>
+
+      {!hasInput ? (
+        // Placeholder state
+        <div style={{ textAlign:"center", padding:"20px 0" }}>
+          <div style={{ fontSize:"28px", marginBottom:"8px" }}>🎯</div>
+          <p style={{ fontSize:"13px", color:"#94a3b8", margin:0 }}>Enter your marks above to see matching universities</p>
+        </div>
+      ) : matches.length === 0 ? (
+        <div style={{ textAlign:"center", padding:"20px 0" }}>
+          <p style={{ fontSize:"13px", color:"#94a3b8", margin:0 }}>Calculating...</p>
+        </div>
+      ) : (
+        matches.map((item, i) => (
+          <Link
+            key={i}
+            to={`/university/${item.slug}`}
+            style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 14px", border:"1px solid #f1f5f9", borderRadius:"10px", marginBottom:"8px", background: i === 0 ? "#f8fafc" : "#ffffff", textDecoration:"none", transition:"all 0.2s" }}
+            onMouseOver={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 15px -4px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+            onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#f1f5f9"; }}
+          >
+            <div style={{ display:"flex", alignItems:"center", gap:"10px", minWidth:0 }}>
+              <div style={{ width:"36px", height:"36px", borderRadius:"8px", background:"#f1f5f9", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, color:"#334155", fontSize:"12px", flexShrink:0 }}>
+                {item.name.slice(0, 2).toUpperCase()}
+              </div>
+              <div style={{ minWidth:0 }}>
+                <p style={{ fontWeight:700, color:"#0f172a", fontSize:"13px", margin:0, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{item.name}</p>
+                <p style={{ color:"#64748b", fontSize:"11px", margin:"2px 0 0", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{item.city && `${item.city} • `}{item.dept}</p>
+              </div>
+            </div>
+            <div style={{ textAlign:"right", flexShrink:0, marginLeft:"8px" }}>
+              <p style={{ fontWeight:800, color:"#0f172a", fontSize:"14px", margin:0 }}>{item.agg.toFixed(1)}%</p>
+              <span style={{ display:"inline-block", padding:"1px 7px", borderRadius:"4px", background:item.statusBg, color:item.statusColor, fontSize:"10px", fontWeight:700, marginTop:"3px" }}>
+                {item.status}
+              </span>
+            </div>
+          </Link>
+        ))
+      )}
+
+      {hasInput && matches.length > 0 && (
+        <Link to="/merit-calculator" style={{ display:"block", textAlign:"center", marginTop:"12px", fontSize:"12px", fontWeight:600, color:"#2563eb", textDecoration:"none" }}
+          onMouseOver={e => e.currentTarget.style.textDecoration = "underline"}
+          onMouseOut={e => e.currentTarget.style.textDecoration = "none"}
+        >
+          Full Merit Calculator →
+        </Link>
+      )}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [degreeLevel, setDegreeLevel] = useState("");
@@ -331,16 +516,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* RIGHT — Realistic Dashboard Preview */}
+          {/* RIGHT — Interactive Merit Predictor */}
           <div style={{ position:"relative", display:"flex", justifyContent:"flex-end" }} className="hero-right">
-            
-            {/* The main UI mock */}
-            <div style={{ 
-              background:"#ffffff", 
-              border:"1px solid #e2e8f0", 
-              borderRadius:"16px", 
-              width:"100%", 
-              maxWidth:"480px", 
+
+            <div style={{
+              background:"#ffffff",
+              border:"1px solid #e2e8f0",
+              borderRadius:"16px",
+              width:"100%",
+              maxWidth:"480px",
               boxShadow:"0 25px 50px -12px rgba(0,0,0,0.15)",
               overflow:"hidden"
             }}>
@@ -353,46 +537,9 @@ export default function HomePage() {
                 </div>
                 <div style={{ marginLeft:"auto", fontSize:"12px", color:"#64748b", fontWeight:500 }}>Merit Predictor</div>
               </div>
-              
-              {/* Window Content */}
-              <div style={{ padding:"24px" }}>
-                <p style={{ fontSize:"13px", color:"#64748b", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 16px" }}>Top Matches for You</p>
-                
-                {[
-                  { name:"FAST NUCES", location:"Lahore", code:"BSCS", score:"82.4%", status:"Eligible", statusColor:"#10b981", statusBg:"#ecfdf5" },
-                  { name:"NUST", location:"Islamabad", code:"SE", score:"79.1%", status:"Borderline", statusColor:"#f59e0b", statusBg:"#fffbeb" },
-                  { name:"COMSATS", location:"Islamabad", code:"BSCS", score:"85.2%", status:"Safe", statusColor:"#3b82f6", statusBg:"#eff6ff" },
-                ].map((item, i) => (
-                  <Link 
-                    key={i} 
-                    to={`/search?q=${encodeURIComponent(item.name)}`}
-                    style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px", border:"1px solid #f1f5f9", borderRadius:"12px", marginBottom:"12px", background: i === 0 ? "#f8fafc" : "#ffffff", textDecoration: "none", transition: "all 0.2s" }}
-                    onMouseOver={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
-                    onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#f1f5f9"; }}
-                  >
-                    <div style={{ display:"flex", alignItems:"center", gap:"12px" }}>
-                      <div style={{ width:"40px", height:"40px", borderRadius:"8px", background:"#f1f5f9", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700, color:"#334155", fontSize:"14px" }}>
-                        {item.name[0]}
-                      </div>
-                      <div>
-                        <p style={{ fontWeight:600, color:"#0f172a", fontSize:"14px", margin:0 }}>{item.name}</p>
-                        <p style={{ color:"#64748b", fontSize:"12px", margin:"4px 0 0" }}>{item.location} • {item.code}</p>
-                      </div>
-                    </div>
-                    <div style={{ textAlign:"right" }}>
-                      <p style={{ fontWeight:700, color:"#0f172a", fontSize:"15px", margin:0 }}>{item.score}</p>
-                      <span style={{ display:"inline-block", padding:"2px 8px", borderRadius:"4px", background:item.statusBg, color:item.statusColor, fontSize:"11px", fontWeight:600, marginTop:"4px" }}>
-                        {item.status}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
 
-                <div style={{ marginTop:"20px", display:"flex", gap:"12px" }}>
-                  <div style={{ flex:1, height:"36px", background:"#f1f5f9", borderRadius:"6px" }} />
-                  <div style={{ width:"100px", height:"36px", background:"#2563eb", borderRadius:"6px" }} />
-                </div>
-              </div>
+              {/* Marks Input Row */}
+              <HeroMeritWidget universities={universities} />
             </div>
 
             {/* Overlapping realistic alert */}
@@ -404,7 +551,7 @@ export default function HomePage() {
                 <Link to="/search?q=UET%20Lahore" style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer", textDecoration:"none" }} onMouseOver={e => e.currentTarget.style.textDecoration="underline"} onMouseOut={e => e.currentTarget.style.textDecoration="none"}>Apply Now →</Link>
               </div>
             </div>
-            
+
           </div>
         </div>
 

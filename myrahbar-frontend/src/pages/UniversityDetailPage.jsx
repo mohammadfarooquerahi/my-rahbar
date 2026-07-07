@@ -225,6 +225,32 @@ export default function UniversityDetailPage() {
         return;
       }
 
+      // Compute the actual nearest deadline date string from the array
+      let actualDeadlineDate = uni.admissionDeadline; // fallback to legacy
+      if (uni.admissionDeadlines?.length > 0) {
+        let minDays = null;
+        const filteredDeadlines = deadlineFilter === "All"
+          ? uni.admissionDeadlines
+          : uni.admissionDeadlines.filter(dl => dl.degreeLevel === deadlineFilter);
+
+        filteredDeadlines.forEach(dl => {
+          if (dl.deadline) {
+            const d = daysUntilDeadline(dl.deadline);
+            if (d !== null && d >= 0) { // only future or today deadlines
+              if (minDays === null || d < minDays) {
+                minDays = d;
+                actualDeadlineDate = dl.deadline;
+              }
+            }
+          }
+        });
+      }
+
+      if (!actualDeadlineDate) {
+         toast.error("No active deadline found to alert you for.");
+         return;
+      }
+
       const res = await fetch("/api/alerts", {
         method: "POST",
         headers: {
@@ -234,7 +260,8 @@ export default function UniversityDetailPage() {
         body: JSON.stringify({
           universityId: uniId,
           universityName: uni.name,
-          deadline: uni.admissionDeadline,
+          deadline: actualDeadlineDate,
+          degreeLevel: deadlineFilter || "All",
         }),
       });
       const data = await res.json();

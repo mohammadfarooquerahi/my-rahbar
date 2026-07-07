@@ -5,29 +5,31 @@ const { protect } = require("../middleware/auth");
 
 // POST /api/alerts — create alert
 router.post("/", protect, async (req, res) => {
-  const { universityId, universityName, deadline } = req.body;
+  const { universityId, universityName, deadline, degreeLevel } = req.body;
 
   if (!universityId) {
     return res.status(400).json({ message: "University ID is required." });
   }
 
-  // Check if alert already exists for this user + university
+  // Check if alert already exists for this user + university + degreeLevel
   const exists = await Alert.findOne({
     userId: req.user._id,
     universityId: universityId,
+    degreeLevel: degreeLevel || "All",
     isActive: true,
   });
 
   if (exists) {
     return res
       .status(400)
-      .json({ message: "Alert already set for this university." });
+      .json({ message: "Alert already set for this university program." });
   }
 
   const alert = await Alert.create({
     userId: req.user._id,
     universityId,
     universityName,
+    degreeLevel: degreeLevel || "All",
     deadline: deadline || null,
     whatsapp: req.user.whatsapp,
     email: req.user.email,
