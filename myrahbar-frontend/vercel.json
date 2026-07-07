@@ -39,6 +39,14 @@
       "destination": "https://my-rahbar-production.up.railway.app/uploads/$1"
     },
     {
+      "source": "/blog/:slug",
+      "destination": "/api/seo"
+    },
+    {
+      "source": "/university/:slug",
+      "destination": "/api/seo"
+    },
+    {
       "source": "/((?!assets/).*)",
       "destination": "/index.html"
     }
