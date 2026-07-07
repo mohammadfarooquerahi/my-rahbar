@@ -35,6 +35,10 @@
       "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/main"
     },
     {
+      "source": "/sitemap-universities.xml",
+      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/universities"
+    },
+    {
       "source": "/uploads/(.*)",
       "destination": "https://my-rahbar-production.up.railway.app/uploads/$1"
     },

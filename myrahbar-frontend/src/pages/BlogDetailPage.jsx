@@ -104,7 +104,7 @@ export default function BlogDetailPage() {
     ? new Date(blog.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "long", day: "numeric" })
     : "";
   const plainExcerpt = stripHtml(blog.excerpt || "");
-  const pageUrl   = `https://rahbars.com/blog/${blog.slug}`;
+  const pageUrl   = `https://www.rahbars.com/blog/${blog.slug}`;
   const seoTitle  = blog.seoTitle || `${blog.title} | Rahbars Blog`;
   const seoDesc   = blog.seoDescription || plainExcerpt || stripHtml(blog.content || "").slice(0, 155);
   const keywords  = [...(blog.keywords || []), ...(blog.tags || [])].join(", ");
@@ -135,36 +135,57 @@ export default function BlogDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{blog.title}</title>
-        <meta name="description" content={blog.excerpt} />
-        <link rel="canonical" href={`https://www.rahbars.com/blog/${blog.slug}`} />
-        <meta property="og:title" content={blog.title} />
-        <meta property="og:description" content={blog.excerpt} />
-        <meta property="og:url" content={`https://www.rahbars.com/blog/${blog.slug}`} />
-        
-        {/* Additional SEO metadata retained for completeness */}
+        {/* Primary SEO — use seoTitle/seoDesc from CMS, fall back to derived values */}
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={pageUrl} />
+        <meta name="robots" content={blog.noIndex ? "noindex, nofollow" : "index, follow"} />
         {keywords && <meta name="keywords" content={keywords} />}
         <meta name="author" content={blog.author?.name || "Rahbars Editorial Team"} />
-        <meta name="robots" content="index, follow" />
+
+        {/* Open Graph */}
         <meta property="og:type" content="article" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={pageUrl} />
         <meta property="og:image" content={coverImg} />
         <meta property="og:site_name" content="Rahbars" />
         <meta property="article:section" content={blog.category} />
         <meta property="article:published_time" content={blog.createdAt} />
+        <meta property="article:modified_time" content={blog.updatedAt || blog.createdAt} />
+
+        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seoTitle} />
         <meta name="twitter:description" content={seoDesc} />
         <meta name="twitter:image" content={coverImg} />
+
+        {/* Article (BlogPosting) JSON-LD */}
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+
+        {/* BreadcrumbList JSON-LD */}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://rahbars.com" },
-            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://rahbars.com/blog" },
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.rahbars.com" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.rahbars.com/blog" },
             { "@type": "ListItem", "position": 3, "name": blog.title, "item": pageUrl }
           ]
         })}</script>
+
+        {/* FAQ JSON-LD — only if FAQs exist */}
+        {blog.faqs && blog.faqs.length > 0 && (
+          <script type="application/ld+json">{JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": blog.faqs.map(f => ({
+              "@type": "Question",
+              "name": f.question,
+              "acceptedAnswer": { "@type": "Answer", "text": f.answer }
+            }))
+          })}</script>
+        )}
       </Helmet>
 
       <div className="bg-slate-50 min-h-screen pb-20">

@@ -18,6 +18,10 @@ const blogSchema = new mongoose.Schema(
     seoTitle:       { type: String, maxlength: 70 },
     seoDescription: { type: String, maxlength: 160 },
     keywords:       [{ type: String }],
+    focusKeyword:   { type: String },           // primary keyword for on-page score
+    canonicalUrl:   { type: String },           // custom override; auto-derived from slug if blank
+    noIndex:        { type: Boolean, default: false }, // don't index drafts/premature publishes
+    featuredImageAlt: { type: String },         // alt text for featured image (accessibility + SEO)
     readTime:       { type: Number, default: 5 }, // in minutes
     faqs:           [{ question: String, answer: String }],
   },

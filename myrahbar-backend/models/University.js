@@ -124,6 +124,14 @@ const universitySchema = new mongoose.Schema(
     },
     isVerified: { type: Boolean, default: false },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+
+    // ── SEO fields ──────────────────────────────────────────────────────────────
+    seoTitle:       { type: String, maxlength: 70 },
+    seoDescription: { type: String, maxlength: 160 },
+    keywords:       [{ type: String }],
+    focusKeyword:   { type: String },          // primary keyword for on-page score
+    canonicalUrl:   { type: String },          // custom override (auto-derived from slug if blank)
+    noIndex:        { type: Boolean, default: false }, // prevent indexing for incomplete profiles
   },
   { timestamps: true },
 );

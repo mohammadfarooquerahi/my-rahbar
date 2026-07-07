@@ -1,6 +1,7 @@
 const Blog = require("../models/Blog");
 const User = require("../models/User");
 const slugify = require("slugify");
+const { runBlogSeoAutomation } = require("../utils/onPublishOrUpdate");
 
 // ─── GET /api/blogs ─────────────────────────────────────────────────────────
 const getBlogs = async (req, res) => {
@@ -62,7 +63,11 @@ const getBlogBySlug = async (req, res) => {
 
 // ─── POST /api/blogs (Admin only) ───────────────────────────────────────────
 const createBlog = async (req, res) => {
-  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor, faqs } = req.body;
+  const {
+    title, content, excerpt, category, tags, status,
+    seoTitle, seoDescription, keywords, focusKeyword, canonicalUrl, noIndex, featuredImageAlt,
+    readTime, coverColor, faqs
+  } = req.body;
   const featuredImage = req.file ? `/uploads/blogs/${req.file.filename}` : undefined;
 
   if (!title || !content || !category) {
@@ -84,6 +89,10 @@ const createBlog = async (req, res) => {
     category,
     tags: tags ? (typeof tags === "string" ? tags.split(",").map(t => t.trim()) : tags) : [],
     keywords: keywords ? (typeof keywords === "string" ? keywords.split(",").map(k => k.trim()) : keywords) : [],
+    focusKeyword: focusKeyword || "",
+    canonicalUrl: canonicalUrl || "",
+    noIndex: noIndex === true || noIndex === "true",
+    featuredImageAlt: featuredImageAlt || "",
     status: status || "draft",
     author: req.user._id,
     featuredImage,
@@ -94,12 +103,21 @@ const createBlog = async (req, res) => {
     faqs: parsedFaqs,
   });
 
+  // Fire-and-forget SEO automation (auto-fills blanks + submits to IndexNow)
+  if (blog.status === "published") {
+    runBlogSeoAutomation(blog).catch(console.error);
+  }
+
   res.status(201).json({ blog, _id: blog._id });
 };
 
 // ─── PUT /api/blogs/:id (Admin only) ────────────────────────────────────────
 const updateBlog = async (req, res) => {
-  const { title, content, excerpt, category, tags, status, seoTitle, seoDescription, keywords, readTime, coverColor, faqs } = req.body;
+  const {
+    title, content, excerpt, category, tags, status,
+    seoTitle, seoDescription, keywords, focusKeyword, canonicalUrl, noIndex, featuredImageAlt,
+    readTime, coverColor, faqs
+  } = req.body;
   const blog = await Blog.findById(req.params.id);
   if (!blog) return res.status(404).json({ message: "Blog not found" });
 
@@ -109,12 +127,16 @@ const updateBlog = async (req, res) => {
   if (category) blog.category = category;
   if (tags !== undefined) blog.tags = typeof tags === "string" ? tags.split(",").map(t => t.trim()) : tags;
   if (keywords !== undefined) blog.keywords = typeof keywords === "string" ? keywords.split(",").map(k => k.trim()) : keywords;
+  if (focusKeyword !== undefined) blog.focusKeyword = focusKeyword;
+  if (canonicalUrl !== undefined) blog.canonicalUrl = canonicalUrl;
+  if (noIndex !== undefined) blog.noIndex = noIndex === true || noIndex === "true";
+  if (featuredImageAlt !== undefined) blog.featuredImageAlt = featuredImageAlt;
   if (status) blog.status = status;
   if (seoTitle) blog.seoTitle = seoTitle;
   if (seoDescription) blog.seoDescription = seoDescription;
   if (readTime) blog.readTime = Number(readTime);
   if (coverColor) blog.coverColor = coverColor;
-  
+
   if (faqs) {
     try { blog.faqs = typeof faqs === "string" ? JSON.parse(faqs) : faqs; } catch {}
   }
@@ -122,6 +144,12 @@ const updateBlog = async (req, res) => {
   if (req.file) blog.featuredImage = `/uploads/blogs/${req.file.filename}`;
 
   await blog.save();
+
+  // Fire-and-forget SEO automation
+  if (blog.status === "published") {
+    runBlogSeoAutomation(blog).catch(console.error);
+  }
+
   res.json(blog);
 };
 

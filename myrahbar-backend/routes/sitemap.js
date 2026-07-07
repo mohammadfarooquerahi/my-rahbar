@@ -18,17 +18,9 @@ router.get("/", async (req, res) => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    // Static + Universities sitemap
-    xml += `  <sitemap>\n`;
-    xml += `    <loc>${BASE_URL}/sitemap-main.xml</loc>\n`;
-    xml += `    <lastmod>${now}</lastmod>\n`;
-    xml += `  </sitemap>\n`;
-
-    // Blogs-only sitemap
-    xml += `  <sitemap>\n`;
-    xml += `    <loc>${BASE_URL}/sitemap-blogs.xml</loc>\n`;
-    xml += `    <lastmod>${now}</lastmod>\n`;
-    xml += `  </sitemap>\n`;
+    xml += `  <sitemap>\n    <loc>${BASE_URL}/sitemap-main.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>\n`;
+    xml += `  <sitemap>\n    <loc>${BASE_URL}/sitemap-blogs.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>\n`;
+    xml += `  <sitemap>\n    <loc>${BASE_URL}/sitemap-universities.xml</loc>\n    <lastmod>${now}</lastmod>\n  </sitemap>\n`;
 
     xml += `</sitemapindex>`;
 
@@ -41,11 +33,9 @@ router.get("/", async (req, res) => {
 });
 
 // ── GET /api/sitemap-main.xml ────────────────────────────────────────────────
-// Core pages + all universities
+// Static core pages only (universities moved to dedicated sitemap)
 router.get("/main", async (req, res) => {
   try {
-    const universities = await University.find({}, { slug: 1, updatedAt: 1 }).lean();
-
     const coreRoutes = [
       { url: "/",               changefreq: "daily",   priority: "1.0" },
       { url: "/search",         changefreq: "daily",   priority: "0.9" },
@@ -66,35 +56,10 @@ router.get("/main", async (req, res) => {
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    const today = new Date().toISOString().split("T")[0];
 
     for (const route of coreRoutes) {
-      xml += `  <url>\n`;
-      xml += `    <loc>${BASE_URL}${route.url}</loc>\n`;
-      xml += `    <changefreq>${route.changefreq}</changefreq>\n`;
-      xml += `    <priority>${route.priority}</priority>\n`;
-      xml += `  </url>\n`;
-    }
-
-    for (const uni of universities) {
-      const lastMod = uni.updatedAt
-        ? new Date(uni.updatedAt).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0];
-      
-      // University Main Page
-      xml += `  <url>\n`;
-      xml += `    <loc>${BASE_URL}/university/${uni.slug}</loc>\n`;
-      xml += `    <lastmod>${lastMod}</lastmod>\n`;
-      xml += `    <changefreq>weekly</changefreq>\n`;
-      xml += `    <priority>0.9</priority>\n`;
-      xml += `  </url>\n`;
-
-      // University Merit Calculator Page
-      xml += `  <url>\n`;
-      xml += `    <loc>${BASE_URL}/${uni.slug}/merit-cal</loc>\n`;
-      xml += `    <lastmod>${lastMod}</lastmod>\n`;
-      xml += `    <changefreq>monthly</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
+      xml += `  <url>\n    <loc>${BASE_URL}${route.url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.changefreq}</changefreq>\n    <priority>${route.priority}</priority>\n  </url>\n`;
     }
 
     xml += `</urlset>`;
@@ -107,11 +72,11 @@ router.get("/main", async (req, res) => {
 });
 
 // ── GET /api/sitemap-blogs.xml ───────────────────────────────────────────────
-// Only published blog posts
+// Only published blog posts — DB-driven, always live
 router.get("/blogs", async (req, res) => {
   try {
     const blogs = await Blog.find(
-      { status: "published" },
+      { status: "published", noIndex: { $ne: true } },
       { slug: 1, createdAt: 1, updatedAt: 1 }
     ).lean();
 
@@ -122,12 +87,7 @@ router.get("/blogs", async (req, res) => {
       const lastMod = blog.updatedAt
         ? new Date(blog.updatedAt).toISOString().split("T")[0]
         : new Date(blog.createdAt).toISOString().split("T")[0];
-      xml += `  <url>\n`;
-      xml += `    <loc>${BASE_URL}/blog/${blog.slug}</loc>\n`;
-      xml += `    <lastmod>${lastMod}</lastmod>\n`;
-      xml += `    <changefreq>monthly</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
+      xml += `  <url>\n    <loc>${BASE_URL}/blog/${blog.slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     }
 
     xml += `</urlset>`;
@@ -139,5 +99,37 @@ router.get("/blogs", async (req, res) => {
   }
 });
 
-module.exports = router;
+// ── GET /api/sitemap-universities.xml ───────────────────────────────────────
+// All approved universities — DB-driven, always live
+router.get("/universities", async (req, res) => {
+  try {
+    const universities = await University.find(
+      { status: "approved", noIndex: { $ne: true } },
+      { slug: 1, updatedAt: 1 }
+    ).lean();
 
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    for (const uni of universities) {
+      const lastMod = uni.updatedAt
+        ? new Date(uni.updatedAt).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0];
+
+      // Main university page
+      xml += `  <url>\n    <loc>${BASE_URL}/university/${uni.slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+
+      // Merit calculator sub-page
+      xml += `  <url>\n    <loc>${BASE_URL}/${uni.slug}/merit-cal</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    }
+
+    xml += `</urlset>`;
+    res.header("Content-Type", "application/xml");
+    res.send(xml);
+  } catch (error) {
+    console.error("Sitemap Universities Error:", error);
+    res.status(500).end();
+  }
+});
+
+module.exports = router;

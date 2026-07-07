@@ -1,12 +1,15 @@
 User-agent: *
 Allow: /
-Allow: /api/blogs/
 
-# Disallow admin and auth routes
+# Disallow admin, auth, and user-specific routes
 Disallow: /admin
-Disallow: /login
-Disallow: /register
+Disallow: /auth/login
+Disallow: /auth/register
 Disallow: /profile
+Disallow: /watchlist
+
+# Disallow backend API routes (not meant for crawlers)
 Disallow: /api/
 
+# Sitemap index
 Sitemap: https://www.rahbars.com/sitemap.xml

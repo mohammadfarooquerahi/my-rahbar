@@ -344,23 +344,61 @@ export default function UniversityDetailPage() {
   return (
     <main>
       <Helmet>
-        <title>{uni.name} — Admission, Merit, Fee | Rahbars</title>
+        {/* Primary SEO */}
+        <title>{uni.seoTitle || `${uni.name} — Admission, Merit, Fee 2026 | Rahbars`}</title>
         <meta
           name="description"
-          content={`${uni.name} admission details, merit calculation, fee structure, and scholarships. Get the latest 2025 updates on Rahbars.`}
+          content={uni.seoDescription || `${uni.name} admission 2026: fee structure, merit list, entry test details, programs, and deadlines. All data updated. Apply smarter with Rahbars.`}
         />
-        <link rel="canonical" href={`https://rahbars.com/university/${uni.slug}`} />
-        
-        {/* OpenGraph Tags */}
-        <meta property="og:title" content={`${uni.name} — Admission Guide`} />
-        <meta property="og:description" content={`Check out the merit, fee, and admission details for ${uni.name} on Rahbars.`} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://rahbars.com/university/${uni.slug}`} />
-        
-        {/* Twitter Card Tags */}
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content={`${uni.name} — Admission Guide`} />
-        <meta name="twitter:description" content={`Check out the merit, fee, and admission details for ${uni.name} on Rahbars.`} />
+        <link rel="canonical" href={`https://www.rahbars.com/university/${uni.slug}`} />
+        <meta name="robots" content="index, follow" />
+        {uni.keywords && <meta name="keywords" content={Array.isArray(uni.keywords) ? uni.keywords.join(", ") : uni.keywords} />}
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={uni.seoTitle || `${uni.name} — Admission Guide 2026 | Rahbars`} />
+        <meta property="og:description" content={uni.seoDescription || `Check ${uni.name} fee, merit, admission deadlines, and programs on Rahbars. Pakistan's most detailed university admission data.`} />
+        <meta property="og:url" content={`https://www.rahbars.com/university/${uni.slug}`} />
+        <meta property="og:image" content={uni.image || uni.logo || "https://www.rahbars.com/og-image.jpg"} />
+        <meta property="og:site_name" content="Rahbars" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={uni.seoTitle || `${uni.name} — Admission Guide 2026`} />
+        <meta name="twitter:description" content={uni.seoDescription || `Fee, merit, and admission details for ${uni.name}. Updated 2026 data on Rahbars.`} />
+        <meta name="twitter:image" content={uni.image || uni.logo || "https://www.rahbars.com/og-image.jpg"} />
+
+        {/* CollegeOrUniversity JSON-LD */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollegeOrUniversity",
+          "name": uni.name,
+          "alternateName": uni.shortName,
+          "url": uni.website || `https://www.rahbars.com/university/${uni.slug}`,
+          "logo": uni.logo ? (uni.logo.startsWith("http") ? uni.logo : `https://www.rahbars.com${uni.logo}`) : "https://www.rahbars.com/logo-full.png",
+          "image": uni.image || uni.logo || "https://www.rahbars.com/og-image.jpg",
+          "description": uni.description || `${uni.name} is a ${uni.type} university located in ${uni.city || "Pakistan"}.`,
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": uni.city || "Karachi",
+            "addressRegion": uni.province || "Sindh",
+            "addressCountry": "PK"
+          },
+          "foundingDate": uni.established ? String(uni.established) : undefined,
+          "sameAs": uni.website ? [uni.website] : [],
+          "dateModified": uni.updatedAt
+        })}</script>
+
+        {/* BreadcrumbList JSON-LD */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.rahbars.com" },
+            { "@type": "ListItem", "position": 2, "name": "Universities", "item": "https://www.rahbars.com/search" },
+            { "@type": "ListItem", "position": 3, "name": uni.name, "item": `https://www.rahbars.com/university/${uni.slug}` }
+          ]
+        })}</script>
       </Helmet>
 
       {/* Breadcrumb */}
