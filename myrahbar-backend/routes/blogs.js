@@ -35,7 +35,7 @@ const upload = multer({
 // Public routes — optionalAuth populates req.user if token valid, never blocks public
 router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
 router.get("/", optionalAuth, getBlogs);
-router.get("/:slug", getBlogBySlug);
+router.get("/:slug", optionalAuth, getBlogBySlug);
 
 // Admin only routes
 router.post("/seed", protect, adminOnly, seedBlogs);

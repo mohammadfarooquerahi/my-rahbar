@@ -45,13 +45,21 @@ const getBlogs = async (req, res) => {
 
 // ─── GET /api/blogs/:slug ────────────────────────────────────────────────────
 const getBlogBySlug = async (req, res) => {
-  const blog = await Blog.findOne({ slug: req.params.slug, status: "published" }).populate("author", "name");
+  // Admins can preview drafts/pending; everyone else only sees published
+  const isAdmin = req.user?.role === "admin";
+  const query = { slug: req.params.slug };
+  if (!isAdmin) query.status = "published";
+
+  const blog = await Blog.findOne(query).populate("author", "name");
   if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-  blog.views += 1;
-  await blog.save({ validateBeforeSave: false });
+  // Only count view for public visitors, not admin previews
+  if (!isAdmin) {
+    blog.views += 1;
+    await blog.save({ validateBeforeSave: false });
+  }
 
-  // Related blogs (same category, exclude current)
+  // Related blogs (same category, exclude current) — always published
   const related = await Blog.find({
     category: blog.category,
     status: "published",
@@ -1315,4 +1323,3 @@ const rejectBlog = async (req, res) => {
 };
 
 module.exports = { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog };
-

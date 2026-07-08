@@ -190,6 +190,14 @@ export default function BlogDetailPage() {
 
       <div className="bg-slate-50 min-h-screen pb-20">
 
+        {/* Draft/Pending Preview Banner */}
+        {blog.status !== "published" && (
+          <div className="bg-amber-400 text-amber-900 text-xs font-bold px-4 py-2.5 text-center flex items-center justify-center gap-2">
+            <span>🔒 ADMIN PREVIEW — This article is <span className="uppercase">{blog.status}</span> and not visible to the public.</span>
+            <Link to="/admin" className="underline hover:text-amber-950 ml-2">← Back to Admin</Link>
+          </div>
+        )}
+
         {/* Breadcrumb */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2 text-xs text-slate-500">
@@ -200,6 +208,7 @@ export default function BlogDetailPage() {
             <span className="text-slate-700 font-medium truncate max-w-xs">{blog.title}</span>
           </div>
         </div>
+
 
         {/* Hero Image */}
         <div className="w-full h-64 sm:h-80 overflow-hidden relative">
