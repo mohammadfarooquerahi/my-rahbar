@@ -543,12 +543,12 @@ export default function HomePage() {
             </div>
 
             {/* Overlapping realistic alert */}
-            <div style={{ position:"absolute", bottom:"-20px", left:"-20px", background:"#ffffff", border:"1px solid #e2e8f0", borderRadius:"12px", padding:"16px", boxShadow:"0 10px 25px -5px rgba(0,0,0,0.1)", display:"flex", gap:"12px", alignItems:"flex-start", maxWidth:"260px" }}>
+            <div className="hero-alert-card" style={{ background:"#ffffff", border:"1px solid #e2e8f0", borderRadius:"12px", padding:"16px", boxShadow:"0 10px 25px -5px rgba(0,0,0,0.1)", display:"flex", gap:"12px", alignItems:"flex-start", maxWidth:"260px" }}>
               <div style={{ color:"#ef4444", marginTop:"2px" }}><Bell size={18} /></div>
               <div>
                 <p style={{ fontSize:"13px", fontWeight:600, color:"#0f172a", margin:"0 0 4px" }}>Application Closing</p>
                 <p style={{ fontSize:"12px", color:"#64748b", margin:"0 0 8px", lineHeight:1.4 }}>UET Lahore BS Engineering admissions close tomorrow.</p>
-                <Link to="/search?q=UET%20Lahore" style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer", textDecoration:"none" }} onMouseOver={e => e.currentTarget.style.textDecoration="underline"} onMouseOut={e => e.currentTarget.style.textDecoration="none"}>Apply Now →</Link>
+                <Link to="/search?q=UET%20Lahore" style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer", textDecoration:"none", zIndex: 20, position: "relative" }} onMouseOver={e => e.currentTarget.style.textDecoration="underline"} onMouseOut={e => e.currentTarget.style.textDecoration="none"}>Apply Now →</Link>
               </div>
             </div>
 
@@ -556,9 +556,23 @@ export default function HomePage() {
         </div>
 
         <style>{`
+          .hero-alert-card {
+            position: absolute;
+            bottom: -20px;
+            left: -40px;
+            z-index: 10;
+          }
           @media(max-width:900px){
             .hero-grid{ grid-template-columns:1fr !important; gap:40px !important; }
-            .hero-right{ justify-content:center !important; margin-top:20px; }
+            .hero-right{ justify-content:center !important; margin-top:20px; flex-direction: column; align-items: center; }
+            .hero-alert-card {
+              position: relative;
+              bottom: 0;
+              left: 0;
+              margin-top: -10px;
+              width: 100%;
+              max-width: 480px !important;
+            }
           }
         `}</style>
       </section>
