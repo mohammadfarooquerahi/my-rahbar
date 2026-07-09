@@ -723,132 +723,183 @@ export default function AdminPage() {
         <title>Admin Panel | Rahbars</title>
       </Helmet>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+      <div className="flex h-screen bg-slate-50 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-white border-r border-slate-200 flex-col hidden md:flex shrink-0">
+          <div className="h-16 flex items-center px-6 border-b border-slate-100 shrink-0">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white mr-3 shadow-sm"
               style={{ background: "var(--navy)" }}
             >
-              <Shield size={18} />
+              <Shield size={16} />
             </div>
-            <div>
-              <h1
-                className="text-2xl font-bold"
-                style={{ fontFamily: "Sora", color: "var(--navy)" }}
-              >
-                Admin Panel
-              </h1>
-              <p className="text-slate-500 text-sm">
-                Logged in as {user?.name}
-              </p>
+            <span className="font-bold text-lg" style={{ fontFamily: "Sora", color: "var(--navy)" }}>Admin</span>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto py-4 px-3" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+            <div className="space-y-1">
+              {TABS.map((tab) => {
+                const getIcon = (tabName) => {
+                  switch (tabName) {
+                    case "Dashboard": return <TrendingUp size={16} />;
+                    case "Universities": return <BookOpen size={16} />;
+                    case "Add University": return <Plus size={16} />;
+                    case "AI Collect": return <Sparkles size={16} />;
+                    case "Upload Excel": return <FileText size={16} />;
+                    case "Reviews": return <MessageSquare size={16} />;
+                    case "Error Logs": return <AlertCircle size={16} />;
+                    case "Bookings": return <Users size={16} />;
+                    case "Past Papers": return <CheckSquare size={16} />;
+                    case "Blogs": return <FileText size={16} />;
+                    case "AI Blog Generator": return <Sparkles size={16} />;
+                    case "News": return <MessageSquare size={16} />;
+                    default: return <FileText size={16} />;
+                  }
+                };
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      setActiveTab(tab);
+                      if (tab !== "Add University") {
+                        setEditingUni(null);
+                        setUniForm(EMPTY_UNI);
+                        setDepartments([]);
+                      }
+                    }}
+                    className={
+                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 " +
+                      (activeTab === tab
+                        ? "bg-blue-50 text-blue-700 shadow-sm"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900")
+                    }
+                  >
+                    <span className={activeTab === tab ? "text-blue-600" : "text-slate-400"}>
+                      {getIcon(tab)}
+                    </span>
+                    {tab}
+                  </button>
+                );
+              })}
             </div>
           </div>
-          <div className="flex gap-2">
-            <Link
-              to="/"
-              className="text-sm text-slate-500 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50"
-            >
-              View Site
-            </Link>
-            <button
-              onClick={() => {
-                logout();
-                navigate("/");
-              }}
-              className="flex items-center gap-1.5 text-sm text-red-500 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50"
-            >
-              <LogOut size={13} /> Logout
-            </button>
-          </div>
-        </div>
 
-        {/* Success message */}
-        {msg && (
-          <div className="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
-            {msg}
-          </div>
-        )}
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            {
-              label: "Universities",
-              value: unis.length,
-              icon: <BookOpen size={16} />,
-              color: "text-blue-600 bg-blue-50",
-            },
-            {
-              label: "Pending",
-              value: unis.filter((u) => u.status === "pending").length,
-              icon: <Clock size={16} />,
-              color: "text-orange-600 bg-orange-50",
-            },
-            {
-              label: "Reviews",
-              value: reviews.length,
-              icon: <MessageSquare size={16} />,
-              color: "text-green-600 bg-green-50",
-            },
-            {
-              label: "Bookings",
-              value: bookings.length,
-              icon: <Users size={16} />,
-              color: "text-purple-600 bg-purple-50",
-            },
-          ].map((s, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-slate-200 p-4"
-            >
-              <div
-                className={
-                  "w-8 h-8 rounded-xl flex items-center justify-center mb-2 " +
-                  s.color
-                }
-              >
-                {s.icon}
+          <div className="p-4 border-t border-slate-200 shrink-0">
+            <div className="flex flex-col gap-2">
+              <div className="px-3 py-2 text-xs font-medium text-slate-500 bg-slate-50 border border-slate-100 rounded-lg mb-1 truncate text-center shadow-inner">
+                {user?.name}
               </div>
-              <p
-                className="text-2xl font-bold"
-                style={{ fontFamily: "Sora", color: "var(--navy)" }}
+              <Link
+                to="/"
+                className="flex justify-center items-center gap-2 text-sm text-slate-600 border border-slate-200 bg-white px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors shadow-sm hover:shadow"
               >
-                {s.value}
-              </p>
-              <p className="text-xs text-slate-500">{s.label}</p>
+                <Eye size={14} /> View Site
+              </Link>
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/");
+                }}
+                className="flex justify-center items-center gap-2 text-sm text-red-600 border border-red-200 bg-red-50/50 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors shadow-sm hover:shadow"
+              >
+                <LogOut size={14} /> Logout
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        </aside>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-5 overflow-x-auto pb-2 whitespace-nowrap" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                if (tab !== "Add University") {
-                  setEditingUni(null);
-                  setUniForm(EMPTY_UNI);
-                  setDepartments([]);
-                }
-              }}
-              className={
-                "shrink-0 px-4 py-2 text-sm font-medium rounded-xl border transition-colors " +
-                (activeTab === tab
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50")
-              }
-            >
-              {tab === "Add University" && (
-                <Plus size={13} className="inline mr-1" />
+        {/* Main Content */}
+        <main className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50">
+          
+          {/* Mobile Header & Nav */}
+          <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 shrink-0 shadow-sm">
+             <div className="flex items-center gap-2">
+               <Shield size={20} className="text-blue-600" />
+               <span className="font-bold text-lg" style={{ fontFamily: "Sora", color: "var(--navy)" }}>Admin</span>
+             </div>
+             <select 
+               className="border border-slate-200 bg-slate-50 rounded-lg text-sm px-3 py-2 outline-none font-medium text-slate-700 shadow-sm"
+               value={activeTab}
+               onChange={(e) => setActiveTab(e.target.value)}
+             >
+               {TABS.map(t => <option key={t} value={t}>{t}</option>)}
+             </select>
+          </div>
+
+          {/* Desktop Top Bar */}
+          <header className="hidden md:flex h-16 bg-white border-b border-slate-200 items-center px-8 justify-between shrink-0 shadow-sm">
+             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: "Sora" }}>
+                {activeTab}
+             </h2>
+          </header>
+
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+            <div className="max-w-7xl mx-auto pb-12">
+              
+              {/* Success message */}
+              {msg && (
+                <div className="mb-6 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm animate-in fade-in slide-in-from-top-2">
+                  <CheckCircle size={16} />
+                  {msg}
+                </div>
               )}
-              {tab}
-            </button>
-          ))}
-        </div>
+
+              {/* Dashboard Stats */}
+              {activeTab === "Dashboard" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-in fade-in slide-in-from-bottom-2">
+                  {[
+                    {
+                      label: "Total Universities",
+                      value: unis.length,
+                      icon: <BookOpen size={20} />,
+                      color: "text-blue-600",
+                      bg: "bg-blue-100",
+                      border: "border-blue-100"
+                    },
+                    {
+                      label: "Pending Approvals",
+                      value: unis.filter((u) => u.status === "pending").length,
+                      icon: <Clock size={20} />,
+                      color: "text-amber-600",
+                      bg: "bg-amber-100",
+                      border: "border-amber-100"
+                    },
+                    {
+                      label: "New Reviews",
+                      value: reviews.length,
+                      icon: <MessageSquare size={20} />,
+                      color: "text-emerald-600",
+                      bg: "bg-emerald-100",
+                      border: "border-emerald-100"
+                    },
+                    {
+                      label: "Counseling Bookings",
+                      value: bookings.length,
+                      icon: <Users size={20} />,
+                      color: "text-purple-600",
+                      bg: "bg-purple-100",
+                      border: "border-purple-100"
+                    },
+                  ].map((s, i) => (
+                    <div
+                      key={i}
+                      className={`bg-white rounded-2xl border ${s.border} p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${s.bg} ${s.color}`}>
+                          {s.icon}
+                        </div>
+                      </div>
+                      <p className="text-4xl font-bold text-slate-800 mb-1 tracking-tight" style={{ fontFamily: "Sora" }}>
+                        {s.value}
+                      </p>
+                      <p className="text-sm text-slate-500 font-medium">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
 
         {/* ===== DASHBOARD TAB ===== */}
         {activeTab === "Dashboard" && dashboardStats && (
@@ -2961,6 +3012,9 @@ export default function AdminPage() {
           <AIBlogGenerator token={token} />
         )}
 
+            </div>
+          </div>
+        </main>
       </div>
     </>
   );
