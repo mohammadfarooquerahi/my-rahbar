@@ -187,7 +187,7 @@ export default function AdminPage() {
   const handleFetchTrendingTopics = async () => {
     setFetchingTopics(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/trending-topics`, { headers });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch topics");
@@ -204,7 +204,7 @@ export default function AdminPage() {
     setGeneratingBlog(true);
     showMsg("Generating blog... this usually takes 30-60 seconds.");
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/generate-blog`, {
         method: "POST",
         headers,

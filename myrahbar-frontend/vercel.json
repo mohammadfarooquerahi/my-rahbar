@@ -29,27 +29,27 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://my-rahbar-production.up.railway.app/api/$1"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/api/$1"
     },
     {
       "source": "/sitemap.xml",
-      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/api/sitemap.xml"
     },
     {
       "source": "/sitemap-blogs.xml",
-      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/blogs"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/api/sitemap.xml/blogs"
     },
     {
       "source": "/sitemap-main.xml",
-      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/main"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/api/sitemap.xml/main"
     },
     {
       "source": "/sitemap-universities.xml",
-      "destination": "https://my-rahbar-production.up.railway.app/api/sitemap.xml/universities"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/api/sitemap.xml/universities"
     },
     {
       "source": "/uploads/(.*)",
-      "destination": "https://my-rahbar-production.up.railway.app/uploads/$1"
+      "destination": "https://my-rahbar-production-45d9.up.railway.app/uploads/$1"
     },
     {
       "source": "/((?!assets/).*)",

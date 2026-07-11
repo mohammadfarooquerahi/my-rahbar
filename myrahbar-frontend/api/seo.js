@@ -13,7 +13,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 
-const BACKEND_URL = "https://my-rahbar-production.up.railway.app";
+const BACKEND_URL = "https://my-rahbar-production-45d9.up.railway.app";
 const SITE_URL = "https://rahbars.com";
 const DEFAULT = {
   title: "Rahbars - Find Your Dream University in Pakistan",

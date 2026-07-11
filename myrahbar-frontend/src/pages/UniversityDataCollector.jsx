@@ -58,7 +58,7 @@ export default function UniversityDataCollector() {
     }
 
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/collect-university`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,7 +176,7 @@ export default function UniversityDataCollector() {
         status: "pending",
       };
 
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/submit-university`, {
         method: "POST",
         headers: {
