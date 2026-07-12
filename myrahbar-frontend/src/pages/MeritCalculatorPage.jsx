@@ -483,6 +483,20 @@ export default function MeritCalculatorPage() {
           </p>
         </div>
       </div>
+    
+        {/* SEO Content */}
+        <div className="mt-12 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 text-slate-600 space-y-4">
+          <h2 className="text-xl font-bold text-slate-800">University Merit Calculator Pakistan</h2>
+          <p className="text-sm leading-relaxed">
+            Calculating your university aggregate can be complex, especially with different formulas for NED, KU, FAST, NUST and Medical colleges. Our <strong>Merit Calculator</strong> simplifies this by automatically applying the exact weightage for Matric, FSc, and Entry Tests (MDCAT, ECAT, NTS, NAT) required by top universities in Pakistan.
+          </p>
+          <h3 className="text-lg font-semibold text-slate-800 mt-4">How to calculate your aggregate merit?</h3>
+          <p className="text-sm leading-relaxed">
+            Simply enter your academic scores above. The tool uses official university formulas to calculate your exact aggregate percentage. This helps you predict your admission chances before the closing merit lists are announced. Whether you are applying for BS Computer Science, Engineering, or Medical (MBBS/BDS), knowing your aggregate is the first step to securing admission.
+          </p>
+        </div>
+      </div>
     </main>
+
   );
 }

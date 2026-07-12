@@ -332,7 +332,20 @@ export default function DocumentToolsPage() {
                     <>
                       <Loader size={16} className="animate-spin" />{" "}
                       Compressing...
-                    </>
+                    
+        {/* SEO Content */}
+        <div className="mt-12 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-slate-600 space-y-4 max-w-4xl mx-auto mb-10">
+          <h2 className="text-xl font-bold text-slate-800">Image Compressor & Passport Photo Maker for Admissions</h2>
+          <p className="text-sm leading-relaxed">
+            University admission portals in Pakistan have strict file size limits (usually under 500KB or 2MB) for uploading documents like CNIC, Matric/FSc certificates, and domicile. Our <strong>Image Compressor</strong> helps you instantly reduce the file size of your documents without losing quality, making them ready for online application forms.
+          </p>
+          <h3 className="text-lg font-semibold text-slate-800 mt-4">Blue Background Photo Generator</h3>
+          <p className="text-sm leading-relaxed">
+            Many universities require a formal passport-size photo with a blue background. Use our <strong>Blue Background Photo tool</strong> to instantly remove your current background and replace it with a professional blue or white background required for official university application forms and entry test admit cards.
+          </p>
+        </div>
+    </>
+
                   ) : (
                     "Compress Document"
                   )}

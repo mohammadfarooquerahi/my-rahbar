@@ -350,6 +350,19 @@ export default function ComparePage() {
           </div>
         )}
       </div>
+    
+        {/* SEO Content */}
+        <div className="mt-12 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-slate-600 space-y-4 text-left max-w-5xl mx-auto mb-10">
+          <h2 className="text-xl font-bold text-slate-800">Compare Universities in Pakistan</h2>
+          <p className="text-sm leading-relaxed">
+            Can't decide between two universities? Use our <strong>University Comparison Tool</strong> to evaluate top universities in Pakistan side-by-side. Compare NED vs FAST, KU vs IBA, or any other HEC-recognized institutes based on tuition fees, aggregate formulas, campus facilities, hostels, and admission deadlines.
+          </p>
+          <h3 className="text-lg font-semibold text-slate-800 mt-4">Make an Informed Decision</h3>
+          <p className="text-sm leading-relaxed">
+            Choosing the right university is a life-changing decision. Our detailed comparison highlights the pros and cons of each institute, helping you evaluate degree programs, scholarships, and past merit trends so you can choose the best option for your future career.
+          </p>
+        </div>
     </>
+
   );
 }

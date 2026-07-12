@@ -469,6 +469,20 @@ export default function FindUniversityPage() {
           </div>
         )}
       </div>
+    
+        {/* SEO Content */}
+        <div className="mt-12 bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-slate-600 space-y-4">
+          <h2 className="text-xl font-bold text-slate-800">Find the Best University in Pakistan</h2>
+          <p className="text-sm leading-relaxed">
+            Confused about which university to choose? The <strong>Smart Uni Finder</strong> is an AI-powered tool designed to help Pakistani students discover the perfect university. By answering a few simple questions about your academic background, preferred city (like Karachi, Lahore, Islamabad), fee budget, and career goals, our tool filters through hundreds of HEC-recognized universities.
+          </p>
+          <h3 className="text-lg font-semibold text-slate-800 mt-4">Why use the Smart Uni Finder?</h3>
+          <p className="text-sm leading-relaxed">
+            With so many options for BS Computer Science, Engineering, BBA, and Medical degrees, making the right choice is overwhelming. Our algorithm matches your exact criteria with university offerings, admission deadlines, and scholarship availability, ensuring you make an informed decision for your higher education.
+          </p>
+        </div>
+      </div>
     </main>
+
   );
 }
