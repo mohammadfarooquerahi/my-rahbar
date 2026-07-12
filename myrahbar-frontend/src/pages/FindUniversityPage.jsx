@@ -481,7 +481,6 @@ export default function FindUniversityPage() {
             With so many options for BS Computer Science, Engineering, BBA, and Medical degrees, making the right choice is overwhelming. Our algorithm matches your exact criteria with university offerings, admission deadlines, and scholarship availability, ensuring you make an informed decision for your higher education.
           </p>
         </div>
-      </div>
     </main>
 
   );

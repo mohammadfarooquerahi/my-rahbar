@@ -495,7 +495,6 @@ export default function MeritCalculatorPage() {
             Simply enter your academic scores above. The tool uses official university formulas to calculate your exact aggregate percentage. This helps you predict your admission chances before the closing merit lists are announced. Whether you are applying for BS Computer Science, Engineering, or Medical (MBBS/BDS), knowing your aggregate is the first step to securing admission.
           </p>
         </div>
-      </div>
     </main>
 
   );

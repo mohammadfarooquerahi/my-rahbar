@@ -107,8 +107,7 @@ export default function UniversityCard({ uni }) {
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative p-5 md:p-6">
       
       {/* Mobile Heart Button (Absolute top right) */}
-      <button
-        onClick={toggleWatch}
+      <button aria-label="Add to Watchlist" onClick={toggleWatch}
         className="absolute top-5 right-5 p-2.5 bg-slate-50 rounded-full shadow-sm z-10 border border-slate-100 hover:bg-slate-100 transition-colors"
       >
         <Heart size={18} className={watched ? "text-red-500" : "text-slate-400"} fill={watched ? "currentColor" : "none"} />
