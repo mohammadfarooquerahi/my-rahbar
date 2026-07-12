@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import {
   MapPin,
   Globe,
@@ -114,7 +114,13 @@ export default function UniversityDetailPage() {
   const [uni, setUni] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [activeTab, setActiveTab] = useState("Overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlTab = searchParams.get("tab") || "Overview";
+  const activeTab = TABS.find((t) => t.toLowerCase() === urlTab.toLowerCase()) || "Overview";
+
+  const setActiveTab = (tab) => {
+    setSearchParams({ tab: tab.toLowerCase() });
+  };
   const [deadlineFilter, setDeadlineFilter] = useState("All");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
