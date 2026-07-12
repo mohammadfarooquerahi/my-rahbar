@@ -162,7 +162,8 @@ export default function AdminPage() {
     formData.append("file", paperForm.file);
     setLoading(true);
     try {
-      const res = await fetch("/api/pastpapers/upload", {
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/pastpapers/upload`, {
         method: "POST",
         headers: { Authorization: "Bearer " + token },
         body: formData,
@@ -248,7 +249,8 @@ export default function AdminPage() {
     if (blogForm.file) formData.append("featuredImage", blogForm.file);
     setLoading(true);
     try {
-      const url = editingBlog ? `/api/blogs/${editingBlog._id}` : "/api/blogs";
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const url = editingBlog ? `${API_BASE}/api/blogs/${editingBlog._id}` : `${API_BASE}/api/blogs`;
       const method = editingBlog ? "PUT" : "POST";
       const res = await fetch(url, { method, headers: { Authorization: "Bearer " + token }, body: formData });
       if (!res.ok) throw new Error((await res.json()).message);
@@ -680,7 +682,8 @@ export default function AdminPage() {
     formData.append("file", excelFile);
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/preview-excel", { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/admin/preview-excel`, { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setExcelPreview(data);
@@ -695,7 +698,8 @@ export default function AdminPage() {
     formData.append("file", excelFile);
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/upload-excel", { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
+      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const res = await fetch(`${API_BASE}/api/admin/upload-excel`, { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       showMsg(data.message || `Import done!`);
