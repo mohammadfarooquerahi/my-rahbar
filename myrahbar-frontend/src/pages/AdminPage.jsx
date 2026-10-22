@@ -162,7 +162,7 @@ export default function AdminPage() {
     formData.append("file", paperForm.file);
     setLoading(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/pastpapers/upload`, {
         method: "POST",
         headers: { Authorization: "Bearer " + token },
@@ -188,7 +188,7 @@ export default function AdminPage() {
   const handleFetchTrendingTopics = async () => {
     setFetchingTopics(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/trending-topics`, { headers });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch topics");
@@ -205,7 +205,7 @@ export default function AdminPage() {
     setGeneratingBlog(true);
     showMsg("Generating blog... this usually takes 30-60 seconds.");
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/generate-blog`, {
         method: "POST",
         headers,
@@ -249,7 +249,7 @@ export default function AdminPage() {
     if (blogForm.file) formData.append("featuredImage", blogForm.file);
     setLoading(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const url = editingBlog ? `${API_BASE}/api/blogs/${editingBlog._id}` : `${API_BASE}/api/blogs`;
       const method = editingBlog ? "PUT" : "POST";
       const res = await fetch(url, { method, headers: { Authorization: "Bearer " + token }, body: formData });
@@ -682,7 +682,7 @@ export default function AdminPage() {
     formData.append("file", excelFile);
     setLoading(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/admin/preview-excel`, { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -698,7 +698,7 @@ export default function AdminPage() {
     formData.append("file", excelFile);
     setLoading(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://my-rahbar-production-45d9.up.railway.app" : "";
+      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/admin/upload-excel`, { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);

@@ -209,7 +209,7 @@ router.post("/collect-university", async (req, res) => {
 
     const msg = err.message || "";
     if (msg.includes("API key not valid")) {
-      return res.status(500).json({ message: "Gemini API key is invalid. Please update it in Railway environment variables." });
+      return res.status(500).json({ message: "Gemini API key is invalid. Please update it in Render environment variables." });
     }
     if (msg.includes("quota") || msg.includes("429")) {
       return res.status(500).json({ message: "API quota exceeded. Please wait a few minutes and try again." });
