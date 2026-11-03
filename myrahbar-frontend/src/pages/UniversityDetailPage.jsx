@@ -24,6 +24,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { useWatchlistStore } from "../store";
 import { daysUntilDeadline, deadlineLabel, formatFee } from "../utils/merit";
+import { KARACHI_UNIVERSITIES } from "../data/universities";
 import toast from "react-hot-toast";
 
 const TABS = [
@@ -141,17 +142,27 @@ export default function UniversityDetailPage() {
     setUni(null);
 
     fetch("/api/universities/" + slug)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("API status " + res.status);
+        return res.json();
+      })
       .then((data) => {
         if (data.university) {
           setUni(data.university);
         } else {
-          setNotFound(true);
+          const fallback = KARACHI_UNIVERSITIES.find((u) => u.slug === slug);
+          if (fallback) setUni(fallback);
+          else setNotFound(true);
         }
         setLoading(false);
       })
       .catch(() => {
-        setNotFound(true);
+        const fallback = KARACHI_UNIVERSITIES.find((u) => u.slug === slug);
+        if (fallback) {
+          setUni(fallback);
+        } else {
+          setNotFound(true);
+        }
         setLoading(false);
       });
   }, [slug]);
