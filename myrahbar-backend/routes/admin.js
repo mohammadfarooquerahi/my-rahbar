@@ -2,11 +2,17 @@ const express = require("express");
 const router = express.Router();
 const University = require("../models/University");
 const {
-  getAllUnis, approveUni, rejectUni,
-  getAllReviews, approveReview, rejectReview,
-  getAllBookings, getAllUsers,
-  getDashboardStats, getErrorLogs,
-  uploadExcelFile, previewExcelFile,
+  getAllUnis,
+  approveUni,
+  rejectUni,
+  getAllReviews,
+  approveReview,
+  rejectReview,
+  getAllBookings,
+  getAllUsers,
+  getDashboardStats,
+  getErrorLogs,
+  uploadExcelFile,
 } = require("../controllers/adminController");
 const { protect, adminOnly } = require("../middleware/auth");
 const { uploadExcel } = require("../config/multer");
@@ -19,9 +25,7 @@ router.get("/dashboard", getDashboardStats);
 router.get("/error-logs", getErrorLogs);
 
 // Excel Upload
-router.post("/preview-excel", uploadExcel.single("file"), previewExcelFile);
 router.post("/upload-excel", uploadExcel.single("file"), uploadExcelFile);
-
 
 // Universities
 router.get("/universities", getAllUnis);
@@ -58,5 +62,6 @@ router.put("/reviews/:id/reject", rejectReview);
 // Bookings and users
 router.get("/bookings", getAllBookings);
 router.get("/users", getAllUsers);
+router.get("/contact-messages", async (req, res) => { try { const ContactMessage = require("../models/ContactMessage"); const messages = await ContactMessage.find().sort({ createdAt: -1 }); res.json({ success: true, count: messages.length, messages }); } catch (err) { res.status(500).json({ error: err.message }); } });
 
 module.exports = router;

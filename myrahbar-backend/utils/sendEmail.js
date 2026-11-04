@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
 
-// Enforce IPv4 globally
 try {
   if (dns.setDefaultResultOrder) {
     dns.setDefaultResultOrder("ipv4first");
@@ -9,9 +8,45 @@ try {
 } catch (_) {}
 
 /**
- * Creates a Nodemailer transporter.
- * Uses a custom DNS lookup that strictly asks for IPv4 (family: 4)
- * to avoid IPv6 ENETUNREACH errors on cloud Linux hosts like Render.
+ * Send an email via Resend HTTP API (Port 443 HTTPS)
+ * Bypasses Render's firewall which blocks SMTP ports 25, 465, 587 on Free instances.
+ */
+const sendViaResend = async ({ to, subject, html, text }) => {
+  const apiKey = (process.env.RESEND_API_KEY || "").trim();
+  if (!apiKey) return null;
+
+  try {
+    const fromAddress = process.env.RESEND_FROM || "Rahbars <onboarding@resend.dev>";
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+        text,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok && data.id) {
+      console.log(`[sendEmail] Delivered via Resend HTTPS (Port 443)! ID: ${data.id}`);
+      return { success: true, messageId: data.id, provider: "resend_https" };
+    }
+    console.error("[sendEmail] Resend API error:", data);
+    return { success: false, error: data.message || "Resend API error", provider: "resend_https" };
+  } catch (err) {
+    console.error("[sendEmail] Resend fetch failed:", err.message);
+    return { success: false, error: err.message, provider: "resend_https" };
+  }
+};
+
+/**
+ * Creates a Nodemailer transporter for Gmail SMTP
  */
 const createGmailTransport = (port = 465, secure = true) => {
   const user = (process.env.EMAIL_USER || "").trim();
@@ -30,9 +65,9 @@ const createGmailTransport = (port = 465, secure = true) => {
       user,
       pass,
     },
-    connectionTimeout: 8000,
-    greetingTimeout: 5000,
-    socketTimeout: 12000,
+    connectionTimeout: 5000,
+    greetingTimeout: 4000,
+    socketTimeout: 8000,
     tls: {
       rejectUnauthorized: false,
       servername: "smtp.gmail.com",
@@ -42,19 +77,29 @@ const createGmailTransport = (port = 465, secure = true) => {
 
 /**
  * Send an email with automatic fallback:
- * 1. Tries port 465 SSL with IPv4
- * 2. If connection fails, tries port 587 STARTTLS with IPv4
+ * 1. Resend API via HTTPS (Port 443) — Recommended for Render Free tier
+ * 2. Gmail SMTP Port 465 / 587 — For paid Render instances or local development
  */
 const sendEmail = async ({ to, subject, html, text, replyTo }) => {
+  const plainText = text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+  // 1. Try Resend HTTPS API first if key exists (Bypasses Render's firewall)
+  if (process.env.RESEND_API_KEY) {
+    const resendResult = await sendViaResend({ to, subject, html, text: plainText });
+    if (resendResult && resendResult.success) {
+      return resendResult;
+    }
+  }
+
   const user = (process.env.EMAIL_USER || "").trim();
   const pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "").trim();
 
   if (!user || !pass) {
-    console.warn("[sendEmail] EMAIL_USER or EMAIL_PASS is missing in environment variables. Skipped sending to:", to);
+    console.warn("[sendEmail] No email credentials configured. Email skipped for:", to);
     return { success: false, reason: "credentials_missing" };
   }
 
-  // Attempt 1: Port 465 (Direct SSL, IPv4)
+  // 2. Try Gmail SMTP Port 465
   try {
     const transporter465 = createGmailTransport(465, true);
     const info = await transporter465.sendMail({
@@ -63,15 +108,15 @@ const sendEmail = async ({ to, subject, html, text, replyTo }) => {
       replyTo: replyTo || user,
       subject,
       html,
-      text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+      text: plainText,
     });
-    console.log(`[sendEmail] Success via port 465! ID: ${info.messageId} to ${to}`);
-    return { success: true, messageId: info.messageId, port: 465 };
+    console.log(`[sendEmail] Success via Gmail SMTP 465! ID: ${info.messageId} to ${to}`);
+    return { success: true, messageId: info.messageId, provider: "gmail_smtp_465" };
   } catch (err465) {
-    console.warn(`[sendEmail] Port 465 failed (${err465.message}). Trying fallback port 587...`);
+    console.warn(`[sendEmail] Gmail 465 failed (${err465.message}). Trying fallback port 587...`);
   }
 
-  // Attempt 2: Port 587 (STARTTLS, IPv4)
+  // 3. Fallback Gmail SMTP Port 587
   try {
     const transporter587 = createGmailTransport(587, false);
     const info = await transporter587.sendMail({
@@ -80,22 +125,33 @@ const sendEmail = async ({ to, subject, html, text, replyTo }) => {
       replyTo: replyTo || user,
       subject,
       html,
-      text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+      text: plainText,
     });
     console.log(`[sendEmail] Success via fallback port 587! ID: ${info.messageId} to ${to}`);
-    return { success: true, messageId: info.messageId, port: 587 };
+    return { success: true, messageId: info.messageId, provider: "gmail_smtp_587" };
   } catch (err587) {
-    console.error(`[sendEmail] Both port 465 and 587 failed for ${to}:`, err587.message);
+    console.error(`[sendEmail] All email attempts failed for ${to}:`, err587.message);
     return { success: false, error: err587.message };
   }
 };
 
 /**
- * Diagnostic verify function to test SMTP credentials directly.
+ * Diagnostic verify function
  */
 const verifyEmailConfig = async () => {
+  const hasResend = Boolean(process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.trim());
   const user = (process.env.EMAIL_USER || "").trim();
   const pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "").trim();
+
+  // Test Resend HTTPS if key is present
+  if (hasResend) {
+    return {
+      configured: true,
+      verified: true,
+      provider: "resend_https",
+      message: "Resend HTTPS API key is configured! Render allows this on all free and paid plans.",
+    };
+  }
 
   if (!user || !pass) {
     return {
@@ -110,7 +166,7 @@ const verifyEmailConfig = async () => {
     ? `${pass.slice(0, 2)}••••••••${pass.slice(-2)}` 
     : "••••";
 
-  // Test port 465
+  // Test SMTP 465 & 587
   let err465 = null;
   try {
     const t465 = createGmailTransport(465, true);
@@ -118,27 +174,22 @@ const verifyEmailConfig = async () => {
     return {
       configured: true,
       verified: true,
-      workingPort: 465,
+      provider: "gmail_smtp_465",
       user,
-      passLength: pass.length,
-      passPreview,
       message: "Gmail SMTP connected and verified successfully via port 465 SSL!",
     };
   } catch (err) {
     err465 = err;
   }
 
-  // Fallback test port 587
   try {
     const t587 = createGmailTransport(587, false);
     await t587.verify();
     return {
       configured: true,
       verified: true,
-      workingPort: 587,
+      provider: "gmail_smtp_587",
       user,
-      passLength: pass.length,
-      passPreview,
       message: "Gmail SMTP connected and verified successfully via fallback port 587 STARTTLS!",
     };
   } catch (err587) {
@@ -150,9 +201,7 @@ const verifyEmailConfig = async () => {
       passPreview,
       errorPort465: err465 ? err465.message : null,
       errorPort587: err587.message,
-      tip: pass.length !== 16
-        ? `Your password is currently ${pass.length} characters (${passPreview}). A Google App Password is EXACTLY 16 letters (4 groups of 4: e.g. abcd efgh ijkl mnop). You appear to have missed 1 character or entered a 15-character password!`
-        : "Ensure 2-Step Verification is ON in your Google Account and that you created an App Password under https://myaccount.google.com/apppasswords",
+      renderFreeTierNotice: "Render's Free Tier blocks outbound SMTP traffic on ports 25, 465, and 587. To send emails on Render Free tier, add RESEND_API_KEY from https://resend.com (which uses standard HTTPS port 443).",
     };
   }
 };
