@@ -40,6 +40,17 @@ Focus on Pakistan job market only.
 If someone asks anything unrelated say:
 I am here to help with career and education guidance for Pakistani students only.`;
 
+// GET /api/ai/models
+router.get("/models", async (req, res) => {
+  try {
+    const groq = getGroqClient();
+    const list = await groq.models.list();
+    res.json({ models: list.data.map(m => m.id) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/ai/chat
 router.post("/chat", async (req, res) => {
   try {
