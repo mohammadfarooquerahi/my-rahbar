@@ -19,35 +19,29 @@ function extractJSON(raw) {
 
   let text = raw.trim();
 
-  // Step 1: Strip markdown code fences
-  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
+  // 1. Direct parse
+  try { return JSON.parse(text); } catch (_) {}
 
-  // Step 2: Try parsing the whole thing as-is first
-  try { return JSON.parse(text); } catch (_) { /* continue */ }
-
-  // Step 3: Find the outermost balanced { ... } or [ ... ]
-  const startIdx = text.search(/[{\[]/);
-  if (startIdx === -1) return null;
-
-  const opener = text[startIdx];
-  const closer = opener === "{" ? "}" : "]";
-  let depth = 0;
-  let inString = false;
-  let escape = false;
-
-  for (let i = startIdx; i < text.length; i++) {
-    const ch = text[i];
-    if (escape) { escape = false; continue; }
-    if (ch === "\\") { escape = true; continue; }
-    if (ch === '"') { inString = !inString; continue; }
-    if (inString) continue;
-    if (ch === opener) depth++;
-    if (ch === closer) depth--;
-    if (depth === 0) {
-      const candidate = text.slice(startIdx, i + 1);
-      try { return JSON.parse(candidate); } catch (_) { return null; }
-    }
+  // 2. Strip code fences if present anywhere
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenceMatch && fenceMatch[1]) {
+    try { return JSON.parse(fenceMatch[1].trim()); } catch (_) {}
   }
+
+  // 3. Outermost { ... }
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    try { return JSON.parse(text.slice(firstBrace, lastBrace + 1)); } catch (_) {}
+  }
+
+  // 4. Outermost [ ... ]
+  const firstBracket = text.indexOf("[");
+  const lastBracket = text.lastIndexOf("]");
+  if (firstBracket !== -1 && lastBracket > firstBracket) {
+    try { return JSON.parse(text.slice(firstBracket, lastBracket + 1)); } catch (_) {}
+  }
+
   return null;
 }
 
