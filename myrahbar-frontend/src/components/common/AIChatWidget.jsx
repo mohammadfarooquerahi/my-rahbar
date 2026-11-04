@@ -74,7 +74,7 @@ export default function AIChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full text-white shadow-lg flex items-center justify-center pulse-green"
+          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full text-white shadow-xl flex items-center justify-center pulse-green transition-all hover:scale-105"
           style={{ background: "var(--green)" }}
         >
           <MessageCircle size={24} />
@@ -84,7 +84,7 @@ export default function AIChatWidget() {
       {/* Chat window */}
       {open && (
         <div
-          className="fixed bottom-6 right-6 z-50 w-80 md:w-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden bg-white border border-slate-200"
+          className="fixed bottom-4 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-80 md:w-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden bg-white border border-slate-200"
           style={{ height: "480px" }}
         >
           {/* Header */}

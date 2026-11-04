@@ -1,10 +1,9 @@
-import {
-  MessageCircle,
-  GraduationCap,
-  Sparkles, useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { KARACHI_UNIVERSITIES } from "../data/universities";
 import {
+  MessageCircle,
+  GraduationCap,
   Search,
   ArrowRight,
   Zap,

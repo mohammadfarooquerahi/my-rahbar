@@ -48,7 +48,9 @@ function PageLoader() {
 
 export default function App() {
   const location = useLocation();
-  const hideFooter = location.pathname === "/career-match";
+  const isChatPage = location.pathname === "/career-match";
+  const hideFooter = isChatPage;
+  const hideChatWidget = isChatPage;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -89,7 +91,7 @@ export default function App() {
         </Suspense>
       </main>
       {!hideFooter && <Footer />}
-      <AIChatWidget />
+      {!hideChatWidget && <AIChatWidget />}
     </div>
   );
 }
