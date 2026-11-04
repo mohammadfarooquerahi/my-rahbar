@@ -94,7 +94,8 @@ router.post("/chat", async (req, res) => {
     
     res.json({
       reply: fallbackResponse,
-      response: fallbackResponse
+      response: fallbackResponse,
+      debugError: error.message
     });
   }
 });
