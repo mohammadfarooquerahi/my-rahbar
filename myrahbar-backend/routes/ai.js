@@ -4,7 +4,10 @@ const Groq = require("groq-sdk");
 const router = express.Router();
 
 // Groq ko initialize karein (Yeh automatically aap ki .env se GROQ_API_KEY utha lega)
-const groq = new Groq();
+const getGroqClient = () => {
+  const apiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY || process.env.GROQ_KEY;
+  return new Groq({ apiKey });
+};
 
 const EDU_SYSTEM = `You are Rahbars AI, a helpful guide for Pakistani students.
 You ONLY answer questions about:
@@ -68,6 +71,7 @@ router.post("/chat", async (req, res) => {
     ];
 
     // Groq API Call
+        const groq = getGroqClient();
     const chatCompletion = await groq.chat.completions.create({
       messages: formattedMessages,
       model: "llama-3.1-8b-instant", // Groq ka fast aur free model

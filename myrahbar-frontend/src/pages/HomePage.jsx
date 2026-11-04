@@ -1,4 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import {
+  MessageCircle,
+  GraduationCap,
+  Sparkles, useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { KARACHI_UNIVERSITIES } from "../data/universities";
 import {
@@ -404,177 +407,294 @@ export default function HomePage() {
         <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
-      {/* ── HERO SECTION — Clean & Realistic ── */}
+      {/* -- HERO SECTION � Inspiring & Connecting (Maqsad-Inspired) -- */}
       <section 
-        className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-80px)] py-4 md:py-8 px-4 flex items-center relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)",
-          fontFamily: "'Inter', sans-serif",
-        }}
+        className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 px-4 bg-gradient-to-b from-slate-50 via-white to-blue-50/40"
+        style={{ fontFamily: "'Inter', sans-serif" }}
       >
+        {/* Ambient subtle glow background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-400/10 blur-3xl" />
+          <div className="absolute top-20 right-0 w-[500px] h-[500px] rounded-full bg-indigo-400/10 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div 
+            className="absolute inset-0 opacity-[0.25]"
+            style={{
+              backgroundImage: "radial-gradient(#94a3b8 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+        </div>
 
-        {/* Subtle dot pattern background */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none", opacity: 0.4,
-          backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }} />
+        <div className="relative max-w-7xl mx-auto z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-        <div style={{ maxWidth:"1200px", margin:"0 auto", width:"100%", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"48px", alignItems:"center", position:"relative", zIndex:10 }} className="hero-grid">
+            {/* -- LEFT COLUMN (7 Cols) � Engaging Copy, Filter & Action -- */}
+            <div className="lg:col-span-7 flex flex-col items-start text-left">
+              
+              {/* Trust Pill */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs md:text-sm font-semibold mb-5 shadow-sm">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>???? Pakistan's #1 University Admission & Merit Guide</span>
+              </div>
 
-          {/* LEFT — Copy */}
-          <div style={{ paddingRight: "20px" }}>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:"8px", background:"#eef2ff", color:"#4f46e5", border:"1px solid #c7d2fe", borderRadius:"6px", padding:"4px 12px", marginBottom:"24px", fontWeight: 600, fontSize: "13px" }}>
-              <span style={{ width:"6px", height:"6px", borderRadius:"50%", background:"#4f46e5", display:"inline-block" }} />
-              Pakistan's Official Admission Platform
-            </div>
+              {/* Main Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12] mb-5">
+                Find your <span className="text-blue-600 relative inline-block">
+                  dream university
+                  <svg className="absolute -bottom-1 left-0 w-full h-2.5 text-blue-300 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 12 100 5" stroke="currentColor" strokeWidth="4" fill="transparent"/>
+                  </svg>
+                </span>
+                <br />
+                without the guesswork.
+              </h1>
 
-            <h1 style={{ fontSize:"clamp(2.5rem, 4.5vw, 4rem)", fontWeight:800, lineHeight:1.1, color:"#0f172a", margin:"0 0 24px", letterSpacing:"-0.03em" }}>
-              Find your <span style={{ color:"#2563eb" }}>university</span>
-              <br />
-              without the guesswork.
-            </h1>
+              {/* Subtitle */}
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6 max-w-xl">
+                Join <strong className="text-slate-900 font-bold">50,000+ Pakistani students</strong> who use Rahbars to calculate exact aggregate merits, track closing deadlines, download past papers, and explore 100+ top universities.
+              </p>
 
-            <p style={{ fontSize:"1.1rem", color:"#475569", lineHeight:1.7, margin:"0 0 40px", maxWidth:"500px" }}>
-              Search programs, calculate your exact merit score, and track admission deadlines across Pakistan. All the data you need to make the right choice, in one place.
-            </p>
+              {/* Field of Study Selector (Quick Target Pills) */}
+              <div className="w-full mb-6">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                  Which field are you aiming for?
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "?? CS & AI", query: "Computer Science" },
+                    { label: "?? Medical / MDCAT", query: "MBBS" },
+                    { label: "?? Engineering", query: "Engineering" },
+                    { label: "?? Business & IBA", query: "BBA" },
+                    { label: "?? Law & Social", query: "LLB" },
+                  ].map((field) => (
+                    <button
+                      key={field.label}
+                      type="button"
+                      onClick={() => navigate("/search?q=" + encodeURIComponent(field.query))}
+                      className="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 shadow-sm transition-all duration-200 cursor-pointer"
+                    >
+                      {field.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-            {/* Search bar — Solid, realistic */}
-            <form onSubmit={handleSearch} style={{ marginBottom:"32px", maxWidth: "540px" }}>
-              <div style={{
-                background:"#ffffff",
-                border:"1px solid #cbd5e1",
-                borderRadius:"12px",
-                padding:"8px",
-                boxShadow:"0 10px 30px -10px rgba(0,0,0,0.08)",
-                display:"flex",
-                alignItems:"center",
-                gap:"8px",
-              }}>
-                <div style={{ borderRight:"1px solid #e2e8f0", paddingRight:"8px", flexShrink:0 }}>
-                  <select
-                    value={degreeLevel}
-                    onChange={(e) => setDegreeLevel(e.target.value)}
-                    style={{ background:"transparent", border:"none", outline:"none", color: degreeLevel ? "#0f172a" : "#64748b", fontSize:"14px", fontWeight:500, padding:"10px", cursor:"pointer", minWidth:"140px" }}
+              {/* Search Bar Container */}
+              <form onSubmit={handleSearch} className="w-full max-w-xl mb-4">
+                <div className="bg-white p-2 rounded-2xl border border-slate-300 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row items-stretch gap-2 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
+                  <div className="sm:border-r border-slate-200 sm:pr-2 shrink-0">
+                    <select
+                      value={degreeLevel}
+                      onChange={(e) => setDegreeLevel(e.target.value)}
+                      className="w-full sm:w-auto bg-transparent border-0 outline-none text-slate-700 text-sm font-medium py-2.5 px-3 cursor-pointer"
+                    >
+                      <option value="">All Degree Levels</option>
+                      <option value="BS">BS / Undergraduate</option>
+                      <option value="MS">MS / Graduate</option>
+                      <option value="PhD">PhD / Doctorate</option>
+                    </select>
+                  </div>
+                  <div className="flex-1 flex items-center gap-2 px-2">
+                    <Search size={18} className="text-slate-400 shrink-0" />
+                    <input
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search university, program (e.g. FAST, Dow, NED)..."
+                      className="w-full bg-transparent border-0 outline-none text-slate-900 placeholder:text-slate-400 text-sm sm:text-base py-1"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors shadow-md shadow-blue-500/20 shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <option value="">All Degree Levels</option>
-                    <option value="BS">BS / Undergraduate</option>
-                    <option value="MS">MS / MPhil</option>
-                    <option value="PhD">PhD / Doctorate</option>
-                  </select>
+                    <span>Search</span>
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
-                <div style={{ flex:1, display:"flex", alignItems:"center", gap:"8px", padding:"0 8px" }}>
-                  <Search size={18} style={{ color:"#94a3b8", flexShrink:0 }} />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search university, program, or city..."
-                    style={{ background:"transparent", border:"none", outline:"none", color:"#0f172a", fontSize:"15px", width:"100%", fontFamily:"inherit" }}
+              </form>
+
+              {/* Action Buttons: Find Uni + WhatsApp Counselor (Like Maqsad) */}
+              <div className="flex flex-wrap items-center gap-3 w-full mb-8">
+                <Link
+                  to="/find-university"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <Sparkles size={16} className="text-yellow-400" />
+                  <span>Smart University Matcher</span>
+                </Link>
+
+                <a
+                  href="https://wa.me/923455589079?text=Assalam-o-Alaikum%20Rahbars!%20I%20need%20guidance%20for%20my%20university%20admission."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <MessageCircle size={17} />
+                  <span>Talk to Counsellor</span>
+                </a>
+              </div>
+
+              {/* Social Proof Stats Strip */}
+              <div className="w-full grid grid-cols-3 gap-3 sm:gap-4 pt-6 border-t border-slate-200/80">
+                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
+                  <p className="text-xl sm:text-2xl font-black text-slate-900" style={{ fontFamily: "Sora" }}>100+</p>
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Universities</p>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
+                  <p className="text-xl sm:text-2xl font-black text-blue-600" style={{ fontFamily: "Sora" }}>150+</p>
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Programs</p>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
+                  <p className="text-xl sm:text-2xl font-black text-emerald-600" style={{ fontFamily: "Sora" }}>50k+</p>
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Students Guided</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* -- RIGHT COLUMN (5 Cols) � The Real & Connecting Student Wall (Maqsad-Style) -- */}
+            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+              
+              {/* Floating Live Badge Top */}
+              <div className="absolute -top-4 -left-3 sm:-left-6 z-20 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl p-2.5 px-4 shadow-xl shadow-slate-900/5 flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-none">Fall 2026 Admissions Open</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Track closing dates across 100+ unis</p>
+                </div>
+              </div>
+
+              {/* The Student Photo Cards Grid (3 Columns x 2 Rows) */}
+              <div className="bg-gradient-to-br from-white to-slate-100/80 p-3 sm:p-4 rounded-3xl border border-slate-200/80 shadow-2xl shadow-blue-900/10 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                
+                {/* Student 1: NUST */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-blue-50 to-indigo-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to NUST"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="eager"
                   />
+                  <div className="absolute top-2 right-2 bg-blue-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    NUST
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Ammar K.</p>
+                    <p className="text-[10px] text-blue-200 leading-tight">BS CS � NUST</p>
+                  </div>
                 </div>
-                <button type="submit" style={{
-                  background:"#2563eb", color:"#ffffff", border:"none",
-                  borderRadius:"8px", padding:"12px 24px",
-                  fontSize:"15px", fontWeight:600, cursor:"pointer",
-                  flexShrink:0, transition: "background 0.2s"
-                }} onMouseOver={e => e.currentTarget.style.background = "#1d4ed8"} onMouseOut={e => e.currentTarget.style.background = "#2563eb"}>
-                  Search
-                </button>
-              </div>
-            </form>
 
-            <div className="flex flex-wrap gap-4 mt-8 pt-8 border-t border-slate-200">
-              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
-                <div className="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                  <BookOpen size={20} />
+                {/* Student 2: Dow Medical */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-emerald-50 to-teal-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to Dow Medical College"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="eager"
+                  />
+                  <div className="absolute top-2 right-2 bg-emerald-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    DOW
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Zainab F.</p>
+                    <p className="text-[10px] text-emerald-200 leading-tight">MBBS � DUHS</p>
+                  </div>
+                </div>
+
+                {/* Student 3: FAST-NUCES */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-purple-50 to-pink-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to FAST"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="eager"
+                  />
+                  <div className="absolute top-2 right-2 bg-purple-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    FAST
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Bilal T.</p>
+                    <p className="text-[10px] text-purple-200 leading-tight">Software Engg</p>
+                  </div>
+                </div>
+
+                {/* Student 4: NED University */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-rose-50 to-orange-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to NED University"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-2 right-2 bg-rose-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    NED
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Hamza S.</p>
+                    <p className="text-[10px] text-rose-200 leading-tight">Mechanical Engg</p>
+                  </div>
+                </div>
+
+                {/* Student 5: IBA Karachi */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-amber-50 to-yellow-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to IBA"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-2 right-2 bg-amber-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    IBA
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Hania M.</p>
+                    <p className="text-[10px] text-amber-200 leading-tight">BBA � IBA Karachi</p>
+                  </div>
+                </div>
+
+                {/* Student 6: University of Karachi (UoK) */}
+                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-sky-50 to-cyan-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <img 
+                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" 
+                    alt="Student admitted to University of Karachi"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-2 right-2 bg-sky-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                    UoK
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
+                    <p className="text-xs font-bold leading-tight">Sara R.</p>
+                    <p className="text-[10px] text-sky-200 leading-tight">AI � Karachi Uni</p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Floating Social Proof Bottom */}
+              <div className="absolute -bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 px-4 shadow-xl shadow-slate-900/10 flex items-center gap-3">
+                <div className="flex -space-x-2 shrink-0">
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">AK</span>
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">ZF</span>
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-purple-500 text-white text-[10px] font-bold flex items-center justify-center">BT</span>
                 </div>
                 <div>
-                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>100+</p>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Universities</p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-amber-500 text-xs">?????</span>
+                    <span className="text-xs font-black text-slate-800">4.9/5</span>
+                  </div>
+                  <p className="text-[10px] font-medium text-slate-500">2,500+ Admissions Secured</p>
                 </div>
               </div>
 
-              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
-                <div className="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <TrendingUp size={20} />
-                </div>
-                <div>
-                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>150+</p>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Programs</p>
-                </div>
-              </div>
-
-              <div className="flex-1 min-w-[140px] flex items-center gap-3 bg-white p-3.5 rounded-xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
-                <div className="w-11 h-11 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                  <Users size={20} />
-                </div>
-                <div>
-                  <p className="text-[1.4rem] font-black text-slate-900 leading-none" style={{ fontFamily: "Sora" }}>5k+</p>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-1.5">Guided</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT — Interactive Merit Predictor */}
-          <div style={{ position:"relative", display:"flex", justifyContent:"flex-end" }} className="hero-right">
-
-            <div style={{
-              background:"#ffffff",
-              border:"1px solid #e2e8f0",
-              borderRadius:"16px",
-              width:"100%",
-              maxWidth:"480px",
-              boxShadow:"0 25px 50px -12px rgba(0,0,0,0.15)",
-              overflow:"hidden"
-            }}>
-              {/* Window Header */}
-              <div style={{ background:"#f8fafc", borderBottom:"1px solid #e2e8f0", padding:"12px 16px", display:"flex", alignItems:"center", gap:"8px" }}>
-                <div style={{ display:"flex", gap:"6px" }}>
-                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#ef4444" }} />
-                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#f59e0b" }} />
-                  <div style={{ width:"10px", height:"10px", borderRadius:"50%", background:"#10b981" }} />
-                </div>
-                <div style={{ marginLeft:"auto", fontSize:"12px", color:"#64748b", fontWeight:500 }}>Merit Predictor</div>
-              </div>
-
-              {/* Marks Input Row */}
-              <HeroMeritWidget universities={universities} />
-            </div>
-
-            {/* Overlapping realistic alert */}
-            <div className="hero-alert-card" style={{ background:"#ffffff", border:"1px solid #e2e8f0", borderRadius:"12px", padding:"16px", boxShadow:"0 10px 25px -5px rgba(0,0,0,0.1)", display:"flex", gap:"12px", alignItems:"flex-start", maxWidth:"260px" }}>
-              <div style={{ color:"#ef4444", marginTop:"2px" }}><Bell size={18} /></div>
-              <div>
-                <p style={{ fontSize:"13px", fontWeight:600, color:"#0f172a", margin:"0 0 4px" }}>Application Closing</p>
-                <p style={{ fontSize:"12px", color:"#64748b", margin:"0 0 8px", lineHeight:1.4 }}>UET Lahore BS Engineering admissions close tomorrow.</p>
-                <Link to="/search?q=UET%20Lahore" style={{ fontSize:"11px", fontWeight:600, color:"#2563eb", cursor:"pointer", textDecoration:"none", zIndex: 20, position: "relative" }} onMouseOver={e => e.currentTarget.style.textDecoration="underline"} onMouseOut={e => e.currentTarget.style.textDecoration="none"}>Apply Now →</Link>
-              </div>
             </div>
 
           </div>
         </div>
-
-        <style>{`
-          .hero-alert-card {
-            position: absolute;
-            bottom: -20px;
-            left: -40px;
-            z-index: 10;
-          }
-          @media(max-width:900px){
-            .hero-grid{ grid-template-columns:1fr !important; gap:40px !important; }
-            .hero-right{ justify-content:center !important; margin-top:20px; flex-direction: column; align-items: center; }
-            .hero-alert-card {
-              position: relative;
-              bottom: 0;
-              left: 0;
-              margin-top: -10px;
-              width: 100%;
-              max-width: 480px !important;
-            }
-          }
-        `}</style>
       </section>
 
 
