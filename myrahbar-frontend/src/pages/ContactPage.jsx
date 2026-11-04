@@ -92,10 +92,10 @@ export default function ContactPage() {
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-1">WhatsApp & Call</h3>
-                  <p className="text-slate-600 mb-2">Mon-Fri from 9am to 6pm.</p>
-                  <a href="https://wa.me/923455589079" target="_blank" rel="noopener noreferrer" className="text-emerald-600 font-medium hover:underline">
-                    +92 345 5589079
+                  <h3 className="text-lg font-semibold text-slate-800 mb-1">Call Us</h3>
+                  <p className="text-slate-600 mb-2">Mon-Fri from 9am to 5pm.</p>
+                  <a href="https://wa.me/923190211218" target="_blank" rel="noopener noreferrer" className="text-emerald-600 font-medium hover:underline">
+                    +92 319 0211218
                   </a>
                 </div>
               </div>
@@ -106,9 +106,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-1">Office</h3>
-                  <p className="text-slate-600 mb-2">Come say hello at our Karachi office.</p>
+                  <p className="text-slate-600 mb-2">Come say hello at our office HQ.</p>
                   <p className="text-slate-800 font-medium">
-                    Karachi, Pakistan
+                    Hyderabad, Pakistan
                   </p>
                 </div>
               </div>

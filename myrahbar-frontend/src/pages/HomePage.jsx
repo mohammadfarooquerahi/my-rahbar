@@ -528,7 +528,7 @@ export default function HomePage() {
                 </Link>
 
                 <a
-                  href="https://wa.me/923455589079?text=Assalam-o-Alaikum%20Rahbars!%20I%20need%20guidance%20for%20my%20university%20admission."
+                  href="https://wa.me/923190211218?text=Assalam-o-Alaikum%20Rahbars!%20I%20need%20guidance%20for%20my%20university%20admission."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all hover:-translate-y-0.5 cursor-pointer"

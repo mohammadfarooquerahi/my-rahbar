@@ -209,7 +209,7 @@ export default function CounselingPage() {
                 reply within 2 hours.
               </p>
               <a
-                href="https://wa.me/923001234567"
+                href="https://wa.me/923190211218"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center py-2 text-sm font-medium text-white rounded-xl"
@@ -243,7 +243,7 @@ export default function CounselingPage() {
                 <p className="text-sm text-slate-400">
                   Please save our number:{" "}
                   <span className="font-medium text-slate-600">
-                    +92 300 1234567
+                    +92 319 0211218
                   </span>
                 </p>
               </div>

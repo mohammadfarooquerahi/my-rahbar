@@ -99,7 +99,7 @@ function CompressorWidget() {
   );
 }
 
-const WHATSAPP = "923455589079";
+const WHATSAPP = "923190211218";
 
 const REVIEW_CATEGORIES = [
   { value: "overall",  label: "Overall" },
