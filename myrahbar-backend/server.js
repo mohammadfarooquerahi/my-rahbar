@@ -20,6 +20,7 @@ const universityRoutes = require("./routes/universities.js");
 const meritRoutes = require("./routes/merit.js");
 const watchlistRoutes = require("./routes/watchlist.js");
 const consultRoutes = require("./routes/consult.js");
+const contactRoutes = require("./routes/contact.js");
 const alertRoutes = require("./routes/alerts.js");
 const adminRoutes = require("./routes/admin.js");
 const aiRoutes = require("./routes/ai.js");
@@ -104,6 +105,7 @@ app.use("/api/universities", universityRoutes);
 app.use("/api/merit", meritRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/consult", consultRoutes);
+app.use("/api/contact", contactRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/ai", aiLimiter, aiRoutes); // VULN-07: strict AI rate limit

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// genAI initialized dynamically
 
 // Fallback model chain — if one is overloaded or quota-limited, try the next
 const MODEL_CHAIN = [
@@ -51,56 +51,83 @@ function extractJSON(raw) {
   return null;
 }
 
-// ── RETRY HELPER WITH MODEL FALLBACK ─────────────────────────────────
-async function generateWithRetry(prompt, maxRetries = 3) {
+// -- RETRY HELPER WITH MODEL & GROQ FALLBACK ---------------------------
+async function generateWithGroq(prompt) {
+  const Groq = require("groq-sdk");
+  const apiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY || process.env.GROQ_KEY;
+  if (!apiKey) {
+    throw new Error("Neither GEMINI_API_KEY nor GROQ_API_KEY is configured in Render environment variables.");
+  }
+  const groq = new Groq({ apiKey });
+
+  let selectedModel = "openai/gpt-oss-20b";
+  try {
+    const mList = await groq.models.list();
+    const valid = mList.data
+      .map((m) => m.id)
+      .filter((id) => !id.includes("whisper") && !id.includes("guard"));
+    selectedModel = valid.find((id) => id.includes("gpt-oss") || id.includes("qwen") || id.includes("llama")) || valid[0] || selectedModel;
+  } catch (_) {}
+
+  const completion = await groq.chat.completions.create({
+    model: selectedModel,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.2,
+    max_tokens: 4096,
+  });
+
+  return completion.choices[0]?.message?.content || "";
+}
+
+async function generateWithRetry(prompt, maxRetries = 2) {
   let lastError = null;
 
-  for (const modelName of MODEL_CHAIN) {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`[AI] Trying model: ${modelName} (attempt ${attempt}/${maxRetries})`);
-
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          tools: [{ googleSearch: {} }],
-        });
-
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        console.log(`[AI] Success with model: ${modelName} — ${text.length} chars`);
-        return text;
-      } catch (err) {
-        lastError = err;
-        const status = err.status || err.httpStatusCode || 0;
-        const msg = err.message || "";
-        console.error(`[AI] Model ${modelName} attempt ${attempt} failed: ${msg}`);
-
-        // 503 / 429 — overloaded or quota — retry with backoff, then next model
-        if (status === 503 || status === 429 || msg.includes("503") || msg.includes("429") || msg.includes("quota") || msg.includes("overloaded") || msg.includes("high demand")) {
-          if (attempt < maxRetries) {
-            await new Promise((r) => setTimeout(r, 1500 * attempt));
-            continue;
+  // 1. Try Gemini first if key is present
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== "") {
+    try {
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      for (const modelName of MODEL_CHAIN) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            console.log(`[AI] Trying Gemini model: ${modelName} (attempt ${attempt}/${maxRetries})`);
+            const model = genAI.getGenerativeModel({ model: modelName });
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
+            if (text) {
+              console.log(`[AI] Success with Gemini ${modelName} � ${text.length} chars`);
+              return text;
+            }
+          } catch (err) {
+            lastError = err;
+            const msg = err.message || "";
+            console.error(`[AI] Gemini ${modelName} attempt ${attempt} failed: ${msg}`);
+            if (msg.includes("API key not valid") || err.status === 400) {
+              break;
+            }
+            if (attempt < maxRetries) {
+              await new Promise((r) => setTimeout(r, 1000 * attempt));
+            }
           }
-          break; // next model
         }
-
-        // 404 — model doesn't exist, skip immediately
-        if (status === 404 || msg.includes("not found")) break;
-
-        // 400 — bad API key — no point retrying
-        if (status === 400 || msg.includes("API key not valid")) throw err;
-
-        // Other errors — retry with backoff
-        if (attempt < maxRetries) {
-          await new Promise((r) => setTimeout(r, 1500 * attempt));
+        if (lastError && (lastError.message || "").includes("API key not valid")) {
+          break;
         }
       }
+    } catch (e) {
+      console.warn("[AI] Gemini client error:", e.message);
+      lastError = e;
     }
   }
 
-  throw lastError || new Error("All AI models failed. Please try again later.");
+  // 2. Seamless Fallback to Groq (already configured on Render)
+  console.log("[AI] Using Groq fallback for generation...");
+  try {
+    return await generateWithGroq(prompt);
+  } catch (groqErr) {
+    console.error("[AI] Both Gemini and Groq failed. Groq error:", groqErr.message);
+    throw (lastError || groqErr);
+  }
 }
-
 // ── UNIVERSITY DATA PROMPT ───────────────────────────────────────────
 const PROMPT_TEMPLATE = (universityName) => `You are a professional, highly accurate university data researcher for Pakistan. 
 You MUST use Google Search to find the absolute latest, real, and current 2025-2026 data for "${universityName}" in Pakistan.

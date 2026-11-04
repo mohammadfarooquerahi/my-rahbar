@@ -1218,7 +1218,8 @@ const aiGenerateBlog = async (req, res) => {
   if (!title) return res.status(400).json({ message: "Title is required" });
 
   const Groq = require("groq-sdk");
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  const apiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY || process.env.GROQ_KEY;
+  const groq = new Groq({ apiKey });
 
   // VULN-02 FIX: Sanitize inputs before injecting into AI prompt (Prompt Injection prevention)
   const sanitizeForPrompt = (str) => String(str || "").replace(/["\\`\n\r]/g, " ").slice(0, 200);
@@ -1263,12 +1264,32 @@ Return ONLY a valid JSON object with these exact fields (absolutely no markdown,
   ]
 }`;
 
-  const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.7,
-    max_tokens: 4096,
-  });
+  let selectedModel = "openai/gpt-oss-20b";
+  try {
+    const mList = await groq.models.list();
+    const valid = mList.data
+      .map((m) => m.id)
+      .filter((id) => !id.includes("whisper") && !id.includes("guard"));
+    selectedModel = valid.find((id) => id.includes("gpt-oss") || id.includes("qwen") || id.includes("llama")) || valid[0] || selectedModel;
+  } catch (_) {}
+
+  let completion = null;
+  try {
+    completion = await groq.chat.completions.create({
+      model: selectedModel,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: 4096,
+    });
+  } catch (mErr) {
+    const fallbackModel = selectedModel.includes("gpt-oss") ? "qwen/qwen3.8-27b" : "openai/gpt-oss-20b";
+    completion = await groq.chat.completions.create({
+      model: fallbackModel,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: 4096,
+    });
+  }
 
   let text = completion.choices[0]?.message?.content?.trim() || "";
 

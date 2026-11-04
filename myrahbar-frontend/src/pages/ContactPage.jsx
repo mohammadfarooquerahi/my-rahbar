@@ -1,12 +1,57 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send your message. Please try again.");
+      }
+
+      setSuccess(true);
+      setFormData({ firstName: "", lastName: "", email: "", message: "" });
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please check your network and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Helmet>
         <title>Contact Us | Rahbars</title>
-        <meta name="description" content="Get in touch with the Rahbars team for any queries regarding university admissions or career counseling." />
+        <meta
+          name="description"
+          content="Get in touch with the Rahbars team for any queries regarding university admissions or career counseling."
+        />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">
@@ -21,11 +66,13 @@ export default function ContactPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
           {/* Contact Info */}
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-8" style={{ fontFamily: "Sora" }}>Contact Information</h2>
-            
+            <h2 className="text-2xl font-bold text-slate-800 mb-8" style={{ fontFamily: "Sora" }}>
+              Contact Information
+            </h2>
+
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
@@ -41,14 +88,14 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-1">Call Us</h3>
-                  <p className="text-slate-600 mb-2">Mon-Fri from 9am to 5pm.</p>
-                  <a href="tel:+923001234567" className="text-blue-600 font-medium hover:underline">
-                    +92 300 1234567
+                  <h3 className="text-lg font-semibold text-slate-800 mb-1">WhatsApp & Call</h3>
+                  <p className="text-slate-600 mb-2">Mon-Fri from 9am to 6pm.</p>
+                  <a href="https://wa.me/923455589079" target="_blank" rel="noopener noreferrer" className="text-emerald-600 font-medium hover:underline">
+                    +92 345 5589079
                   </a>
                 </div>
               </div>
@@ -59,11 +106,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-1">Office</h3>
-                  <p className="text-slate-600 mb-2">Come say hello at our office HQ.</p>
+                  <p className="text-slate-600 mb-2">Come say hello at our Karachi office.</p>
                   <p className="text-slate-800 font-medium">
-                    123 Innovation Drive<br />
-                    Tech Park, Islamabad<br />
-                    Pakistan
+                    Karachi, Pakistan
                   </p>
                 </div>
               </div>
@@ -71,35 +116,108 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-lg shadow-slate-200/50">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6" style={{ fontFamily: "Sora" }}>Send us a message</h2>
-            <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); alert("Thanks for your message! We will get back to you soon."); }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">First Name</label>
-                  <input type="text" required placeholder="John" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+          <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6" style={{ fontFamily: "Sora" }}>
+              Send us a message
+            </h2>
+
+            {success ? (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center animate-fade-in">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={32} />
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Last Name</label>
-                  <input type="text" required placeholder="Doe" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+                <h3 className="text-xl font-bold text-emerald-900 mb-2">Message Sent Successfully!</h3>
+                <p className="text-sm text-emerald-700 leading-relaxed mb-6">
+                  Thank you for reaching out. We have received your message and sent a notification to our team at <strong>rahbarsofficial@gmail.com</strong>. We will get back to you shortly.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSuccess(false)}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm cursor-pointer"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
+              <form className="space-y-5" onSubmit={handleSubmit}>
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm flex items-center gap-3">
+                    <AlertCircle size={18} className="shrink-0 text-red-500" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">First Name *</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      required
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      placeholder="e.g. Farooq"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Last Name</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      placeholder="e.g. Rahi"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-slate-900"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
-                <input type="email" required placeholder="john@example.com" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
-              </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="yourname@gmail.com"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-slate-900"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Message</label>
-                <textarea required rows={4} placeholder="How can we help you?" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all resize-none"></textarea>
-              </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Message *</label>
+                  <textarea
+                    name="message"
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="How can we help you with your university admissions or queries?"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all resize-none text-slate-900"
+                  ></textarea>
+                </div>
 
-              <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
-                <Send size={18} />
-                Send Message
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-600/20 cursor-pointer"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      <span>Send Message</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
