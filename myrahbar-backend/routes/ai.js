@@ -70,13 +70,39 @@ router.post("/chat", async (req, res) => {
       ...sanitizedMessages,
     ];
 
-    // Groq API Call
-        const groq = getGroqClient();
-    const chatCompletion = await groq.chat.completions.create({
-      messages: formattedMessages,
-      model: "llama-3.1-8b-instant", // Groq ka fast aur free model
-      max_tokens: 1000,
-    });
+    // Groq API Call with robust model fallback
+    const groq = getGroqClient();
+    const candidateModels = [
+      "llama-3.3-70b-versatile",
+      "llama3-8b-8192",
+      "llama-3.1-8b-instant",
+      "gemma2-9b-it",
+      "mixtral-8x7b-32768"
+    ];
+
+    let chatCompletion = null;
+    let lastErr = null;
+
+    for (const model of candidateModels) {
+      try {
+        chatCompletion = await groq.chat.completions.create({
+          messages: formattedMessages,
+          model,
+          max_tokens: 1000,
+        });
+        if (chatCompletion) break;
+      } catch (err) {
+        lastErr = err;
+        if (err.status === 404 || (err.message && err.message.includes("model"))) {
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    if (!chatCompletion && lastErr) {
+      throw lastErr;
+    }
 
     const text =
       chatCompletion.choices[0]?.message?.content ||
