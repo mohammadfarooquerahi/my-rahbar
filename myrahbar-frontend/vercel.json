@@ -54,7 +54,7 @@
       "destination": "https://myrahbar-backend.onrender.com/uploads/$1"
     },
     {
-      "source": "/((?!assets/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/((?!assets/).*)",
       "destination": "/index.html"
     }
   ]
