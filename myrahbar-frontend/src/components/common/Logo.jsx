@@ -1,53 +1,63 @@
 import { Link } from "react-router-dom";
 
 export default function Logo({ size = "md", layout = "horizontal" }) {
-  // Make the old logo bigger as requested
-  const imgSizes = {
-    sm: "h-10",
-    md: "h-12 md:h-14",
-    lg: "h-16 md:h-20",
-  };
-  
-  // Base text scale based on size
-  const textScale = {
-    sm: "text-xl",
-    md: "text-2xl md:text-[28px]",
-    lg: "text-4xl",
+  const isVertical = layout === "vertical";
+
+  // Prominently enlarged icon sizes so the logo mark stands out proudly beside the wordmark & tagline
+  const iconSizes = {
+    sm: "h-11 w-11 min-w-[44px]",
+    md: "h-14 w-14 md:h-16 md:w-16 min-w-[56px] md:min-w-[64px]",
+    lg: "h-20 w-20 md:h-24 md:w-24 min-w-[80px]",
   };
 
-  const isVertical = layout === "vertical";
-  const heightClass = imgSizes[size] || imgSizes.md;
-  const fontClass = textScale[size] || textScale.md;
+  const titleSizes = {
+    sm: "text-xl",
+    md: "text-2xl md:text-[28px]",
+    lg: "text-4xl md:text-5xl",
+  };
+
+  const taglineSizes = {
+    sm: "text-[9px] tracking-wider",
+    md: "text-[10px] md:text-[11px] tracking-[0.18em]",
+    lg: "text-xs md:text-sm tracking-[0.22em]",
+  };
+
+  const iconClass = iconSizes[size] || iconSizes.md;
+  const titleClass = titleSizes[size] || titleSizes.md;
+  const taglineClass = taglineSizes[size] || taglineSizes.md;
 
   return (
     <Link 
       to="/" 
-      className={`inline-flex group items-center ${isVertical ? "flex-col text-center justify-center gap-1" : "gap-2 sm:gap-3"}`}
+      className={`inline-flex group items-center transition-all ${isVertical ? "flex-col text-center justify-center gap-2" : "gap-3 sm:gap-3.5"}`}
+      title="Rahbars - Pakistan's #1 Admission Platform"
     >
-      <img
-        src="/logo-full.png"
-        alt="Rahbars Logo"
-        className={`${heightClass} w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0`}
-      />
-      <div className={`flex flex-col ${isVertical ? "items-center mt-1" : "items-start justify-center"} shrink-0`}>
-        {/* 'Rahbars' with Proper Font */}
+      {/* Brand Icon Mark — Made bigger, sharper and well-proportioned */}
+      <div className="relative shrink-0 flex items-center justify-center">
+        <img
+          src="/logo-full.png"
+          alt="Rahbars Logo"
+          className={`${iconClass} object-contain transition-transform duration-300 group-hover:scale-105 shrink-0 drop-shadow-sm`}
+          fetchpriority="high"
+          loading="eager"
+        />
+      </div>
+
+      {/* Brand Name & Tagline Stack */}
+      <div className={`flex flex-col ${isVertical ? "items-center" : "items-start justify-center"} shrink-0`}>
         <span 
-          className={`font-bold text-slate-800 ${fontClass}`}
+          className={`font-black text-slate-900 leading-none tracking-tight ${titleClass}`}
           style={{ 
-            fontFamily: "'Outfit', sans-serif", 
-            lineHeight: "1",
-            letterSpacing: "-0.01em"
+            fontFamily: "'Outfit', 'Sora', sans-serif",
+            letterSpacing: "-0.02em",
           }}
         >
           Rahbars<span className="text-blue-600">.</span>
         </span>
-        {/* Tagline with Proper tracking and font */}
         <span 
-          className="font-medium text-slate-500 whitespace-nowrap uppercase mt-1"
+          className={`font-bold text-slate-500 uppercase mt-1 leading-none ${taglineClass}`}
           style={{ 
             fontFamily: "'Inter', sans-serif",
-            letterSpacing: "0.15em",
-            fontSize: size === "sm" ? "0.45rem" : size === "md" ? "0.5rem" : "0.6rem" 
           }}
         >
           LEARN. GROW. SUCCEED.

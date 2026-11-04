@@ -429,47 +429,50 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-            {/* -- LEFT COLUMN (7 Cols) � Engaging Copy, Filter & Action -- */}
+            {/* -- LEFT COLUMN (7 Cols) — Engaging Copy, Filter & Action -- */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
               
               {/* Trust Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs md:text-sm font-semibold mb-5 shadow-sm">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-blue-50/90 border border-blue-200/90 text-blue-700 text-xs sm:text-sm font-bold mb-5 shadow-sm">
+                <span className="flex h-2.5 w-2.5 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
-                <span>???? Pakistan's #1 University Admission & Merit Guide</span>
+                <span>🎓 Pakistan's #1 Admission & Merit Intelligence Guide</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12] mb-5">
-                Find your <span className="text-blue-600 relative inline-block">
-                  dream university
-                  <svg className="absolute -bottom-1 left-0 w-full h-2.5 text-blue-300 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
-                    <path d="M0 5 Q 50 12 100 5" stroke="currentColor" strokeWidth="4" fill="transparent"/>
+              <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1] mb-5">
+                Pakistan's #1 Platform to Enter Your{" "}
+                <span className="relative inline-block text-blue-600">
+                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                    Dream University
+                  </span>
+                  <svg className="absolute -bottom-1.5 left-0 w-full h-3 text-blue-400/60 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 6 Q 50 14 100 6" stroke="currentColor" strokeWidth="4" strokeLinecap="round" fill="transparent"/>
                   </svg>
                 </span>
-                <br />
-                without the guesswork.
+                <br className="hidden sm:inline" />
+                Without the Stress.
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6 max-w-xl">
-                Join <strong className="text-slate-900 font-bold">50,000+ Pakistani students</strong> who use Rahbars to calculate exact aggregate merits, track closing deadlines, download past papers, and explore 100+ top universities.
+              <p className="text-base sm:text-lg lg:text-xl text-slate-600 font-normal leading-relaxed mb-6 max-w-xl">
+                Stop guessing closing merits. Calculate your exact aggregate score, explore real cut-offs for 100+ top universities in Pakistan, download verified past papers, and get free 1:1 counselor support on WhatsApp.
               </p>
 
               {/* Field of Study Selector (Quick Target Pills) */}
               <div className="w-full mb-6">
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                  Which field are you aiming for?
+                  Popular Target Fields:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: "?? CS & AI", query: "Computer Science" },
-                    { label: "?? Medical / MDCAT", query: "MBBS" },
-                    { label: "?? Engineering", query: "Engineering" },
-                    { label: "?? Business & IBA", query: "BBA" },
-                    { label: "?? Law & Social", query: "LLB" },
+                    { label: "💻 Computer Science & AI", query: "Computer Science" },
+                    { label: "🩺 Medical / MDCAT", query: "MBBS" },
+                    { label: "⚡ Engineering / ECAT", query: "Engineering" },
+                    { label: "📊 Business & IBA", query: "BBA" },
+                    { label: "⚖️ Law & Social", query: "LLB" },
                   ].map((field) => (
                     <button
                       key={field.label}
@@ -545,7 +548,7 @@ export default function HomePage() {
                   <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Universities</p>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
-                  <p className="text-xl sm:text-2xl font-black text-blue-600" style={{ fontFamily: "Sora" }}>150+</p>
+                  <p className="text-xl sm:text-2xl font-black text-blue-600" style={{ fontFamily: "Sora" }}>500+</p>
                   <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Programs</p>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
@@ -556,7 +559,7 @@ export default function HomePage() {
 
             </div>
 
-            {/* -- RIGHT COLUMN (5 Cols) � The Real & Connecting Student Wall (Maqsad-Style) -- */}
+            {/* -- RIGHT COLUMN (5 Cols) — The Real & Connecting Student Wall (Maqsad-Style) -- */}
             <div className="lg:col-span-5 relative mt-4 lg:mt-0">
               
               {/* Floating Live Badge Top */}
@@ -577,14 +580,17 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to NUST"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="eager"
+                    fetchpriority="high"
                   />
                   <div className="absolute top-2 right-2 bg-blue-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
                     NUST
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
                     <p className="text-xs font-bold leading-tight">Ammar K.</p>
-                    <p className="text-[10px] text-blue-200 leading-tight">BS CS � NUST</p>
+                    <p className="text-[10px] text-blue-200 leading-tight">BS CS • NUST</p>
                   </div>
                 </div>
 
@@ -594,14 +600,17 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to Dow Medical College"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="eager"
+                    fetchpriority="high"
                   />
                   <div className="absolute top-2 right-2 bg-emerald-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
                     DOW
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
                     <p className="text-xs font-bold leading-tight">Zainab F.</p>
-                    <p className="text-[10px] text-emerald-200 leading-tight">MBBS � DUHS</p>
+                    <p className="text-[10px] text-emerald-200 leading-tight">MBBS • DUHS</p>
                   </div>
                 </div>
 
@@ -611,6 +620,8 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to FAST"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="eager"
                   />
                   <div className="absolute top-2 right-2 bg-purple-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
@@ -628,6 +639,8 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to NED University"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="lazy"
                   />
                   <div className="absolute top-2 right-2 bg-rose-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
@@ -645,6 +658,8 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to IBA"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="lazy"
                   />
                   <div className="absolute top-2 right-2 bg-amber-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
@@ -652,7 +667,7 @@ export default function HomePage() {
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
                     <p className="text-xs font-bold leading-tight">Hania M.</p>
-                    <p className="text-[10px] text-amber-200 leading-tight">BBA � IBA Karachi</p>
+                    <p className="text-[10px] text-amber-200 leading-tight">BBA • IBA Karachi</p>
                   </div>
                 </div>
 
@@ -662,6 +677,8 @@ export default function HomePage() {
                     src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" 
                     alt="Student admitted to University of Karachi"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    width="400"
+                    height="500"
                     loading="lazy"
                   />
                   <div className="absolute top-2 right-2 bg-sky-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
@@ -669,7 +686,7 @@ export default function HomePage() {
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
                     <p className="text-xs font-bold leading-tight">Sara R.</p>
-                    <p className="text-[10px] text-sky-200 leading-tight">AI � Karachi Uni</p>
+                    <p className="text-[10px] text-sky-200 leading-tight">Pharm-D • Karachi Uni</p>
                   </div>
                 </div>
 
@@ -678,13 +695,13 @@ export default function HomePage() {
               {/* Floating Social Proof Bottom */}
               <div className="absolute -bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 px-4 shadow-xl shadow-slate-900/10 flex items-center gap-3">
                 <div className="flex -space-x-2 shrink-0">
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">AK</span>
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">ZF</span>
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-purple-500 text-white text-[10px] font-bold flex items-center justify-center">BT</span>
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-blue-600 text-white text-[10px] font-black flex items-center justify-center shadow">AK</span>
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shadow">ZF</span>
+                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-purple-600 text-white text-[10px] font-black flex items-center justify-center shadow">BT</span>
                 </div>
                 <div>
                   <div className="flex items-center gap-1">
-                    <span className="text-amber-500 text-xs">?????</span>
+                    <span className="text-amber-500 text-xs">★★★★★</span>
                     <span className="text-xs font-black text-slate-800">4.9/5</span>
                   </div>
                   <p className="text-[10px] font-medium text-slate-500">2,500+ Admissions Secured</p>
