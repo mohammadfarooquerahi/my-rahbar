@@ -1,52 +1,51 @@
 const nodemailer = require("nodemailer");
 
 /**
- * Creates and returns a configured Nodemailer transporter using Gmail SSL (port 465).
- * Explicitly sanitizes credentials (stripping whitespace from App Passwords)
- * and sets aggressive socket timeouts to prevent cloud hanging.
+ * Creates a Nodemailer transporter.
+ * Supports explicit IPv4 (family: 4) to prevent cloud IPv6 blackhole hanging.
  */
-const getTransporter = () => {
+const createGmailTransport = (port = 465, secure = true) => {
   const user = (process.env.EMAIL_USER || "").trim();
-  // Google App Passwords are 16 letters, often copied with spaces e.g. "abcd efgh ijkl mnop"
   const pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "").trim();
 
-  if (!user || !pass) {
-    return null;
-  }
+  if (!user || !pass) return null;
 
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // Direct SSL
+    port,
+    secure,
+    family: 4, // CRITICAL: Force IPv4 to prevent IPv6 hanging on Render/cloud Linux containers
     auth: {
       user,
       pass,
     },
-    connectionTimeout: 10000, // 10s max to establish TCP connection
-    greetingTimeout: 5000,    // 5s max for SMTP greeting
-    socketTimeout: 15000,     // 15s max for data transfer
+    connectionTimeout: 8000, // 8s
+    greetingTimeout: 4000,   // 4s
+    socketTimeout: 12000,    // 12s
     tls: {
-      rejectUnauthorized: false, // Prevents self-signed or proxy TLS errors on cloud hosts
+      rejectUnauthorized: false,
     },
   });
 };
 
 /**
- * Send an email using Nodemailer
- * @param {Object} options { to, subject, html, text, replyTo }
- * @returns {Promise<{ success: boolean, messageId?: string, error?: string }>}
+ * Send an email with automatic fallback:
+ * 1. Tries port 465 SSL with IPv4
+ * 2. If connection fails or times out, tries port 587 STARTTLS with IPv4
  */
 const sendEmail = async ({ to, subject, html, text, replyTo }) => {
   const user = (process.env.EMAIL_USER || "").trim();
-  const transporter = getTransporter();
+  const pass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "").trim();
 
-  if (!transporter) {
-    console.warn("[sendEmail] EMAIL_USER or EMAIL_PASS is not configured on the server. Email skipped for:", to);
+  if (!user || !pass) {
+    console.warn("[sendEmail] EMAIL_USER or EMAIL_PASS is missing in environment variables. Skipped sending to:", to);
     return { success: false, reason: "credentials_missing" };
   }
 
+  // Attempt 1: Port 465 (Direct SSL, IPv4)
   try {
-    const info = await transporter.sendMail({
+    const transporter465 = createGmailTransport(465, true);
+    const info = await transporter465.sendMail({
       from: `"Rahbars" <${user}>`,
       to,
       replyTo: replyTo || user,
@@ -54,12 +53,28 @@ const sendEmail = async ({ to, subject, html, text, replyTo }) => {
       html,
       text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
     });
+    console.log(`[sendEmail] Success via port 465! ID: ${info.messageId} to ${to}`);
+    return { success: true, messageId: info.messageId, port: 465 };
+  } catch (err465) {
+    console.warn(`[sendEmail] Port 465 failed (${err465.message}). Trying fallback port 587...`);
+  }
 
-    console.log(`[sendEmail] Success! Message sent to ${to} (ID: ${info.messageId})`);
-    return { success: true, messageId: info.messageId };
-  } catch (err) {
-    console.error(`[sendEmail] Failed to send email to ${to}:`, err.message);
-    return { success: false, error: err.message };
+  // Attempt 2: Port 587 (STARTTLS, IPv4)
+  try {
+    const transporter587 = createGmailTransport(587, false);
+    const info = await transporter587.sendMail({
+      from: `"Rahbars" <${user}>`,
+      to,
+      replyTo: replyTo || user,
+      subject,
+      html,
+      text: text || html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+    });
+    console.log(`[sendEmail] Success via fallback port 587! ID: ${info.messageId} to ${to}`);
+    return { success: true, messageId: info.messageId, port: 587 };
+  } catch (err587) {
+    console.error(`[sendEmail] Both port 465 and 587 failed for ${to}:`, err587.message);
+    return { success: false, error: err587.message };
   }
 };
 
@@ -79,26 +94,57 @@ const verifyEmailConfig = async () => {
     };
   }
 
+  const passPreview = pass.length >= 4 
+    ? `${pass.slice(0, 2)}••••••••${pass.slice(-2)}` 
+    : "••••";
+
+  // Test port 465
+  let err465 = null;
   try {
-    const transporter = getTransporter();
-    await transporter.verify();
+    const t465 = createGmailTransport(465, true);
+    await t465.verify();
     return {
       configured: true,
       verified: true,
+      workingPort: 465,
       user,
-      message: "Gmail SMTP connected and verified successfully!",
+      passLength: pass.length,
+      passPreview,
+      message: "Gmail SMTP connected and verified successfully via port 465 SSL!",
     };
   } catch (err) {
+    err465 = err;
+  }
+
+  // Fallback test port 587
+  try {
+    const t587 = createGmailTransport(587, false);
+    await t587.verify();
+    return {
+      configured: true,
+      verified: true,
+      workingPort: 587,
+      user,
+      passLength: pass.length,
+      passPreview,
+      message: "Gmail SMTP connected and verified successfully via fallback port 587 STARTTLS!",
+    };
+  } catch (err587) {
     return {
       configured: true,
       verified: false,
       user,
-      error: err.message,
-      tip: "Ensure 2-Step Verification is ON in Google Account and use a 16-character App Password (not your normal Gmail login password).",
+      passLength: pass.length,
+      passPreview,
+      errorPort465: err465 ? err465.message : null,
+      errorPort587: err587.message,
+      tip: pass.length !== 16
+        ? `Your password is ${pass.length} characters long. A Google App Password must be EXACTLY 16 letters (e.g. abcd efgh ijkl mnop). You probably entered your regular Gmail password!`
+        : "Ensure 2-Step Verification is ON in your Google Account and that you created an App Password under https://myaccount.google.com/apppasswords",
     };
   }
 };
 
 module.exports = sendEmail;
-module.exports.getTransporter = getTransporter;
+module.exports.createGmailTransport = createGmailTransport;
 module.exports.verifyEmailConfig = verifyEmailConfig;
