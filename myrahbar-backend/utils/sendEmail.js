@@ -1,17 +1,17 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
 
-// Force IPv4 lookup first on Linux/Render containers to prevent IPv6 ENETUNREACH errors
+// Enforce IPv4 globally
 try {
   if (dns.setDefaultResultOrder) {
     dns.setDefaultResultOrder("ipv4first");
   }
-} catch (e) {
-  // Ignored if older node version
-}
+} catch (_) {}
 
 /**
  * Creates a Nodemailer transporter.
+ * Uses a custom DNS lookup that strictly asks for IPv4 (family: 4)
+ * to avoid IPv6 ENETUNREACH errors on cloud Linux hosts like Render.
  */
 const createGmailTransport = (port = 465, secure = true) => {
   const user = (process.env.EMAIL_USER || "").trim();
@@ -23,7 +23,9 @@ const createGmailTransport = (port = 465, secure = true) => {
     host: "smtp.gmail.com",
     port,
     secure,
-    family: 4, // Explicit IPv4
+    lookup: (hostname, options, callback) => {
+      dns.lookup(hostname, { family: 4 }, callback);
+    },
     auth: {
       user,
       pass,
@@ -33,6 +35,7 @@ const createGmailTransport = (port = 465, secure = true) => {
     socketTimeout: 12000,
     tls: {
       rejectUnauthorized: false,
+      servername: "smtp.gmail.com",
     },
   });
 };
@@ -40,7 +43,7 @@ const createGmailTransport = (port = 465, secure = true) => {
 /**
  * Send an email with automatic fallback:
  * 1. Tries port 465 SSL with IPv4
- * 2. If connection fails or times out, tries port 587 STARTTLS with IPv4
+ * 2. If connection fails, tries port 587 STARTTLS with IPv4
  */
 const sendEmail = async ({ to, subject, html, text, replyTo }) => {
   const user = (process.env.EMAIL_USER || "").trim();

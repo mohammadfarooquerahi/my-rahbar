@@ -73,43 +73,23 @@ async function generateWithGroq(prompt) {
   return completion.choices[0]?.message?.content || "";
 }
 
-async function generateWithRetry(prompt, maxRetries = 2) {
+async function generateWithRetry(prompt) {
   let lastError = null;
 
   // 1. Try Gemini first if key is present
   if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== "") {
     try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      for (const modelName of MODEL_CHAIN) {
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
-          try {
-            console.log(`[AI] Trying Gemini model: ${modelName} (attempt ${attempt}/${maxRetries})`);
-            const model = genAI.getGenerativeModel({ model: modelName });
-            const result = await model.generateContent(prompt);
-            const text = result.response.text();
-            if (text) {
-              console.log(`[AI] Success with Gemini ${modelName} � ${text.length} chars`);
-              return text;
-            }
-          } catch (err) {
-            lastError = err;
-            const msg = err.message || "";
-            console.error(`[AI] Gemini ${modelName} attempt ${attempt} failed: ${msg}`);
-            if (msg.includes("API key not valid") || err.status === 400) {
-              break;
-            }
-            if (attempt < maxRetries) {
-              await new Promise((r) => setTimeout(r, 1000 * attempt));
-            }
-          }
-        }
-        if (lastError && (lastError.message || "").includes("API key not valid")) {
-          break;
-        }
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+      if (text) {
+        console.log(`[AI] Success with Gemini 2.0 Flash (${text.length} chars)`);
+        return text;
       }
-    } catch (e) {
-      console.warn("[AI] Gemini client error:", e.message);
-      lastError = e;
+    } catch (err) {
+      lastError = err;
+      console.warn(`[AI] Gemini unavailable (${err.message}). Switching to Groq immediately...`);
     }
   }
 
@@ -122,6 +102,7 @@ async function generateWithRetry(prompt, maxRetries = 2) {
     throw (lastError || groqErr);
   }
 }
+
 // ── UNIVERSITY DATA PROMPT ───────────────────────────────────────────
 const PROMPT_TEMPLATE = (universityName) => `You are a professional, highly accurate university data researcher for Pakistan. 
 You MUST use Google Search to find the absolute latest, real, and current 2025-2026 data for "${universityName}" in Pakistan.
