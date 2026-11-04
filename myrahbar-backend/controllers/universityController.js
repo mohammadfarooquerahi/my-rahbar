@@ -98,9 +98,17 @@ const search = async (req, res) => {
 // GET /api/universities/:slug
 const getOne = async (req, res) => {
   try {
-    const university = await University.findOne({
-      slug: req.params.slug.toLowerCase(),
-    });
+    const slugParam = req.params.slug.toLowerCase().trim();
+    let university = await University.findOne({ slug: slugParam });
+
+    if (!university) {
+      university = await University.findOne({
+        $or: [
+          { slug: { $regex: new RegExp('^' + escapeRegex(slugParam), 'i') } },
+          { shortName: { $regex: new RegExp('^' + escapeRegex(slugParam) + '$', 'i') } }
+        ]
+      });
+    }
 
     if (!university) {
       return res.status(404).json({ message: "University not found" });
