@@ -83,36 +83,34 @@ router.post("/chat", async (req, res) => {
 
     // Groq API Call with robust model fallback
     const groq = getGroqClient();
-    const candidateModels = [
-      "llama-3.3-70b-versatile",
-      "llama3-8b-8192",
-      "llama-3.1-8b-instant",
-      "gemma2-9b-it",
-      "mixtral-8x7b-32768"
-    ];
-
+    // Dynamically pick the best active text generation model from Groq
     let chatCompletion = null;
-    let lastErr = null;
+    let selectedModel = "openai/gpt-oss-20b";
 
-    for (const model of candidateModels) {
-      try {
-        chatCompletion = await groq.chat.completions.create({
-          messages: formattedMessages,
-          model,
-          max_tokens: 1000,
-        });
-        if (chatCompletion) break;
-      } catch (err) {
-        lastErr = err;
-        if (err.status === 404 || (err.message && err.message.includes("model"))) {
-          continue;
-        }
-        throw err;
-      }
+    try {
+      const mList = await groq.models.list();
+      const valid = mList.data
+        .map((m) => m.id)
+        .filter((id) => !id.includes("whisper") && !id.includes("guard"));
+      
+      selectedModel = valid.find((id) => id.includes("gpt-oss") || id.includes("qwen") || id.includes("llama")) || valid[0] || "openai/gpt-oss-20b";
+    } catch (e) {
+      console.warn("Could not fetch dynamic models list, using default:", selectedModel);
     }
 
-    if (!chatCompletion && lastErr) {
-      throw lastErr;
+    try {
+      chatCompletion = await groq.chat.completions.create({
+        messages: formattedMessages,
+        model: selectedModel,
+        max_tokens: 1000,
+      });
+    } catch (err) {
+      const fallbackModel = selectedModel.includes("gpt-oss") ? "qwen/qwen3.8-27b" : "openai/gpt-oss-20b";
+      chatCompletion = await groq.chat.completions.create({
+        messages: formattedMessages,
+        model: fallbackModel,
+        max_tokens: 1000,
+      });
     }
 
     const text =
@@ -132,8 +130,7 @@ router.post("/chat", async (req, res) => {
     res.json({
       reply: fallbackResponse,
       response: fallbackResponse,
-      debugError: error.message
-    });
+          });
   }
 });
 
