@@ -31,6 +31,7 @@ const pastPaperRoutes = require("./routes/pastpapers.js");
 const newsRoutes = require("./routes/news.js");
 const aiCollectRoutes = require("./routes/aiCollect"); // 🌟 imported properly
 const sitemapRoutes = require("./routes/sitemap.js");
+const heroStudentRoutes = require("./routes/heroStudents.js");
 
 // Middleware Imports
 const errorTracker = require("./middleware/errorTracker.js");
@@ -119,6 +120,7 @@ app.use("/api/news", newsRoutes);
 app.use("/api/ai-collect", aiCollectRoutes);
 
 app.use("/api/sitemap.xml", sitemapRoutes);
+app.use("/api/hero-students", heroStudentRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

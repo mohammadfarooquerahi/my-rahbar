@@ -406,9 +406,9 @@ export default function HomePage() {
         <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
       </Helmet>
 
-      {/* -- HERO SECTION � Inspiring & Connecting (Maqsad-Inspired) -- */}
+      {/* -- HERO SECTION (Fits 100% in One Screen Above the Fold) -- */}
       <section 
-        className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24 px-4 bg-gradient-to-b from-slate-50 via-white to-blue-50/40"
+        className="relative overflow-hidden py-3 sm:py-5 lg:min-h-[calc(100vh-68px)] lg:flex lg:items-center px-4 bg-gradient-to-b from-slate-50 via-white to-blue-50/40"
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
         {/* Ambient subtle glow background */}
@@ -417,7 +417,7 @@ export default function HomePage() {
           <div className="absolute top-20 right-0 w-[500px] h-[500px] rounded-full bg-indigo-400/10 blur-3xl" />
           <div className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-emerald-400/10 blur-3xl" />
           <div 
-            className="absolute inset-0 opacity-[0.25]"
+            className="absolute inset-0 opacity-[0.2]"
             style={{
               backgroundImage: "radial-gradient(#94a3b8 1px, transparent 1px)",
               backgroundSize: "28px 28px",
@@ -425,74 +425,48 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative max-w-7xl mx-auto z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto w-full z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
 
-            {/* -- LEFT COLUMN (7 Cols) — Engaging Copy, Filter & Action -- */}
+            {/* -- LEFT COLUMN (7 Cols) -- */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
               
               {/* Trust Pill */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-blue-50/90 border border-blue-200/90 text-blue-700 text-xs sm:text-sm font-bold mb-5 shadow-sm">
-                <span className="flex h-2.5 w-2.5 relative">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/90 text-blue-700 text-xs font-bold mb-2.5 shadow-xs">
+                <span className="flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
                 <span>🎓 Pakistan's #1 Admission & Merit Intelligence Guide</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1] mb-5">
+              <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-black text-slate-900 tracking-tight leading-[1.15] mb-2.5">
                 Pakistan's #1 Platform to Enter Your{" "}
                 <span className="relative inline-block text-blue-600">
                   <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
                     Dream University
                   </span>
-                  <svg className="absolute -bottom-1.5 left-0 w-full h-3 text-blue-400/60 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <svg className="absolute -bottom-1 left-0 w-full h-2.5 text-blue-400/60 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 6 Q 50 14 100 6" stroke="currentColor" strokeWidth="4" strokeLinecap="round" fill="transparent"/>
                   </svg>
-                </span>
-                <br className="hidden sm:inline" />
+                </span>{" "}
                 Without the Stress.
               </h1>
 
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg lg:text-xl text-slate-600 font-normal leading-relaxed mb-6 max-w-xl">
-                Stop guessing closing merits. Calculate your exact aggregate score, explore real cut-offs for 100+ top universities in Pakistan, download verified past papers, and get free 1:1 counselor support on WhatsApp.
+              {/* Subtitle - Crisp, focused, no fluff */}
+              <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-normal leading-relaxed mb-3 max-w-xl">
+                Compare cut-offs, calculate your exact aggregate score, and discover the best university programs in Pakistan with free 1:1 WhatsApp counselor support.
               </p>
 
-              {/* Field of Study Selector (Quick Target Pills) */}
-              <div className="w-full mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                  Popular Target Fields:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: "💻 Computer Science & AI", query: "Computer Science" },
-                    { label: "🩺 Medical / MDCAT", query: "MBBS" },
-                    { label: "⚡ Engineering / ECAT", query: "Engineering" },
-                    { label: "📊 Business & IBA", query: "BBA" },
-                    { label: "⚖️ Law & Social", query: "LLB" },
-                  ].map((field) => (
-                    <button
-                      key={field.label}
-                      type="button"
-                      onClick={() => navigate("/search?q=" + encodeURIComponent(field.query))}
-                      className="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 shadow-sm transition-all duration-200 cursor-pointer"
-                    >
-                      {field.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Search Bar Container */}
-              <form onSubmit={handleSearch} className="w-full max-w-xl mb-4">
-                <div className="bg-white p-2 rounded-2xl border border-slate-300 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row items-stretch gap-2 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
-                  <div className="sm:border-r border-slate-200 sm:pr-2 shrink-0">
+              <form onSubmit={handleSearch} className="w-full max-w-xl mb-2.5">
+                <div className="bg-white p-1.5 rounded-xl border border-slate-300 shadow-md flex flex-col sm:flex-row items-stretch gap-1.5 transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
+                  <div className="sm:border-r border-slate-200 sm:pr-1 shrink-0">
                     <select
                       value={degreeLevel}
                       onChange={(e) => setDegreeLevel(e.target.value)}
-                      className="w-full sm:w-auto bg-transparent border-0 outline-none text-slate-700 text-sm font-medium py-2.5 px-3 cursor-pointer"
+                      className="w-full sm:w-auto bg-transparent border-0 outline-none text-slate-700 text-xs sm:text-sm font-medium py-2 px-2.5 cursor-pointer"
                     >
                       <option value="">All Degree Levels</option>
                       <option value="BS">BS / Undergraduate</option>
@@ -501,210 +475,160 @@ export default function HomePage() {
                     </select>
                   </div>
                   <div className="flex-1 flex items-center gap-2 px-2">
-                    <Search size={18} className="text-slate-400 shrink-0" />
+                    <Search size={16} className="text-slate-400 shrink-0" />
                     <input
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search university, program (e.g. FAST, Dow, NED)..."
-                      className="w-full bg-transparent border-0 outline-none text-slate-900 placeholder:text-slate-400 text-sm sm:text-base py-1"
+                      placeholder="Search university or program (e.g. FAST, Dow, NUST)..."
+                      className="w-full bg-transparent border-0 outline-none text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm py-1"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors shadow-md shadow-blue-500/20 shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors shadow-sm shrink-0 cursor-pointer flex items-center justify-center gap-1"
                   >
                     <span>Search</span>
-                    <ArrowRight size={16} />
+                    <ArrowRight size={14} />
                   </button>
                 </div>
               </form>
 
-              {/* Action Buttons: Find Uni + WhatsApp Counselor (Like Maqsad) */}
-              <div className="flex flex-wrap items-center gap-3 w-full mb-8">
+              {/* Popular Target Fields (Compact Inline Row) */}
+              <div className="w-full mb-3 flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1">
+                  Popular:
+                </span>
+                {[
+                  { label: "💻 CS & AI", query: "Computer Science" },
+                  { label: "🩺 Medical / MDCAT", query: "MBBS" },
+                  { label: "⚙️ Engineering", query: "Engineering" },
+                  { label: "📊 Business", query: "BBA" },
+                  { label: "⚖️ Law", query: "LLB" },
+                ].map((field) => (
+                  <button
+                    key={field.label}
+                    type="button"
+                    onClick={() => navigate("/search?q=" + encodeURIComponent(field.query))}
+                    className="px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition cursor-pointer"
+                  >
+                    {field.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Action Buttons: Matcher + WhatsApp Counselor */}
+              <div className="flex flex-wrap items-center gap-2.5 w-full mb-3.5">
                 <Link
                   to="/find-university"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all hover:-translate-y-0.5 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer"
                 >
-                  <Sparkles size={16} className="text-yellow-400" />
-                  <span>Smart University Matcher</span>
+                  <Sparkles size={15} className="text-yellow-400" />
+                  <span>Smart Matcher</span>
                 </Link>
 
                 <a
                   href="https://wa.me/923190211218?text=Assalam-o-Alaikum%20Rahbars!%20I%20need%20guidance%20for%20my%20university%20admission."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md shadow-emerald-500/20 transition-all hover:-translate-y-0.5 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer"
                 >
-                  <MessageCircle size={17} />
+                  <MessageCircle size={15} />
                   <span>Talk to Counsellor</span>
                 </a>
               </div>
 
-              {/* Social Proof Stats Strip */}
-              <div className="w-full grid grid-cols-3 gap-3 sm:gap-4 pt-6 border-t border-slate-200/80">
-                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
-                  <p className="text-xl sm:text-2xl font-black text-slate-900" style={{ fontFamily: "Sora" }}>100+</p>
-                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Universities</p>
+              {/* Social Proof Stats Strip (Compact & Sleek) */}
+              <div className="w-full flex items-center flex-wrap gap-4 sm:gap-6 pt-2.5 border-t border-slate-200/70 text-xs text-slate-600">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black text-slate-900 text-sm" style={{ fontFamily: "Sora" }}>100+</span>
+                  <span className="text-slate-500">Universities</span>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
-                  <p className="text-xl sm:text-2xl font-black text-blue-600" style={{ fontFamily: "Sora" }}>500+</p>
-                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Programs</p>
+                <div className="h-3 w-px bg-slate-200" />
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black text-blue-600 text-sm" style={{ fontFamily: "Sora" }}>500+</span>
+                  <span className="text-slate-500">Programs</span>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 shadow-sm">
-                  <p className="text-xl sm:text-2xl font-black text-emerald-600" style={{ fontFamily: "Sora" }}>50k+</p>
-                  <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-0.5">Students Guided</p>
+                <div className="h-3 w-px bg-slate-200" />
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black text-emerald-600 text-sm" style={{ fontFamily: "Sora" }}>50k+</span>
+                  <span className="text-slate-500">Students Guided</span>
+                </div>
+                <div className="h-3 w-px bg-slate-200" />
+                <div className="flex items-center gap-1">
+                  <span className="text-amber-500 font-bold">★ 4.9/5</span>
+                  <span className="text-slate-400">(2,500+ Reviews)</span>
                 </div>
               </div>
 
             </div>
 
-            {/* -- RIGHT COLUMN (5 Cols) — The Real & Connecting Student Wall (Maqsad-Style) -- */}
-            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+            {/* -- RIGHT COLUMN (5 Cols) — Fully Editable Student Showcase Cards Grid -- */}
+            <div className="lg:col-span-5 relative mt-4 lg:mt-0 flex flex-col items-center">
               
               {/* Floating Live Badge Top */}
-              <div className="absolute -top-4 -left-3 sm:-left-6 z-20 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl p-2.5 px-4 shadow-xl shadow-slate-900/5 flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900 leading-none">Fall 2026 Admissions Open</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Track closing dates across 100+ unis</p>
+              <div className="w-full flex items-center justify-between mb-2 px-1">
+                <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl px-3 py-1 shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <p className="text-xs font-bold text-slate-800">Fall 2026 Admissions Open</p>
+                </div>
+                <div className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-slate-500">
+                  <span className="text-amber-500">★ 4.9/5</span>
+                  <span>• 2,500+ Placed</span>
                 </div>
               </div>
 
               {/* The Student Photo Cards Grid (3 Columns x 2 Rows) */}
-              <div className="bg-gradient-to-br from-white to-slate-100/80 p-3 sm:p-4 rounded-3xl border border-slate-200/80 shadow-2xl shadow-blue-900/10 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                
-                {/* Student 1: NUST */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-blue-50 to-indigo-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to NUST"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="eager"
-                    fetchpriority="high"
-                  />
-                  <div className="absolute top-2 right-2 bg-blue-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    NUST
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Ammar K.</p>
-                    <p className="text-[10px] text-blue-200 leading-tight">BS CS • NUST</p>
-                  </div>
-                </div>
+              <div className="w-full bg-gradient-to-br from-white to-slate-100/90 p-2.5 sm:p-3 rounded-2xl border border-slate-200 shadow-xl shadow-blue-900/5 grid grid-cols-3 gap-2 sm:gap-2.5">
+                {displayStudents.slice(0, 6).map((student, idx) => {
+                  const badgeColorClass =
+                    student.color === "emerald"
+                      ? "bg-emerald-700/90"
+                      : student.color === "purple"
+                      ? "bg-purple-700/90"
+                      : student.color === "rose"
+                      ? "bg-rose-700/90"
+                      : student.color === "amber"
+                      ? "bg-amber-700/90"
+                      : student.color === "sky"
+                      ? "bg-sky-700/90"
+                      : "bg-blue-700/90";
 
-                {/* Student 2: Dow Medical */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-emerald-50 to-teal-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to Dow Medical College"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="eager"
-                    fetchpriority="high"
-                  />
-                  <div className="absolute top-2 right-2 bg-emerald-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    DOW
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Zainab F.</p>
-                    <p className="text-[10px] text-emerald-200 leading-tight">MBBS • DUHS</p>
-                  </div>
-                </div>
-
-                {/* Student 3: FAST-NUCES */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-purple-50 to-pink-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to FAST"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="eager"
-                  />
-                  <div className="absolute top-2 right-2 bg-purple-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    FAST
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Bilal T.</p>
-                    <p className="text-[10px] text-purple-200 leading-tight">Software Engg</p>
-                  </div>
-                </div>
-
-                {/* Student 4: NED University */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-rose-50 to-orange-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to NED University"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2 right-2 bg-rose-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    NED
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Hamza S.</p>
-                    <p className="text-[10px] text-rose-200 leading-tight">Mechanical Engg</p>
-                  </div>
-                </div>
-
-                {/* Student 5: IBA Karachi */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-amber-50 to-yellow-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to IBA"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2 right-2 bg-amber-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    IBA
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Hania M.</p>
-                    <p className="text-[10px] text-amber-200 leading-tight">BBA • IBA Karachi</p>
-                  </div>
-                </div>
-
-                {/* Student 6: University of Karachi (UoK) */}
-                <div className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-sky-50 to-cyan-100 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <img 
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" 
-                    alt="Student admitted to University of Karachi"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    width="400"
-                    height="500"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2 right-2 bg-sky-700/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
-                    UoK
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent p-2.5 pt-6 text-white">
-                    <p className="text-xs font-bold leading-tight">Sara R.</p>
-                    <p className="text-[10px] text-sky-200 leading-tight">Pharm-D • Karachi Uni</p>
-                  </div>
-                </div>
-
+                  return (
+                    <div
+                      key={student._id || student.name || idx}
+                      className="group relative rounded-xl overflow-hidden aspect-[4/5] max-h-[140px] sm:max-h-[155px] xl:max-h-[170px] bg-slate-100 border border-slate-100 shadow-xs transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+                    >
+                      <img 
+                        src={student.imageUrl} 
+                        alt={student.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading={idx < 3 ? "eager" : "lazy"}
+                        onError={(e) => {
+                          e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400";
+                        }}
+                      />
+                      <div className={`absolute top-1.5 right-1.5 ${badgeColorClass} backdrop-blur-xs text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs`}>
+                        {student.tag}
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent p-2 pt-4 text-white">
+                        <p className="text-[11px] font-bold leading-tight truncate">{student.name}</p>
+                        <p className="text-[9px] text-blue-200 leading-tight truncate">{student.subtitle}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Floating Social Proof Bottom */}
-              <div className="absolute -bottom-5 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 px-4 shadow-xl shadow-slate-900/10 flex items-center gap-3">
-                <div className="flex -space-x-2 shrink-0">
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-blue-600 text-white text-[10px] font-black flex items-center justify-center shadow">AK</span>
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shadow">ZF</span>
-                  <span className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-purple-600 text-white text-[10px] font-black flex items-center justify-center shadow">BT</span>
+              {/* Floating Social Proof Bottom Bar */}
+              <div className="w-full flex items-center justify-between mt-2 px-1">
+                <div className="flex -space-x-1.5 shrink-0">
+                  <span className="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-blue-600 text-white text-[8px] font-black flex items-center justify-center shadow-xs">AK</span>
+                  <span className="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-emerald-600 text-white text-[8px] font-black flex items-center justify-center shadow-xs">ZF</span>
+                  <span className="inline-block h-5 w-5 rounded-full ring-2 ring-white bg-purple-600 text-white text-[8px] font-black flex items-center justify-center shadow-xs">BT</span>
                 </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-amber-500 text-xs">★★★★★</span>
-                    <span className="text-xs font-black text-slate-800">4.9/5</span>
-                  </div>
-                  <p className="text-[10px] font-medium text-slate-500">2,500+ Admissions Secured</p>
-                </div>
+                <p className="text-[11px] font-medium text-slate-500">
+                  Verified admissions across NUST, FAST, Dow & more
+                </p>
               </div>
 
             </div>
@@ -712,8 +636,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-
 
       {/* Saved universities — show when logged in and has saved */}
       {isLoggedIn && savedFull.length > 0 && (

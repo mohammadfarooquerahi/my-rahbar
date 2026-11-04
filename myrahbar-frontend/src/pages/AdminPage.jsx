@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import UniversityDataCollector from "./UniversityDataCollector";
 import AIBlogGenerator from "../components/admin/AIBlogGenerator";
+import HeroStudentsManager from "../components/admin/HeroStudentsManager";
 import {
   Shield,
   CheckCircle,
@@ -35,6 +36,7 @@ import { useAuthStore } from "../store";
 
 const TABS = [
   "Dashboard",
+  "Hero Students",
   "Universities",
   "Add University",
   "AI Collect",
@@ -746,6 +748,7 @@ export default function AdminPage() {
                 const getIcon = (tabName) => {
                   switch (tabName) {
                     case "Dashboard": return <TrendingUp size={16} />;
+                    case "Hero Students": return <Users size={16} />;
                     case "Universities": return <BookOpen size={16} />;
                     case "Add University": return <Plus size={16} />;
                     case "AI Collect": return <Sparkles size={16} />;
@@ -3009,6 +3012,11 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* ─── HERO STUDENTS MANAGER TAB ─── */}
+        {activeTab === "Hero Students" && (
+          <HeroStudentsManager />
         )}
 
         {/* ─── AI BLOG GENERATOR TAB ─── */}
