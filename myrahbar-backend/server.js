@@ -1,3 +1,5 @@
+const dns = require("dns");
+if (dns.setDefaultResultOrder) dns.setDefaultResultOrder("ipv4first");
 require("dotenv/config");
 const Groq = require("groq-sdk");
 require("express-async-errors");

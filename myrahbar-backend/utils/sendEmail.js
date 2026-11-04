@@ -1,8 +1,17 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force IPv4 lookup first on Linux/Render containers to prevent IPv6 ENETUNREACH errors
+try {
+  if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+  }
+} catch (e) {
+  // Ignored if older node version
+}
 
 /**
  * Creates a Nodemailer transporter.
- * Supports explicit IPv4 (family: 4) to prevent cloud IPv6 blackhole hanging.
  */
 const createGmailTransport = (port = 465, secure = true) => {
   const user = (process.env.EMAIL_USER || "").trim();
@@ -14,14 +23,14 @@ const createGmailTransport = (port = 465, secure = true) => {
     host: "smtp.gmail.com",
     port,
     secure,
-    family: 4, // CRITICAL: Force IPv4 to prevent IPv6 hanging on Render/cloud Linux containers
+    family: 4, // Explicit IPv4
     auth: {
       user,
       pass,
     },
-    connectionTimeout: 8000, // 8s
-    greetingTimeout: 4000,   // 4s
-    socketTimeout: 12000,    // 12s
+    connectionTimeout: 8000,
+    greetingTimeout: 5000,
+    socketTimeout: 12000,
     tls: {
       rejectUnauthorized: false,
     },
@@ -139,7 +148,7 @@ const verifyEmailConfig = async () => {
       errorPort465: err465 ? err465.message : null,
       errorPort587: err587.message,
       tip: pass.length !== 16
-        ? `Your password is ${pass.length} characters long. A Google App Password must be EXACTLY 16 letters (e.g. abcd efgh ijkl mnop). You probably entered your regular Gmail password!`
+        ? `Your password is currently ${pass.length} characters (${passPreview}). A Google App Password is EXACTLY 16 letters (4 groups of 4: e.g. abcd efgh ijkl mnop). You appear to have missed 1 character or entered a 15-character password!`
         : "Ensure 2-Step Verification is ON in your Google Account and that you created an App Password under https://myaccount.google.com/apppasswords",
     };
   }
