@@ -99,12 +99,12 @@ export default function CounselingPage() {
           name="description"
           content="Book a personal counseling session with a Rahbars expert. Get help with university selection, merit calculation, and admission process."
         />
-        <link rel="canonical" href="https://rahbars.com/counseling" />
+        <link rel="canonical" href="https://www.rahbars.com/counseling" />
         
         <meta property="og:title" content="1-on-1 Admission Counseling | Rahbars" />
         <meta property="og:description" content="Talk to an expert and get clear answers about your admission, field, and universities." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rahbars.com/counseling" />
+        <meta property="og:url" content="https://www.rahbars.com/counseling" />
         
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="1-on-1 Admission Counseling" />

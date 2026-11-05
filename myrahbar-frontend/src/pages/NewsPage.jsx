@@ -189,6 +189,11 @@ export default function NewsPage() {
           name="description"
           content="Stay updated with the latest admission news, notifications, and announcements from Pakistani universities."
         />
+        <link rel="canonical" href="https://www.rahbars.com/news" />
+        <meta property="og:title" content="Latest Admission News | Rahbars" />
+        <meta property="og:description" content="Stay updated with the latest admission news, notifications, and announcements from Pakistani universities." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/news" />
       </Helmet>
 
       {/* ── Hero ── */}

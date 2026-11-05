@@ -89,6 +89,11 @@ export default function PastPapersPage() {
           name="description"
           content="Download university entry test past papers for Karachi universities. Free papers available to download."
         />
+        <link rel="canonical" href="https://www.rahbars.com/past-papers" />
+        <meta property="og:title" content="Past Papers - University Entry Test Papers | Rahbars" />
+        <meta property="og:description" content="Download university entry test past papers for Pakistani universities." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/past-papers" />
       </Helmet>
 
       {/* Page header */}

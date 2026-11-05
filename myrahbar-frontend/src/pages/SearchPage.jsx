@@ -183,12 +183,12 @@ export default function SearchPage() {
           name="description"
           content="Search all Karachi universities by name, department, or field to find the perfect fit for your higher education."
         />
-        <link rel="canonical" href="https://rahbars.com/search" />
+        <link rel="canonical" href="https://www.rahbars.com/search" />
         
         <meta property="og:title" content="Search Universities | Rahbars" />
         <meta property="og:description" content="Search all Karachi universities by name, department, or field to find the perfect fit for your higher education." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rahbars.com/search" />
+        <meta property="og:url" content="https://www.rahbars.com/search" />
         
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Search Universities | Rahbars" />

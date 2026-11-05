@@ -6,6 +6,11 @@ export default function TermsPage() {
       <Helmet>
         <title>Terms & Conditions | Rahbars</title>
         <meta name="description" content="Terms and Conditions for using Rahbars." />
+        <link rel="canonical" href="https://www.rahbars.com/terms" />
+        <meta property="og:title" content="Terms & Conditions | Rahbars" />
+        <meta property="og:description" content="Terms and Conditions for using Rahbars." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/terms" />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">

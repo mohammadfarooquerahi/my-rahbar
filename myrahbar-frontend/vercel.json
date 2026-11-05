@@ -35,16 +35,33 @@
     },
     {
       "source": "/sitemap-blogs.xml",
-      "destination": "/sitemap-main.xml",
+      "destination": "/sitemap.xml",
       "permanent": true
     },
     {
       "source": "/sitemap-universities.xml",
-      "destination": "/sitemap-main.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap-main.xml",
+      "destination": "/sitemap.xml",
       "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/university/:slug",
+      "destination": "/api/seo?type=university&slug=:slug"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/seo?type=blog&slug=:slug"
+    },
+    {
+      "source": "/api/seo",
+      "destination": "/api/seo.js"
+    },
     {
       "source": "/api/(.*)",
       "destination": "https://myrahbar-backend.onrender.com/api/$1"

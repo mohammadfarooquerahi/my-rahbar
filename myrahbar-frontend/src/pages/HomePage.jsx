@@ -380,7 +380,7 @@ export default function HomePage() {
           name="description"
           content="Rahbars helps Pakistani students find the best universities in Karachi. Calculate merit, check fee structures, get deadline alerts, and apply smarter."
         />
-        <link rel="canonical" href="https://rahbars.com/" />
+        <link rel="canonical" href="https://www.rahbars.com/" />
 
         {/* OpenGraph Tags */}
         <meta property="og:title" content="Rahbars | Find Your University" />
@@ -389,8 +389,8 @@ export default function HomePage() {
           content="Calculate your merit and get matched to the perfect university in Karachi instantly."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rahbars.com/" />
-        <meta property="og:image" content="https://rahbars.com/og-image.jpg" />
+        <meta property="og:url" content="https://www.rahbars.com/" />
+        <meta property="og:image" content="https://www.rahbars.com/og-image.jpg" />
         <meta property="og:site_name" content="Rahbars" />
 
         {/* Twitter Card Tags */}
@@ -403,7 +403,7 @@ export default function HomePage() {
           name="twitter:description"
           content="Calculate your merit and get matched to the perfect university in Karachi instantly."
         />
-        <meta name="twitter:image" content="https://rahbars.com/og-image.jpg" />
+        <meta name="twitter:image" content="https://www.rahbars.com/og-image.jpg" />
       </Helmet>
 
       {/* -- HERO SECTION (Fits 100% in One Screen Above the Fold) -- */}

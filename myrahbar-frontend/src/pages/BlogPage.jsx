@@ -194,14 +194,14 @@ export default function BlogPage() {
         <meta name="keywords" content="university admission pakistan 2025, aggregate calculator, MDCAT guide, merit calculator, university scholarships pakistan, NED FAST NUST LUMS admission" />
         <meta property="og:title" content="University Admission Blog — Pakistan 2025 | Rahbars" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rahbars.com/blog" />
-        <link rel="canonical" href="https://rahbars.com/blog" />
+        <meta property="og:url" content="https://www.rahbars.com/blog" />
+        <link rel="canonical" href="https://www.rahbars.com/blog" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Blog",
           "name": "Rahbars — University Admission Blog Pakistan",
-          "url": "https://rahbars.com/blog",
-          "publisher": { "@type": "Organization", "name": "Rahbars", "url": "https://rahbars.com" },
+          "url": "https://www.rahbars.com/blog",
+          "publisher": { "@type": "Organization", "name": "Rahbars", "url": "https://www.rahbars.com" },
           "inLanguage": "en-PK"
         })}</script>
       </Helmet>

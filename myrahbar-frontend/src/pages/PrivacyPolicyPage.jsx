@@ -6,6 +6,11 @@ export default function PrivacyPolicyPage() {
       <Helmet>
         <title>Privacy Policy | Rahbars</title>
         <meta name="description" content="Privacy Policy for Rahbars." />
+        <link rel="canonical" href="https://www.rahbars.com/privacy-policy" />
+        <meta property="og:title" content="Privacy Policy | Rahbars" />
+        <meta property="og:description" content="Privacy Policy for Rahbars." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/privacy-policy" />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">

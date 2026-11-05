@@ -115,6 +115,11 @@ export default function ComparePage() {
           name="description"
           content="Compare up to 3 Karachi universities side by side. See fee, merit, hostel, scholarships and more at a glance."
         />
+        <link rel="canonical" href="https://www.rahbars.com/compare" />
+        <meta property="og:title" content="Compare Universities - Side by Side | Rahbars" />
+        <meta property="og:description" content="Compare universities side by side. See fee, merit, hostel, scholarships and more at a glance." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/compare" />
       </Helmet>
 
       <div className="max-w-6xl mx-auto px-4 py-10">

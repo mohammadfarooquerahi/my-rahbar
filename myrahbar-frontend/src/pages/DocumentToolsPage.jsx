@@ -168,6 +168,11 @@ export default function DocumentToolsPage() {
           name="description"
           content="Compress and resize your documents for university admission. Reduce JPG, PNG file size to meet university requirements."
         />
+        <link rel="canonical" href="https://www.rahbars.com/document-tools" />
+        <meta property="og:title" content="Document Tools - Compress & Prepare Files | Rahbars" />
+        <meta property="og:description" content="Compress and resize your documents for university admission." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/document-tools" />
       </Helmet>
 
       <div className="max-w-2xl mx-auto px-4 py-10">

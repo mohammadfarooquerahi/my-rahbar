@@ -8,6 +8,11 @@ export default function AboutPage() {
       <Helmet>
         <title>About Us | Rahbars</title>
         <meta name="description" content="Learn about Rahbars's mission to guide students towards their perfect university and career." />
+        <link rel="canonical" href="https://www.rahbars.com/about" />
+        <meta property="og:title" content="About Us | Rahbars" />
+        <meta property="og:description" content="Learn about Rahbars mission to guide students towards their perfect university and career." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/about" />
       </Helmet>
 
       {/* Hero Section */}

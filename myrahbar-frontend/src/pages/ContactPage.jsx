@@ -52,6 +52,11 @@ export default function ContactPage() {
           name="description"
           content="Get in touch with the Rahbars team for any queries regarding university admissions or career counseling."
         />
+        <link rel="canonical" href="https://www.rahbars.com/contact" />
+        <meta property="og:title" content="Contact Us | Rahbars" />
+        <meta property="og:description" content="Get in touch with the Rahbars team for any queries regarding university admissions or career counseling." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rahbars.com/contact" />
       </Helmet>
 
       <div className="bg-slate-50 py-12 border-b border-slate-200">
