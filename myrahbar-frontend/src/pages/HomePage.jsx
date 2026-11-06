@@ -33,6 +33,7 @@ import { deadlineLabel, daysUntilDeadline } from "../utils/merit";
 import { calculateAggregate } from "../utils/merit";
 import { useWatchlistStore, useAuthStore } from "../store";
 import Logo from "../components/common/Logo";
+import { API_BASE, getImageUrl } from "../utils/api";
 
 // ── Hero Merit Widget ─────────────────────────────────────────────────────────
 function HeroMeritWidget({ universities }) {
@@ -251,8 +252,11 @@ export default function HomePage() {
 
   // Fetch hero student showcase photos from backend (with fallback)
   useEffect(() => {
-    fetch("/api/hero-students")
-      .then((res) => res.json())
+    fetch(`${API_BASE}/api/hero-students`)
+      .then((res) => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
       .then((data) => {
         if (data.students && data.students.length > 0) {
           setDisplayStudents(data.students);
@@ -625,7 +629,7 @@ export default function HomePage() {
                       className="group relative rounded-xl overflow-hidden aspect-[4/5] max-h-[140px] sm:max-h-[155px] xl:max-h-[170px] bg-slate-100 border border-slate-100 shadow-xs transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
                     >
                       <img 
-                        src={student.imageUrl} 
+                        src={getImageUrl(student.imageUrl)} 
                         alt={student.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading={idx < 3 ? "eager" : "lazy"}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Save, X, RefreshCw, Image, Check, AlertCircle, Sparkles, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store";
+import { API_BASE, getImageUrl } from "../../utils/api";
 
 const COLOR_OPTIONS = [
   { value: "blue", label: "Blue (e.g. NUST / STEM)", badgeClass: "bg-blue-700/90" },
@@ -33,19 +34,68 @@ export default function HeroStudentsManager() {
   const [previewImage, setPreviewImage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Client-side image compression to guarantee small payload (under 1MB) & fast upload
+  const compressImage = (file, maxWidth = 800, quality = 0.85) => {
+    return new Promise((resolve) => {
+      if (!file || !file.type.startsWith("image/") || file.type.includes("gif") || file.type.includes("svg")) {
+        return resolve(file);
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (!blob || blob.size >= file.size) {
+                return resolve(file);
+              }
+              const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, ".webp"), {
+                type: "image/webp",
+              });
+              resolve(compressedFile);
+            },
+            "image/webp",
+            quality
+          );
+        };
+        img.onerror = () => resolve(file);
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    });
+  };
+
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/hero-students/admin/all", {
+      const res = await fetch(`${API_BASE}/api/hero-students/admin/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await res.json();
-      if (data.success && data.students) {
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error(`Server returned status ${res.status}. Please check your connection.`);
+      }
+
+      if (res.ok && data.success && data.students) {
         setStudents(data.students);
       } else {
-        toast.error(data.error || "Failed to load hero students");
+        toast.error(data.error || data.message || "Failed to load hero students");
       }
     } catch (err) {
       toast.error("Error loading hero students: " + err.message);
@@ -55,7 +105,9 @@ export default function HeroStudentsManager() {
   };
 
   useEffect(() => {
-    fetchStudents();
+    if (token) {
+      fetchStudents();
+    }
   }, [token]);
 
   const openAddModal = () => {
@@ -86,15 +138,16 @@ export default function HeroStudentsManager() {
       isActive: student.isActive !== false,
     });
     setSelectedFile(null);
-    setPreviewImage(student.imageUrl);
+    setPreviewImage(getImageUrl(student.imageUrl));
     setShowAddModal(true);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file);
       setPreviewImage(URL.createObjectURL(file));
+      const optimized = await compressImage(file);
+      setSelectedFile(optimized);
     }
   };
 
@@ -123,7 +176,9 @@ export default function HeroStudentsManager() {
         data.append("imageUrl", formData.imageUrl.trim());
       }
 
-      const url = editingId ? `/api/hero-students/admin/${editingId}` : "/api/hero-students/admin";
+      const url = editingId
+        ? `${API_BASE}/api/hero-students/admin/${editingId}`
+        : `${API_BASE}/api/hero-students/admin`;
       const method = editingId ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -134,13 +189,20 @@ export default function HeroStudentsManager() {
         body: data,
       });
 
-      const result = await res.json();
-      if (result.success) {
+      const text = await res.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error(`Server returned HTTP ${res.status}. Please try again.`);
+      }
+
+      if (res.ok && result.success) {
         toast.success(editingId ? "Student updated successfully!" : "Student added to Hero!");
         setShowAddModal(false);
         fetchStudents();
       } else {
-        toast.error(result.error || "Failed to save student.");
+        toast.error(result.error || result.message || "Failed to save student.");
       }
     } catch (err) {
       toast.error("Error: " + err.message);
@@ -152,16 +214,19 @@ export default function HeroStudentsManager() {
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Are you sure you want to remove "${name}" from Hero?`)) return;
     try {
-      const res = await fetch(`/api/hero-students/admin/${id}`, {
+      const res = await fetch(`${API_BASE}/api/hero-students/admin/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (data.success) {
+      const text = await res.text();
+      let data = {};
+      try { data = JSON.parse(text); } catch (e) {}
+
+      if (res.ok && data.success) {
         toast.success("Student removed from Hero.");
         setStudents((prev) => prev.filter((s) => s._id !== id));
       } else {
-        toast.error(data.error || "Failed to delete.");
+        toast.error(data.error || data.message || "Failed to delete.");
       }
     } catch (err) {
       toast.error("Delete failed: " + err.message);
@@ -171,16 +236,19 @@ export default function HeroStudentsManager() {
   const handleResetDefaults = async () => {
     if (!window.confirm("Reset all hero cards to the original 6 default students?")) return;
     try {
-      const res = await fetch("/api/hero-students/admin/reset", {
+      const res = await fetch(`${API_BASE}/api/hero-students/admin/reset`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (data.success) {
+      const text = await res.text();
+      let data = {};
+      try { data = JSON.parse(text); } catch (e) {}
+
+      if (res.ok && data.success) {
         toast.success("Reset to 6 default students!");
         fetchStudents();
       } else {
-        toast.error(data.error || "Failed to reset.");
+        toast.error(data.error || data.message || "Failed to reset.");
       }
     } catch (err) {
       toast.error("Reset failed: " + err.message);
@@ -246,7 +314,7 @@ export default function HeroStudentsManager() {
                 {/* Photo Preview */}
                 <div className="relative aspect-[4/5] bg-slate-100 overflow-hidden">
                   <img
-                    src={student.imageUrl}
+                    src={getImageUrl(student.imageUrl)}
                     alt={student.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
