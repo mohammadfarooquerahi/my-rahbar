@@ -3,11 +3,6 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": "vite",
-  "functions": {
-    "api/seo.js": {
-      "includeFiles": "dist/**"
-    }
-  },
   "headers": [
     {
       "source": "/(.*\\.html)",
@@ -55,18 +50,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/university/:slug",
-      "destination": "/api/seo?type=university&slug=:slug"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/api/seo?type=blog&slug=:slug"
-    },
-    {
-      "source": "/api/seo",
-      "destination": "/api/seo.js"
-    },
     {
       "source": "/api/(.*)",
       "destination": "https://myrahbar-backend.onrender.com/api/$1"

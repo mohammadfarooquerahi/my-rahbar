@@ -7,24 +7,6 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
 
-const GA_ID = "G-B2Z633E4JY";
-
-function AnalyticsTracker() {
-  const location = useLocation();
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && typeof window.gtag === "function") {
-      window.gtag("config", GA_ID, {
-        page_path: location.pathname + location.search,
-        page_location: window.location.href,
-        page_title: document.title || "Rahbars",
-      });
-    }
-  }, [location.pathname, location.search]);
-
-  return null;
-}
-
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -74,7 +56,6 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
-      <AnalyticsTracker />
       <Toaster position="top-center" />
       <Navbar />
       <main className="flex-1">
