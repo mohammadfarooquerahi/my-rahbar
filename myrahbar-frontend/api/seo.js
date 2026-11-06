@@ -8,13 +8,16 @@
  * serves the enriched HTML directly to crawlers and users.
  */
 
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 
 const BACKEND_URL = "https://myrahbar-backend.onrender.com";
 const SITE_URL = "https://www.rahbars.com";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 const TIMEOUT_MS = 3500;
+const GA_ID = "G-B2Z633E4JY";
+
+let cachedBaseHtml = null;
 
 function formatSlugToTitle(slug) {
   if (!slug) return "";
@@ -24,14 +27,39 @@ function formatSlugToTitle(slug) {
     .join(" ");
 }
 
-/** Read the built index.html from dist */
-function getBaseHtml() {
-  try {
-    const distPath = join(process.cwd(), "dist", "index.html");
-    return readFileSync(distPath, "utf-8");
-  } catch {
-    return `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body><div id="root"></div></body></html>`;
+/** Read base index.html: try local dist first, then fetch live shell, then fallback */
+async function getBaseHtml() {
+  if (cachedBaseHtml) return cachedBaseHtml;
+
+  const candidatePaths = [
+    join(process.cwd(), "dist", "index.html"),
+    join(process.cwd(), "index.html"),
+  ];
+
+  for (const p of candidatePaths) {
+    try {
+      if (existsSync(p)) {
+        cachedBaseHtml = readFileSync(p, "utf-8");
+        return cachedBaseHtml;
+      }
+    } catch {}
   }
+
+  try {
+    const res = await fetch(`${SITE_URL}/`, {
+      headers: { "Accept": "text/html" },
+    });
+    if (res.ok) {
+      cachedBaseHtml = await res.text();
+      return cachedBaseHtml;
+    }
+  } catch {}
+
+  // Emergency fallback shell with GA4
+  return `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{send_page_view:false});</script>
+  </head><body><div id="root"></div></body></html>`;
 }
 
 /** Fetch with timeout to prevent hanging on backend sleep */
@@ -88,7 +116,7 @@ function injectMeta(html, { title, description, url, image, type = "website", ex
 export default async function handler(req, res) {
   const url = req.url || "/";
   const parsedUrl = new URL(url, SITE_URL);
-  const baseHtml = getBaseHtml();
+  const baseHtml = await getBaseHtml();
 
   const queryType = req.query?.type || parsedUrl.searchParams.get("type");
   const querySlug = req.query?.slug || parsedUrl.searchParams.get("slug");
