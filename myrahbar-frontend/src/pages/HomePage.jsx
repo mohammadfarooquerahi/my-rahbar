@@ -237,7 +237,33 @@ export default function HomePage() {
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Inside HomePage component, replace the useEffect:
+  // Static fallback data for hero student showcase cards
+  const STATIC_HERO_STUDENTS = [
+    { _id: "s1", name: "Ammar K.", tag: "NUST", subtitle: "BS CS • NUST", imageUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80", color: "blue", order: 1 },
+    { _id: "s2", name: "Zainab F.", tag: "DOW", subtitle: "MBBS • DUHS", imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80", color: "emerald", order: 2 },
+    { _id: "s3", name: "Bilal T.", tag: "FAST", subtitle: "Software Engg", imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80", color: "purple", order: 3 },
+    { _id: "s4", name: "Hamza S.", tag: "NED", subtitle: "Mechanical Engg", imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80", color: "rose", order: 4 },
+    { _id: "s5", name: "Hania M.", tag: "IBA", subtitle: "BBA • IBA Karachi", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80", color: "amber", order: 5 },
+    { _id: "s6", name: "Sara R.", tag: "UoK", subtitle: "Pharm-D • Karachi Uni", imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", color: "sky", order: 6 },
+  ];
+
+  const [displayStudents, setDisplayStudents] = useState(STATIC_HERO_STUDENTS);
+
+  // Fetch hero student showcase photos from backend (with fallback)
+  useEffect(() => {
+    fetch("/api/hero-students")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.students && data.students.length > 0) {
+          setDisplayStudents(data.students);
+        }
+      })
+      .catch(() => {
+        // Keep using STATIC_HERO_STUDENTS (already set as default)
+      });
+  }, []);
+
+  // Fetch universities
   useEffect(() => {
     setLoading(true);
     fetch("/api/universities")
