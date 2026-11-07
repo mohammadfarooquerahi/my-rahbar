@@ -1,0 +1,53 @@
+# llms.txt — Rahbars
+# This file helps AI language models, crawlers, and agents understand the
+# structure and purpose of rahbars.com quickly, without executing JavaScript.
+# Format based on the emerging llms.txt specification.
+
+# About
+> Rahbars is Pakistan's most detailed university admission platform.
+> It provides fee structures, merit lists, admission deadlines, entry test guides,
+> aggregate calculators, and counseling for students applying to universities across Pakistan.
+> Brand: Rahbars | URL: https://www.rahbars.com
+
+## Core Pages
+
+- [Home](https://www.rahbars.com/) — Main landing page
+- [University Search](https://www.rahbars.com/search) — Browse and filter all universities
+- [Merit Calculator](https://www.rahbars.com/merit-calculator) — Calculate aggregate merit score
+- [Compare Universities](https://www.rahbars.com/compare) — Side-by-side comparison
+- [AI University Finder](https://www.rahbars.com/find-university) — 10-question AI matcher
+- [Blog](https://www.rahbars.com/blog) — Admission guides, tips, and entry test prep
+- [News](https://www.rahbars.com/news) — Latest admission news and updates
+- [Past Papers](https://www.rahbars.com/past-papers) — Entry test past papers download
+- [Document Tools](https://www.rahbars.com/document-tools) — Compress/resize documents for upload
+- [Counseling](https://www.rahbars.com/counseling) — Book 1-on-1 expert counseling session
+- [About](https://www.rahbars.com/about) — About Rahbars
+- [Contact](https://www.rahbars.com/contact) — Contact us
+
+## University Profiles
+Each university has a dedicated profile at /university/{slug} with:
+- Admission deadlines and open/closed status
+- Fee structure and fee ranges
+- Merit history by year and program
+- Entry test details (ECAT, MDCAT, NET, own test)
+- Aggregate formula (Matric % + FSc % + Test %)
+- Departments and programs offered
+- Scholarships available
+- HEC recognition status
+
+## Blog Coverage
+The blog covers: admission guides, merit calculation, MDCAT, ECAT, NET, aggregate formulas,
+university reviews, career guidance, scholarship guides, LUMS, NUST, FAST, NED, UoK,
+Habib University, UET, and all major Pakistani universities.
+
+## Sitemaps
+- https://www.rahbars.com/sitemap.xml (sitemap index)
+- https://www.rahbars.com/sitemap-blogs.xml (all blog articles)
+- https://www.rahbars.com/sitemap-universities.xml (all university profiles)
+- https://www.rahbars.com/sitemap-main.xml (static pages)
+
+## Contact / Entity
+- Organization: Rahbars
+- Country: Pakistan
+- Language: English (en-PK)
+- Topics: University admissions, merit calculation, entry tests, scholarships, career guidance

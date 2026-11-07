@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Disallow admin, auth, and user-specific routes
+Disallow: /admin
+Disallow: /auth/login
+Disallow: /auth/register
+Disallow: /profile
+Disallow: /watchlist
+
+# Disallow backend API routes (not meant for crawlers)
+Disallow: /api/
+
+# Sitemap index
+Sitemap: https://www.rahbars.com/sitemap.xml
+Sitemap: https://www.rahbars.com/sitemap-main.xml
