@@ -5,5 +5,9 @@ export const getImageUrl = (url) => {
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
     return url;
   }
+  // Local static hero images bundled in public/hero/ are served directly from the frontend CDN
+  if (url.startsWith("/hero/")) {
+    return url;
+  }
   return `${API_BASE}${url.startsWith("/") ? "" : "/"}${url}`;
 };

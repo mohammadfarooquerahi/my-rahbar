@@ -240,12 +240,12 @@ export default function HomePage() {
 
   // Static fallback data for hero student showcase cards
   const STATIC_HERO_STUDENTS = [
-    { _id: "s1", name: "Ammar K.", tag: "NUST", subtitle: "BS CS • NUST", imageUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80", color: "blue", order: 1 },
-    { _id: "s2", name: "Zainab F.", tag: "DOW", subtitle: "MBBS • DUHS", imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80", color: "emerald", order: 2 },
-    { _id: "s3", name: "Bilal T.", tag: "FAST", subtitle: "Software Engg", imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80", color: "purple", order: 3 },
-    { _id: "s4", name: "Hamza S.", tag: "NED", subtitle: "Mechanical Engg", imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80", color: "rose", order: 4 },
-    { _id: "s5", name: "Hania M.", tag: "IBA", subtitle: "BBA • IBA Karachi", imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80", color: "amber", order: 5 },
-    { _id: "s6", name: "Sara R.", tag: "UoK", subtitle: "Pharm-D • Karachi Uni", imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", color: "sky", order: 6 },
+    { _id: "s1", name: "Sudheer Mantharani", tag: "FAST", subtitle: "BS Computer Science", imageUrl: "/hero/sudheer-mantharani.png", color: "emerald", order: 1 },
+    { _id: "s2", name: "Muzammil Ahmed", tag: "UET Taxila", subtitle: "CS Student | CGPA 3.53", imageUrl: "/hero/muzammil-ahmed.jpg", color: "rose", order: 2 },
+    { _id: "s3", name: "Muhammad Abdullah", tag: "LUMS", subtitle: "Sophomore CS Student", imageUrl: "/hero/muhammad-abdullah.jpg", color: "rose", order: 3 },
+    { _id: "s4", name: "Aleena Zia", tag: "NUST", subtitle: "BS Computer Engineering", imageUrl: "/hero/aleena-zia.png", color: "purple", order: 4 },
+    { _id: "s5", name: "Faizan Ahmed", tag: "NED", subtitle: "BS Computer Science", imageUrl: "/hero/faizan-ahmed.png", color: "blue", order: 5 },
+    { _id: "s6", name: "Abdullah Aamir", tag: "NUST", subtitle: "BS Computer Science", imageUrl: "/hero/abdullah-aamir.jpg", color: "amber", order: 6 },
   ];
 
   const [displayStudents, setDisplayStudents] = useState(STATIC_HERO_STUDENTS);
@@ -611,13 +611,13 @@ export default function HomePage() {
               <div className="w-full bg-gradient-to-br from-white to-slate-100/90 p-2.5 sm:p-3 rounded-2xl border border-slate-200 shadow-xl shadow-blue-900/5 grid grid-cols-3 gap-2 sm:gap-2.5">
                 {displayStudents.slice(0, 6).map((student, idx) => {
                   const badgeColorClass =
-                    student.color === "emerald"
+                    student.color === "emerald" || student.color === "green"
                       ? "bg-emerald-700/90"
                       : student.color === "purple"
                       ? "bg-purple-700/90"
                       : student.color === "rose"
                       ? "bg-rose-700/90"
-                      : student.color === "amber"
+                      : student.color === "amber" || student.color === "orange"
                       ? "bg-amber-700/90"
                       : student.color === "sky"
                       ? "bg-sky-700/90"
