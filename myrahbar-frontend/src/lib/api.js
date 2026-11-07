@@ -31,7 +31,10 @@ export async function getUniversities(limit = 200) {
 
 export async function getUniversityBySlug(slug) {
   const data = await fetchAPI(`/api/universities/${slug}`);
-  return data?.university || data || null;
+  if (data?.university) return data.university;
+  if (data?._id) return data;
+  const fallback = KARACHI_UNIVERSITIES.find((u) => u.slug === slug || u.id === slug);
+  return fallback || null;
 }
 
 export async function getBlogs(limit = 100) {

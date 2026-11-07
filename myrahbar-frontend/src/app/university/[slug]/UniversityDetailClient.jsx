@@ -38,16 +38,26 @@ const TABS = [
   "Past Papers",
 ];
 
+const TAB_ICONS = {
+  "Overview": "🏛️",
+  "Admission": "📅",
+  "Fee & Expenses": "💰",
+  "Scholarships": "🎓",
+  "Documents": "📄",
+  "Reviews": "⭐",
+  "Past Papers": "📝",
+};
+
 const TEST_TYPE_CONFIG = {
-  "Own Test":  { emoji: "Ã°Å¸â€œÂ", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  "HEC-NAT":   { emoji: "Ã°Å¸Ââ€º", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  "NTS":       { emoji: "Ã°Å¸â€œâ€¹", color: "bg-orange-100 text-orange-700 border-orange-200" },
-  "MDCAT":     { emoji: "Ã°Å¸Â©Âº", color: "bg-red-100 text-red-700 border-red-200" },
-  "ECAT":      { emoji: "Ã¢Å¡â„¢Ã¯Â¸Â", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
-  "NUMS":      { emoji: "Ã°Å¸ÂÂ¥", color: "bg-pink-100 text-pink-700 border-pink-200" },
-  "SAT":       { emoji: "Ã°Å¸Å’Â", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
-  "None":      { emoji: "Ã¢Å“â€¦", color: "bg-green-100 text-green-700 border-green-200" },
-  "Multiple":  { emoji: "Ã°Å¸â€â‚¬", color: "bg-slate-100 text-slate-700 border-slate-200" },
+  "Own Test":  { emoji: "📝", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  "HEC-NAT":   { emoji: "🏛️", color: "bg-purple-100 text-purple-700 border-purple-200" },
+  "NTS":       { emoji: "📋", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  "MDCAT":     { emoji: "🩺", color: "bg-red-100 text-red-700 border-red-200" },
+  "ECAT":      { emoji: "⚙️", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  "NUMS":      { emoji: "🏥", color: "bg-pink-100 text-pink-700 border-pink-200" },
+  "SAT":       { emoji: "🌐", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
+  "None":      { emoji: "✅", color: "bg-green-100 text-green-700 border-green-200" },
+  "Multiple":  { emoji: "🔀", color: "bg-slate-100 text-slate-700 border-slate-200" },
 };
 
 function CompressorWidget() {
@@ -680,7 +690,7 @@ export default function UniversityDetailClient({ initialUni }) {
                         : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60")
                     }
                   >
-                    <span>{TAB_ICONS[tab] || "ðŸ“Œ"}</span>
+                    <span>{TAB_ICONS[tab] || "📌"}</span>
                     <span>{tab}</span>
                   </button>
                 ))}
@@ -734,8 +744,8 @@ export default function UniversityDetailClient({ initialUni }) {
                       {uni.admissionDeadlines?.length > 0 ? (
                         <div className="grid gap-2">
                           {uni.admissionDeadlines.filter(dl => deadlineFilter === "All" || dl.degreeLevel === deadlineFilter).map((dl, i) => {
-                            const d = new Date(dl.deadline);
-                            const diff = Math.ceil((d - new Date()) / 86400000);
+                            const d = dl.deadline ? new Date(dl.deadline) : null;
+                            const diff = d && !isNaN(d.getTime()) ? Math.ceil((d - new Date()) / 86400000) : -1;
                             const color = diff < 0 ? "text-red-500 bg-red-50 border-red-100" : diff <= 7 ? "text-orange-600 bg-orange-50 border-orange-100" : "text-green-600 bg-green-50 border-green-100";
                             
                             return (
@@ -752,7 +762,7 @@ export default function UniversityDetailClient({ initialUni }) {
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
                                   <div>
                                     <p className="text-[10px] text-slate-400 mb-0.5">Apply By</p>
-                                    <p className="font-semibold text-slate-800">{d.toLocaleDateString("en-PK", { day: "numeric", month: "short" })}</p>
+                                    <p className="font-semibold text-slate-800">{d && !isNaN(d.getTime()) ? d.toLocaleDateString("en-PK", { day: "numeric", month: "short" }) : (dl.deadline || "TBA")}</p>
                                   </div>
                                   {dl.testDate && (
                                     <div>
@@ -1479,8 +1489,8 @@ export default function UniversityDetailClient({ initialUni }) {
               {uni.admissionDeadlines?.length > 0 ? (
                 <div className="space-y-2 mb-3">
                   {uni.admissionDeadlines.map((item, i) => {
-                    const d = new Date(item.deadline);
-                    const diff = Math.ceil((d - new Date()) / 86400000);
+                    const d = item.deadline ? new Date(item.deadline) : null;
+                    const diff = d && !isNaN(d.getTime()) ? Math.ceil((d - new Date()) / 86400000) : -1;
                     const urgency = diff < 0 ? "text-red-500 bg-red-50 border-red-200" : diff <= 3 ? "text-orange-600 bg-orange-50 border-orange-200" : "text-green-600 bg-green-50 border-green-200";
                     return (
                       <div key={i} className={`flex items-center justify-between rounded-xl px-3 py-2 border text-xs ${urgency}`}>
