@@ -494,7 +494,7 @@ export default function HeroStudentsManager() {
                       alt="Preview"
                       className="w-12 h-14 object-cover rounded-lg shadow-sm"
                       onError={(e) => {
-                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400";
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name || 'Student')}&background=334155&color=fff&size=400&bold=true`;
                       }}
                     />
                     <div className="text-xs text-slate-600">
