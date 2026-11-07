@@ -116,11 +116,19 @@ export default function UniversityDetailClient({ initialUni }) {
   const [uni, setUni] = useState(initialUni || null);
   const [loading, setLoading] = useState(!initialUni);
   const [notFound, setNotFound] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const urlTab = searchParams.get("tab") || "Overview";
+  const searchParams = useSearchParams();
+  const urlTab = searchParams ? searchParams.get("tab") || "Overview" : "Overview";
+  const [localTab, setLocalTab] = useState(urlTab);
   const activeTab = TABS.find((t) => t.toLowerCase() === (localTab || urlTab).toLowerCase()) || "Overview";
 
-  const [localTab, setLocalTab] = useState(urlTab); const setActiveTab = (tab) => { setLocalTab(tab); if (typeof window !== "undefined") { const url = new URL(window.location); url.searchParams.set("tab", tab.toLowerCase()); window.history.replaceState({}, "", url); } };
+  const setActiveTab = (tab) => {
+    setLocalTab(tab);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location);
+      url.searchParams.set("tab", tab.toLowerCase());
+      window.history.replaceState({}, "", url);
+    }
+  };
   const [deadlineFilter, setDeadlineFilter] = useState("All");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
@@ -136,9 +144,16 @@ export default function UniversityDetailClient({ initialUni }) {
 
   // Fetch university from API by slug
   useEffect(() => {
+    if (initialUni && (initialUni.slug === slug || initialUni._id === slug)) {
+      setUni(initialUni);
+      setLoading(false);
+      return;
+    }
+
+    if (!slug) return;
+
     setLoading(true);
     setNotFound(false);
-    setUni(null);
 
     fetch("/api/universities/" + slug)
       .then((res) => {

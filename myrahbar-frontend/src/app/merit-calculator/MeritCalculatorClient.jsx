@@ -12,7 +12,7 @@ import {
 import { calculateAggregate, getMeritStatus } from "@/utils/merit";
 
 export default function MeritCalculatorPage() {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { uniSlug } = useParams();
   const router = useRouter(); const navigate = (url) => router.push(url);
 

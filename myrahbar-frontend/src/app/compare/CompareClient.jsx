@@ -6,7 +6,7 @@ import { Plus, X, BarChart2, Check, Minus } from "lucide-react";
 import { formatFee } from "@/utils/merit";
 
 export default function ComparePage() {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { uni1Slug, uni2Slug } = useParams();
   const router = useRouter(); const navigate = (url) => router.push(url);
 
@@ -69,14 +69,7 @@ export default function ComparePage() {
   };
 
   const removeUniversity = (id) => {
-    setSelected(selected.filter((u) => u.id !== id));
-    // When removing, we need to immediately update URL to drop the removed param
-    const remaining = selected.filter((u) => u.id !== id);
-    const params = new URLSearchParams();
-    if (remaining[0]) params.set("uni1", remaining[0].slug);
-    if (remaining[1]) params.set("uni2", remaining[1].slug);
-    if (remaining[2]) params.set("uni3", remaining[2].slug);
-    setSearchParams(params, { replace: true });
+    setSelected((prev) => prev.filter((u) => u.id !== id));
   };
 
   const available = allUniversities.filter(

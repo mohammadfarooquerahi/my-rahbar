@@ -1,3 +1,4 @@
+import { KARACHI_UNIVERSITIES } from "@/data/universities";
 // Server-side API helper for fetching data from the backend
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://myrahbar-backend.onrender.com";
 
