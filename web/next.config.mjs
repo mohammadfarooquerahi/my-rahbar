@@ -19,20 +19,6 @@ const nextConfig = {
       },
     ];
   },
-  async redirects() {
-    return [
-      {
-        source: "/admin",
-        destination: "https://admin.rahbars.com/admin",
-        permanent: false,
-      },
-      {
-        source: "/Admin",
-        destination: "https://admin.rahbars.com/admin",
-        permanent: false,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
