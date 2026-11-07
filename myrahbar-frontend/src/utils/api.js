@@ -1,4 +1,7 @@
-export const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
+export const API_BASE =
+  typeof window !== "undefined"
+    ? (process.env.NEXT_PUBLIC_API_BASE || "https://myrahbar-backend.onrender.com")
+    : (process.env.API_BASE || "https://myrahbar-backend.onrender.com");
 
 export const getImageUrl = (url) => {
   if (!url) return "";

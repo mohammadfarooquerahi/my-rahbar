@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Save, X, RefreshCw, Image, Check, AlertCircle, Sparkles, Upload } from "lucide-react";
 import toast from "react-hot-toast";
@@ -556,3 +557,4 @@ export default function HeroStudentsManager() {
     </div>
   );
 }
+
