@@ -1,4 +1,5 @@
 "use client";
+import UniversityCard from "@/components/university/UniversityCard";
 import { useState, useMemo } from "react";
 import { getImageUrl } from "@/lib/api";
 import { calculateAggregate } from "@/lib/merit";
@@ -244,3 +245,5 @@ export default function HomeClient({ universities, students }) {
     </>
   );
 }
+
+
