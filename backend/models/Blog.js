@@ -15,8 +15,8 @@ const blogSchema = new mongoose.Schema(
     views:          { type: Number, default: 0 },
 
     // SEO fields
-    seoTitle:       { type: String, maxlength: 70 },
-    seoDescription: { type: String, maxlength: 160 },
+    seoTitle:       { type: String, maxlength: 200 },
+    seoDescription: { type: String, maxlength: 200 },
     keywords:       [{ type: String }],
     focusKeyword:   { type: String },           // primary keyword for on-page score
     canonicalUrl:   { type: String },           // custom override; auto-derived from slug if blank
