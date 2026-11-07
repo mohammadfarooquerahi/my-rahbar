@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import UniversityDataCollector from "./UniversityDataCollector";
 import AIBlogGenerator from "../components/admin/AIBlogGenerator";
 import HeroStudentsManager from "../components/admin/HeroStudentsManager";
+import { API_BASE } from "../utils/api";
 import {
   Shield,
   CheckCircle,
@@ -95,7 +96,7 @@ const EMPTY_DEPT = {
 };
 
 export default function AdminPage() {
-  const { user, isLoggedIn, logout } = useAuthStore();
+  const { user, isLoggedIn, logout, token: storeToken } = useAuthStore();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("Universities");
@@ -107,7 +108,7 @@ export default function AdminPage() {
   const [uniForm, setUniForm] = useState(EMPTY_UNI);
   const [deptForm, setDeptForm] = useState(EMPTY_DEPT);
   const [departments, setDepartments] = useState([]);
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState({ text: "", type: "success" });
   const [expandedUni, setExpandedUni] = useState(null);
   const [dashboardStats, setDashboardStats] = useState(null);
   const [errorLogs, setErrorLogs] = useState([]);
@@ -145,12 +146,13 @@ export default function AdminPage() {
     expiresAt: "",
   });
 
-  const token = JSON.parse(localStorage.getItem("rahbar-auth") || "{}")?.state
-    ?.token;
+  const token =
+    storeToken ||
+    JSON.parse(localStorage.getItem("rahbar-auth") || "{}")?.state?.token;
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + token,
+    ...(token ? { Authorization: "Bearer " + token } : {}),
   };
 
   const handleUploadPaper = async (e) => {
@@ -267,7 +269,7 @@ export default function AdminPage() {
   const handleDeleteBlog = async (id) => {
     if (!window.confirm("Delete this blog? This cannot be undone.")) return;
     try {
-      const res = await fetch(`/api/blogs/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token } });
+      const res = await fetch(`${API_BASE}/api/blogs/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token } });
       if (!res.ok) throw new Error((await res.json()).message);
       showMsg("Blog deleted");
       loadData();
@@ -279,7 +281,7 @@ export default function AdminPage() {
     try {
       const formData = new FormData();
       formData.append("status", newStatus);
-      const res = await fetch(`/api/blogs/${blog._id}`, { method: "PUT", headers: { Authorization: "Bearer " + token }, body: formData });
+      const res = await fetch(`${API_BASE}/api/blogs/${blog._id}`, { method: "PUT", headers: { Authorization: "Bearer " + token }, body: formData });
       if (!res.ok) throw new Error((await res.json()).message);
       showMsg(`Blog ${newStatus === "published" ? "published" : "set to draft"}`);
       loadData();
@@ -290,7 +292,7 @@ export default function AdminPage() {
     if (!window.confirm("Seed 20 educational blogs? Existing seeded blogs will be replaced.")) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/blogs/seed", { method: "POST", headers: { Authorization: "Bearer " + token } });
+      const res = await fetch(`${API_BASE}/api/blogs/seed`, { method: "POST", headers: { Authorization: "Bearer " + token } });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       showMsg(`✅ Seeded ${data.blogs?.length || 20} blogs successfully!`);
@@ -317,7 +319,7 @@ export default function AdminPage() {
       return showMsg("Title and content are required.");
     setLoading(true);
     try {
-      const res = await fetch("/api/news", {
+      const res = await fetch(`${API_BASE}/api/news`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -348,7 +350,7 @@ export default function AdminPage() {
       return showMsg("Title and content are required.");
     setLoading(true);
     try {
-      const res = await fetch("/api/news/" + newsForm._id, {
+      const res = await fetch(`${API_BASE}/api/news/` + newsForm._id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -376,7 +378,7 @@ export default function AdminPage() {
 
   const handleToggleNewsActive = async (item) => {
     try {
-      const res = await fetch("/api/news/" + item._id, {
+      const res = await fetch(`${API_BASE}/api/news/` + item._id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -395,7 +397,7 @@ export default function AdminPage() {
   const handleDeleteNews = async (id) => {
     if (!window.confirm("Delete this news item?")) return;
     try {
-      const res = await fetch("/api/news/" + id, {
+      const res = await fetch(`${API_BASE}/api/news/` + id, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token },
       });
@@ -421,52 +423,98 @@ export default function AdminPage() {
     loadData();
   }, [activeTab]);
 
-  const showMsg = (text) => {
-    setMsg(text);
-    setTimeout(() => setMsg(""), 3000);
+  const showMsg = (text, type = "success") => {
+    if (!text) return;
+    const isError =
+      type === "error" ||
+      /error|failed|invalid|expired|not authorized|unauthorized/i.test(String(text));
+    setMsg({ text: String(text), type: isError ? "error" : "success" });
+    setTimeout(() => setMsg({ text: "", type: "success" }), 4500);
   };
 
   const loadData = async () => {
     setLoading(true);
     try {
       if (activeTab === "Universities") {
-        const res = await fetch("/api/admin/universities", { headers });
-        const data = await res.json();
-        setUnis(data.universities || []);
+        let loadedUnis = [];
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/universities`, { headers });
+          if (res.status === 401) {
+            showMsg("Admin session expired. Please re-login to manage universities.", "error");
+          } else {
+            const data = await res.json();
+            if (Array.isArray(data.universities) && data.universities.length > 0) {
+              loadedUnis = data.universities;
+            }
+          }
+        } catch (adminErr) {
+          console.warn("Admin universities fetch failed, falling back to public endpoint:", adminErr);
+        }
+
+        // Resilient fallback: ensure universities always populate
+        if (loadedUnis.length === 0) {
+          try {
+            const pubRes = await fetch(`${API_BASE}/api/universities?limit=100`);
+            const pubData = await pubRes.json();
+            const list = Array.isArray(pubData) ? pubData : (pubData.universities || []);
+            if (list.length > 0) loadedUnis = list;
+          } catch (pubErr) {
+            console.error("Public universities fallback failed:", pubErr);
+          }
+        }
+        setUnis(loadedUnis);
       }
       if (activeTab === "Reviews") {
-        const res = await fetch("/api/admin/reviews", { headers });
+        const res = await fetch(`${API_BASE}/api/admin/reviews`, { headers });
         const data = await res.json();
         setReviews(data.reviews || []);
       }
       if (activeTab === "Bookings") {
-        const res = await fetch("/api/admin/bookings", { headers });
+        const res = await fetch(`${API_BASE}/api/admin/bookings`, { headers });
         const data = await res.json();
         setBookings(data.bookings || []);
       }
       if (activeTab === "Dashboard") {
-        const res = await fetch("/api/admin/dashboard", { headers });
+        const res = await fetch(`${API_BASE}/api/admin/dashboard`, { headers });
         const data = await res.json();
         setDashboardStats(data);
       }
       if (activeTab === "Error Logs") {
-        const res = await fetch("/api/admin/error-logs", { headers });
+        const res = await fetch(`${API_BASE}/api/admin/error-logs`, { headers });
         const data = await res.json();
         setErrorLogs(data || []);
       }
       if (activeTab === "Past Papers") {
-        const res = await fetch("/api/pastpapers", { headers });
+        const res = await fetch(`${API_BASE}/api/pastpapers`, { headers });
         const data = await res.json();
         setPastPapers(data || []);
       }
       if (activeTab === "Blogs") {
-        // Admin fetches ALL blogs (draft + published) with status param
-        const res = await fetch("/api/blogs?limit=100&status=all", { headers });
-        const data = await res.json();
-        setBlogs(data.blogs || []);
+        let loadedBlogs = [];
+        try {
+          const res = await fetch(`${API_BASE}/api/blogs?limit=100&status=all`, { headers });
+          const data = await res.json();
+          if (Array.isArray(data.blogs) && data.blogs.length > 0) {
+            loadedBlogs = data.blogs;
+          }
+        } catch (blogErr) {
+          console.warn("Admin blogs fetch failed:", blogErr);
+        }
+
+        if (loadedBlogs.length === 0) {
+          try {
+            const pubRes = await fetch(`${API_BASE}/api/blogs?limit=100`);
+            const pubData = await pubRes.json();
+            const list = Array.isArray(pubData) ? pubData : (pubData.blogs || []);
+            if (list.length > 0) loadedBlogs = list;
+          } catch (pubErr) {
+            console.error("Public blogs fallback failed:", pubErr);
+          }
+        }
+        setBlogs(loadedBlogs);
       }
       if (activeTab === "News") {
-        const res = await fetch("/api/news", { headers });
+        const res = await fetch(`${API_BASE}/api/news`, { headers });
         const data = await res.json();
         setNews(data || []);
       }
@@ -479,7 +527,7 @@ export default function AdminPage() {
 
   // University actions
   const approveUni = async (id) => {
-    await fetch("/api/admin/universities/" + id + "/approve", {
+    await fetch(`${API_BASE}/api/admin/universities/` + id + "/approve", {
       method: "PUT",
       headers,
     });
@@ -488,7 +536,7 @@ export default function AdminPage() {
   };
 
   const rejectUni = async (id) => {
-    await fetch("/api/admin/universities/" + id + "/reject", {
+    await fetch(`${API_BASE}/api/admin/universities/` + id + "/reject", {
       method: "PUT",
       headers,
     });
@@ -498,7 +546,7 @@ export default function AdminPage() {
 
   const deleteUni = async (id) => {
     if (!window.confirm("Delete this university?")) return;
-    await fetch("/api/admin/universities/" + id, { method: "DELETE", headers });
+    await fetch(`${API_BASE}/api/admin/universities/` + id, { method: "DELETE", headers });
     showMsg("University deleted");
     loadData();
   };
@@ -578,13 +626,13 @@ export default function AdminPage() {
     try {
       let res;
       if (editingUni) {
-        res = await fetch("/api/admin/universities/" + editingUni, {
+        res = await fetch(`${API_BASE}/api/admin/universities/` + editingUni, {
           method: "PUT",
           headers,
           body: JSON.stringify(payload),
         });
       } else {
-        res = await fetch("/api/admin/universities", {
+        res = await fetch(`${API_BASE}/api/admin/universities`, {
           method: "POST",
           headers,
           body: JSON.stringify(payload),
@@ -642,7 +690,7 @@ export default function AdminPage() {
 
   // Review actions
   const approveReview = async (id) => {
-    await fetch("/api/admin/reviews/" + id + "/approve", {
+    await fetch(`${API_BASE}/api/admin/reviews/` + id + "/approve", {
       method: "PUT",
       headers,
     });
@@ -651,7 +699,7 @@ export default function AdminPage() {
   };
 
   const rejectReview = async (id) => {
-    await fetch("/api/admin/reviews/" + id + "/reject", {
+    await fetch(`${API_BASE}/api/admin/reviews/` + id + "/reject", {
       method: "PUT",
       headers,
     });
@@ -844,11 +892,21 @@ export default function AdminPage() {
           <div className="flex-1 overflow-y-auto p-4 md:p-8 relative">
             <div className="max-w-7xl mx-auto pb-12">
               
-              {/* Success message */}
-              {msg && (
-                <div className="mb-6 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm animate-in fade-in slide-in-from-top-2">
-                  <CheckCircle size={16} />
-                  {msg}
+              {/* Notification Banner */}
+              {msg.text && (
+                <div
+                  className={`mb-6 border text-sm px-4 py-3 rounded-xl flex items-center gap-2 shadow-sm animate-in fade-in slide-in-from-top-2 ${
+                    msg.type === "error"
+                      ? "bg-red-50 border-red-200 text-red-700"
+                      : "bg-green-50 border-green-200 text-green-700"
+                  }`}
+                >
+                  {msg.type === "error" ? (
+                    <AlertCircle size={18} className="shrink-0 text-red-500" />
+                  ) : (
+                    <CheckCircle size={18} className="shrink-0 text-green-500" />
+                  )}
+                  <span>{msg.text}</span>
                 </div>
               )}
 
@@ -2371,7 +2429,7 @@ export default function AdminPage() {
                           const token = JSON.parse(
                             localStorage.getItem("rahbar-auth") || "{}",
                           )?.state?.token;
-                          await fetch("/api/pastpapers/" + p._id, {
+                          await fetch(`${API_BASE}/api/pastpapers/` + p._id, {
                             method: "DELETE",
                             headers: { Authorization: "Bearer " + token },
                           });

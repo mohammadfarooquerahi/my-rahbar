@@ -1,50 +1,79 @@
 const express = require("express");
 const router = express.Router();
-const { getBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog, seedBlogs, getTrendingTopics, aiGenerateBlog, approveBlog, rejectBlog } = require("../controllers/blogController");
-const { protect, adminOnly, optionalAuth } = require("../middleware/auth");
-const multer = require("multer");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
+const {
+  getBlogs,
+  getBlogBySlug,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+  seedBlogs,
+  approveBlog,
+  rejectBlog,
+  getTrendingTopics,
+  aiGenerateBlog,
+} = require("../controllers/blogController");
+const { protect, adminOnly } = require("../middleware/auth");
 
-// Ensure uploads/blogs directory exists
-const uploadDir = "uploads/blogs/";
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, "../uploads/blogs");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
-  destination: uploadDir,
+  destination: (req, file, cb) => {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
   filename: (req, file, cb) => {
-    cb(null, `blog-${Date.now()}${path.extname(file.originalname)}`);
-  }
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `blog-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+  },
 });
+
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  // VULN-14 FIX: Whitelist only safe image types to prevent malicious file uploads
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    const allowedMimes = /jpeg|jpg|png|gif|webp/;
-    const mimeOk = allowedMimes.test(file.mimetype);
-    const extOk = allowedMimes.test(path.extname(file.originalname).toLowerCase().slice(1));
-    if (mimeOk && extOk) {
+    if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files (jpeg, jpg, png, gif, webp) are allowed."), false);
+      cb(new Error("Only images (PNG, JPG, WebP) are allowed."), false);
     }
   },
 });
 
-// Public routes — optionalAuth populates req.user if token valid, never blocks public
-router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
-router.get("/", optionalAuth, getBlogs);
-router.get("/:slug", optionalAuth, getBlogBySlug);
+// Middleware for clean JSON error responses from multer
+const handleUpload = (req, res, next) => {
+  upload.single("featuredImage")(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message || "Failed to upload image." });
+    }
+    next();
+  });
+};
 
-// Admin only routes
+// Public routes
+router.get("/", getBlogs);
+
+// Specific admin actions (MUST be placed before :slug to prevent matching as a slug)
 router.post("/seed", protect, adminOnly, seedBlogs);
+router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
 router.post("/ai-generate", protect, adminOnly, aiGenerateBlog);
-router.post("/", protect, adminOnly, upload.single("featuredImage"), createBlog);
+
+// Single blog by slug (Public)
+router.get("/:slug", getBlogBySlug);
+
+// Admin CRUD routes
+router.post("/", protect, adminOnly, handleUpload, createBlog);
 router.put("/:id/approve", protect, adminOnly, approveBlog);
 router.put("/:id/reject", protect, adminOnly, rejectBlog);
-router.put("/:id", protect, adminOnly, upload.single("featuredImage"), updateBlog);
+router.put("/:id", protect, adminOnly, handleUpload, updateBlog);
 router.delete("/:id", protect, adminOnly, deleteBlog);
 
 module.exports = router;
-

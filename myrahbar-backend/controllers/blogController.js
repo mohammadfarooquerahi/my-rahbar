@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/Blog");
 const User = require("../models/User");
 const slugify = require("slugify");
@@ -9,8 +10,17 @@ const getBlogs = async (req, res) => {
 
   const query = {};
 
+  let user = req.user;
+  if (!user && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      user = await User.findById(decoded.id).select("-password");
+    } catch (_) {}
+  }
+
   // Admin with status=all sees every blog; otherwise only published
-  if (req.user?.role === "admin" && status === "all") {
+  if (user?.role === "admin" && status === "all") {
     // no status filter — return all
   } else if (req.user?.role === "admin" && status) {
     query.status = status;
@@ -102,7 +112,7 @@ const createBlog = async (req, res) => {
     noIndex: noIndex === true || noIndex === "true",
     featuredImageAlt: featuredImageAlt || "",
     status: status || "draft",
-    author: req.user._id,
+    author: req.user?._id || (await User.findOne({ role: "admin" }))?._id,
     featuredImage,
     seoTitle: seoTitle || title.substring(0, 70),
     seoDescription: seoDescription || (excerpt || "").substring(0, 160),

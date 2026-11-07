@@ -34,7 +34,7 @@ export default function AIBlogGenerator({ token }) {
   const loadPendingBlogs = async () => {
     setLoadingPending(true);
     try {
-      const res = await fetch("/api/blogs?status=pending&limit=50", {
+      const res = await fetch(`${API_BASE}/api/blogs?status=pending&limit=50`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -45,7 +45,7 @@ export default function AIBlogGenerator({ token }) {
   const fetchTrending = async () => {
     setLoadingTrending(true);
     try {
-      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
+      // API_BASE imported from utils/api
       const res = await fetch(`${API_BASE}/api/blogs/trending-topics`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -60,7 +60,7 @@ export default function AIBlogGenerator({ token }) {
     setError("");
     setStep("generating");
     try {
-      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
+      // API_BASE imported from utils/api
       const res = await fetch(`${API_BASE}/api/blogs/ai-generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -100,7 +100,7 @@ export default function AIBlogGenerator({ token }) {
     formData.append("faqs", JSON.stringify(editFaqs));
 
     try {
-      const res = await fetch("/api/blogs", {
+      const res = await fetch(`${API_BASE}/api/blogs`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -117,7 +117,7 @@ export default function AIBlogGenerator({ token }) {
 
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`/api/blogs/${id}/approve`, {
+      const res = await fetch(`${API_BASE}/api/blogs/${id}/approve`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -131,7 +131,7 @@ export default function AIBlogGenerator({ token }) {
 
   const handleReject = async (id) => {
     try {
-      const res = await fetch(`/api/blogs/${id}/reject`, {
+      const res = await fetch(`${API_BASE}/api/blogs/${id}/reject`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
