@@ -60,6 +60,7 @@ app.use(
       ...(process.env.NODE_ENV !== "production" ? ["http://localhost:5173"] : []),
       "https://rahbars.com",
       "https://www.rahbars.com",
+      "https://admin.rahbars.com",
       process.env.CLIENT_URL,
     ].filter(Boolean),
     credentials: true,
