@@ -5,7 +5,7 @@ const { verifyEmailConfig } = require("../utils/sendEmail");
 const ContactMessage = require("../models/ContactMessage");
 
 // GET /api/contact/test-email - Diagnostic route to test Render email configuration
-router.get("/test-email", async (req, res) => {
+router.get(/"test-email", async (req, res) => {
   try {
     const diag = await verifyEmailConfig();
     res.json({
@@ -14,6 +14,38 @@ router.get("/test-email", async (req, res) => {
       adminEmail: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "rahbarsofficial@gmail.com",
       ...diag,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/contact/send-test?to=farooqrahi828@gmail.com - Send instant test email
+router.get("/send-test", async (req, res) => {
+  try {
+    const targetEmail = req.query.to || "farooqrahi828@gmail.com";
+    const result = await sendEmail({
+      to: targetEmail,
+      subject: "?? Rahbars Test Email — Verified and Working!",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; max-width: 500px; margin: 0 auto;">
+          <h2 style="color: #2563eb; margin-top: 0;">Rahbars Email System Test</h2>
+          <p>Assalam-o-Alaikum Farooq!</p>
+          <p>Aapka email alert system <strong>100% operational</strong> hai aur Render se successfully deliver ho raha hai.</p>
+          <p style="color: #64748b; font-size: 13px;">Sent at: ${new Date().toLocaleString("en-PK", { timeZone: "Asia/Karachi" })}</p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
+          <a href="https://www.rahbars.com" style="display: inline-block; background: #0f172a; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">Visit Rahbars</a>
+        </div>
+      `,
+    });
+    res.json({
+      status: "sent",
+      to: targetEmail,
+      result,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -121,3 +153,4 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+
