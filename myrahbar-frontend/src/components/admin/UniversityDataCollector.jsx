@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuthStore } from "@/store";
+import { API_BASE } from "@/utils/api";
 
 const CATEGORIES = [
   "CS",
@@ -59,7 +60,6 @@ export default function UniversityDataCollector() {
     }
 
     try {
-      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/collect-university`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -177,7 +177,6 @@ export default function UniversityDataCollector() {
         status: "pending",
       };
 
-      const API_BASE = import.meta.env.PROD ? "https://myrahbar-backend.onrender.com" : "";
       const res = await fetch(`${API_BASE}/api/ai-collect/submit-university`, {
         method: "POST",
         headers: {

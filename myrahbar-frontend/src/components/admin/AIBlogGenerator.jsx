@@ -1,10 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { API_BASE } from "@/utils/api";
 
 const CATEGORIES = [
   "Admission Guide", "Merit & Aggregate", "Entry Tests",
   "University Reviews", "Scholarships", "Career Guidance", "Student Life"
+];
+
+const FALLBACK_TRENDING = [
+  { title: "MDCAT 2026 Registration Dates and Complete Preparation Guide", category: "Entry Tests", hot: true },
+  { title: "ECAT 2026 Engineering Entry Test — Everything You Need", category: "Entry Tests", hot: true },
+  { title: "NUST Merit 2026 — Closing Merit List for All Departments", category: "Merit & Aggregate", hot: true },
+  { title: "FAST University CS Admission 2026 — Eligibility, Dates and Merit", category: "University Reviews", hot: true },
+  { title: "How to Apply for HEC Scholarship 2026 — Step by Step", category: "Scholarships", hot: true },
+  { title: "Top 10 Medical Colleges in Pakistan 2026 — Rankings and Merit", category: "University Reviews", hot: false },
+  { title: "Dow University MBBS Admission 2026 — Merit, Fee and Eligibility", category: "University Reviews", hot: true },
+  { title: "Aggregate Formula for NED University 2026 — Calculate Now", category: "Merit & Aggregate", hot: false },
+  { title: "Best Software Engineering Universities in Pakistan 2026", category: "University Reviews", hot: true },
+  { title: "HEC Recognized Universities List 2026 — Avoid Fake Institutes", category: "Admission Guide", hot: true },
 ];
 
 export default function AIBlogGenerator({ token }) {

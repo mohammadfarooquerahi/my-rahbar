@@ -1,3 +1,4 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const jwt = require("jsonwebtoken");
 const Blog = require("../models/Blog");
 const User = require("../models/User");
@@ -1196,28 +1197,28 @@ const seedBlogs = async (req, res) => {
 
 // ─── GET /api/blogs/trending-topics ─────────────────────────────────────────
 const getTrendingTopics = async (req, res) => {
-  // Curated trending Pakistani education topics (updated for 2025)
+  // Curated trending Pakistani education topics (updated for 2026)
   const topics = [
-    { title: "MDCAT 2025 Registration Dates and Complete Guide", category: "Entry Tests", hot: true },
-    { title: "ECAT 2025 Engineering Entry Test — Everything You Need", category: "Entry Tests", hot: true },
-    { title: "NUST Merit 2025 — Closing Merit List for All Departments", category: "Merit & Aggregate", hot: true },
-    { title: "FAST University CS Admission 2025 — Eligibility, Dates and Merit", category: "University Reviews", hot: false },
-    { title: "How to Apply for HEC Scholarship 2025 — Step by Step", category: "Scholarships", hot: true },
-    { title: "Top 10 Medical Colleges in Pakistan 2025 — Rankings and Merit", category: "University Reviews", hot: false },
-    { title: "Dow University MBBS Admission 2025 — Merit, Fee and Eligibility", category: "University Reviews", hot: true },
-    { title: "Aggregate Formula for NED University 2025 — Calculate Now", category: "Merit & Aggregate", hot: false },
-    { title: "LUMS Admission 2025 — NCA Test, Fee and Departments", category: "University Reviews", hot: false },
-    { title: "Best Software Engineering Universities in Pakistan 2025", category: "University Reviews", hot: true },
-    { title: "AGA Khan Medical College Admission 2025 — Complete Guide", category: "University Reviews", hot: false },
+    { title: "MDCAT 2026 Registration Dates and Complete Guide", category: "Entry Tests", hot: true },
+    { title: "ECAT 2026 Engineering Entry Test — Everything You Need", category: "Entry Tests", hot: true },
+    { title: "NUST Merit 2026 — Closing Merit List for All Departments", category: "Merit & Aggregate", hot: true },
+    { title: "FAST University CS Admission 2026 — Eligibility, Dates and Merit", category: "University Reviews", hot: true },
+    { title: "How to Apply for HEC Scholarship 2026 — Step by Step", category: "Scholarships", hot: true },
+    { title: "Top 10 Medical Colleges in Pakistan 2026 — Rankings and Merit", category: "University Reviews", hot: false },
+    { title: "Dow University MBBS Admission 2026 — Merit, Fee and Eligibility", category: "University Reviews", hot: true },
+    { title: "Aggregate Formula for NED University 2026 — Calculate Now", category: "Merit & Aggregate", hot: false },
+    { title: "LUMS Admission 2026 — NCA Test, Fee and Departments", category: "University Reviews", hot: false },
+    { title: "Best Software Engineering Universities in Pakistan 2026", category: "University Reviews", hot: true },
+    { title: "AGA Khan Medical College Admission 2026 — Complete Guide", category: "University Reviews", hot: false },
     { title: "Gap Year After FSc in Pakistan — What To Do Next", category: "Admission Guide", hot: false },
-    { title: "Pharm-D Admission 2025 in Pakistan — Universities and Merit", category: "Admission Guide", hot: false },
-    { title: "UHS MBBS Merit List 2025 — How to Check and What to Expect", category: "Merit & Aggregate", hot: true },
-    { title: "Documents Required for University Admission in Pakistan 2025", category: "Admission Guide", hot: false },
-    { title: "PIEAS Admission 2025 — Nuclear Engineering Merit and Test", category: "Entry Tests", hot: false },
-    { title: "COMSATS University Admission 2025 — All Campuses and Merit", category: "University Reviews", hot: false },
-    { title: "BDS Admission 2025 Pakistan — Complete Universities List", category: "Admission Guide", hot: true },
-    { title: "How to Prepare for NUMS Entry Test 2025 — Army Medical College", category: "Entry Tests", hot: false },
-    { title: "DPT Admission 2025 Pakistan — Fee, Merit and Top Universities", category: "Admission Guide", hot: false },
+    { title: "Pharm-D Admission 2026 in Pakistan — Universities and Merit", category: "Admission Guide", hot: false },
+    { title: "UHS MBBS Merit List 2026 — How to Check and What to Expect", category: "Merit & Aggregate", hot: true },
+    { title: "HEC Recognized Universities List 2026 — Verify Before Applying", category: "Admission Guide", hot: true },
+    { title: "PIEAS Admission 2026 — Nuclear Engineering Merit and Test", category: "Entry Tests", hot: false },
+    { title: "COMSATS University Admission 2026 — All Campuses and Merit", category: "University Reviews", hot: false },
+    { title: "BDS Admission 2026 Pakistan — Complete Universities List", category: "Admission Guide", hot: true },
+    { title: "How to Prepare for NUMS Entry Test 2026 — Army Medical College", category: "Entry Tests", hot: false },
+    { title: "DPT Admission 2026 Pakistan — Fee, Merit and Top Universities", category: "Admission Guide", hot: false },
   ];
   res.json({ topics });
 };
@@ -1227,12 +1228,8 @@ const aiGenerateBlog = async (req, res) => {
   const { title, category, keywords, additionalContext } = req.body;
   if (!title) return res.status(400).json({ message: "Title is required" });
 
-  const Groq = require("groq-sdk");
-  const apiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY || process.env.GROQ_KEY;
-  const groq = new Groq({ apiKey });
-
   // VULN-02 FIX: Sanitize inputs before injecting into AI prompt (Prompt Injection prevention)
-  const sanitizeForPrompt = (str) => String(str || "").replace(/["\\`\n\r]/g, " ").slice(0, 200);
+  const sanitizeForPrompt = (str) => String(str || "").replace(/[\"\\`\n\r]/g, " ").slice(0, 200);
   const safeTitle = sanitizeForPrompt(title);
   const safeCategory = sanitizeForPrompt(category || "Admission Guide");
   const safeKeywords = sanitizeForPrompt(keywords || title);
@@ -1254,7 +1251,7 @@ IMPORTANT REQUIREMENTS:
 5. Use proper HTML formatting: <h2>, <h3>, <p>, <ul>, <ol>, <li>, <strong>, <table> where appropriate
 6. Add a "Key Takeaways" section at the top as a <ul> list
 7. End with a strong conclusion encouraging students to use Rahbars tools
-8. Make the content factually accurate for Pakistan 2025
+8. Make the content factually accurate for Pakistan 2026
 
 Return ONLY a valid JSON object with these exact fields (absolutely no markdown, no code blocks, no extra text outside the JSON):
 {
@@ -1274,47 +1271,73 @@ Return ONLY a valid JSON object with these exact fields (absolutely no markdown,
   ]
 }`;
 
-  let selectedModel = "openai/gpt-oss-20b";
-  try {
-    const mList = await groq.models.list();
-    const valid = mList.data
-      .map((m) => m.id)
-      .filter((id) => !id.includes("whisper") && !id.includes("guard"));
-    selectedModel = valid.find((id) => id.includes("gpt-oss") || id.includes("qwen") || id.includes("llama")) || valid[0] || selectedModel;
-  } catch (_) {}
+  let rawText = "";
 
-  let completion = null;
-  try {
-    completion = await groq.chat.completions.create({
-      model: selectedModel,
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 4096,
-    });
-  } catch (mErr) {
-    const fallbackModel = selectedModel.includes("gpt-oss") ? "qwen/qwen3.8-27b" : "openai/gpt-oss-20b";
-    completion = await groq.chat.completions.create({
-      model: fallbackModel,
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 4096,
-    });
+  // 1. Try Gemini first (Gemini 2.5-flash / 1.5-flash)
+  const geminiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
+  if (geminiKey) {
+    const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-pro"];
+    const genAI = new GoogleGenerativeAI(geminiKey);
+    for (const modelName of GEMINI_MODELS) {
+      try {
+        console.log(`[Blog AI] Trying Gemini model: ${modelName}`);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(prompt);
+        const text = result?.response?.text();
+        if (text && text.trim().length > 0) {
+          rawText = text.trim();
+          console.log(`[Blog AI] Success with ${modelName} (${rawText.length} chars)`);
+          break;
+        }
+      } catch (err) {
+        console.warn(`[Blog AI] ${modelName} failed (${err.message}). Trying next...`);
+      }
+    }
   }
 
-  let text = completion.choices[0]?.message?.content?.trim() || "";
+  // 2. Fallback to Groq if Gemini did not produce text
+  if (!rawText) {
+    const Groq = require("groq-sdk");
+    const groqKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY || process.env.GROQ_KEY;
+    if (groqKey) {
+      try {
+        const groq = new Groq({ apiKey: groqKey });
+        let selectedModel = "llama-3.3-70b-versatile";
+        try {
+          const mList = await groq.models.list();
+          const valid = mList.data
+            .map((m) => m.id)
+            .filter((id) => !id.includes("whisper") && !id.includes("guard"));
+          selectedModel = valid.find((id) => id.includes("llama-3.3") || id.includes("llama-3.1") || id.includes("qwen")) || valid[0] || selectedModel;
+        } catch (_) {}
 
-  // Strip markdown code blocks if present
-  text = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+        const completion = await groq.chat.completions.create({
+          model: selectedModel,
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7,
+          max_tokens: 4096,
+        });
+        rawText = completion.choices[0]?.message?.content?.trim() || "";
+      } catch (groqErr) {
+        console.error("[Blog AI] Groq fallback failed:", groqErr.message);
+      }
+    }
+  }
 
-  // Extract JSON if there's extra text around it
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) text = jsonMatch[0];
+  if (!rawText) {
+    return res.status(500).json({ message: "AI generation failed. Please verify API keys or wait a moment." });
+  }
+
+  // Clean JSON extraction
+  let cleanedText = rawText.replace(/^\`\`\`json\s*/i, "").replace(/^\`\`\`\s*/i, "").replace(/\s*\`\`\`$/i, "").trim();
+  const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+  if (jsonMatch) cleanedText = jsonMatch[0];
 
   let parsed;
   try {
-    parsed = JSON.parse(text);
+    parsed = JSON.parse(cleanedText);
   } catch (e) {
-    return res.status(500).json({ message: "AI response parsing failed. Please try again.", raw: text.substring(0, 300) });
+    return res.status(500).json({ message: "AI response parsing failed. Please try again.", raw: rawText.substring(0, 300) });
   }
 
   res.json({
