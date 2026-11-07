@@ -241,11 +241,11 @@ export default function HomePage() {
   // Static fallback data for hero student showcase cards
   const STATIC_HERO_STUDENTS = [
     { _id: "s1", name: "Sudheer Mantharani", tag: "FAST", subtitle: "BS Computer Science", imageUrl: "/hero/sudheer-mantharani.png", color: "emerald", order: 1 },
-    { _id: "s2", name: "Muzammil Ahmed", tag: "UET Taxila", subtitle: "CS Student | CGPA 3.53", imageUrl: "/hero/muzammil-ahmed.jpg", color: "rose", order: 2 },
-    { _id: "s3", name: "Muhammad Abdullah", tag: "LUMS", subtitle: "Sophomore CS Student", imageUrl: "/hero/muhammad-abdullah.jpg", color: "rose", order: 3 },
+    { _id: "s2", name: "Muzammil Ahmed", tag: "UET Taxila", subtitle: "BS Mechanical Engineering", imageUrl: "/hero/muzammil-ahmed.jpg", color: "rose", order: 2 },
+    { _id: "s3", name: "Muhammad Abdullah", tag: "LUMS", subtitle: "BSc Accounting & Finance", imageUrl: "/hero/muhammad-abdullah.jpg", color: "amber", order: 3 },
     { _id: "s4", name: "Aleena Zia", tag: "NUST", subtitle: "BS Computer Engineering", imageUrl: "/hero/aleena-zia.png", color: "purple", order: 4 },
-    { _id: "s5", name: "Faizan Ahmed", tag: "NED", subtitle: "BS Computer Science", imageUrl: "/hero/faizan-ahmed.png", color: "blue", order: 5 },
-    { _id: "s6", name: "Abdullah Aamir", tag: "NUST", subtitle: "BS Computer Science", imageUrl: "/hero/abdullah-aamir.jpg", color: "amber", order: 6 },
+    { _id: "s5", name: "Faizan Ahmed", tag: "NED", subtitle: "BE Civil Engineering", imageUrl: "/hero/faizan-ahmed.png", color: "blue", order: 5 },
+    { _id: "s6", name: "Abdullah Aamir", tag: "NUST", subtitle: "BS Artificial Intelligence", imageUrl: "/hero/abdullah-aamir.jpg", color: "sky", order: 6 },
   ];
 
   const [displayStudents, setDisplayStudents] = useState(STATIC_HERO_STUDENTS);
@@ -634,7 +634,8 @@ export default function HomePage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading={idx < 3 ? "eager" : "lazy"}
                         onError={(e) => {
-                          e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400";
+                          e.target.onerror = null;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name || 'Student')}&background=0284c7&color=fff&size=400`;
                         }}
                       />
                       <div className={`absolute top-1.5 right-1.5 ${badgeColorClass} backdrop-blur-xs text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs`}>

@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Alert = require("../models/Alert");
+const University = require("../models/University");
 const { protect } = require("../middleware/auth");
 
 // POST /api/alerts — create alert
@@ -11,10 +13,24 @@ router.post("/", protect, async (req, res) => {
     return res.status(400).json({ message: "University ID is required." });
   }
 
+  let finalUniId = universityId;
+  let finalUniName = universityName;
+
+  // If universityId is not a valid ObjectId (e.g. slug like 'neduet'), look up by slug
+  if (!mongoose.Types.ObjectId.isValid(universityId)) {
+    const uni = await University.findOne({ slug: universityId.toString().toLowerCase().trim() }).select("_id name");
+    if (uni) {
+      finalUniId = uni._id;
+      if (!finalUniName) finalUniName = uni.name;
+    } else {
+      return res.status(400).json({ message: "Invalid University ID or slug." });
+    }
+  }
+
   // Check if alert already exists for this user + university
   const exists = await Alert.findOne({
     userId: req.user._id,
-    universityId: universityId,
+    universityId: finalUniId,
     isActive: true,
   });
 
@@ -26,8 +42,8 @@ router.post("/", protect, async (req, res) => {
 
   const alert = await Alert.create({
     userId: req.user._id,
-    universityId,
-    universityName,
+    universityId: finalUniId,
+    universityName: finalUniName,
     deadline: deadline || null,
     whatsapp: req.user.whatsapp,
     email: req.user.email,
