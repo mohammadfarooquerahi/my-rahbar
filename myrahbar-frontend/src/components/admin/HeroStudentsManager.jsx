@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Save, X, RefreshCw, Image, Check, AlertCircle, Sparkles, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store";
-import { API_BASE, getImageUrl } from "../../utils/api";
+import { API_BASE, getImageUrl } from "@/utils/api";
 
 const COLOR_OPTIONS = [
   { value: "blue", label: "Blue (e.g. NUST / STEM)", badgeClass: "bg-blue-700/90" },
@@ -557,4 +557,5 @@ export default function HeroStudentsManager() {
     </div>
   );
 }
+
 

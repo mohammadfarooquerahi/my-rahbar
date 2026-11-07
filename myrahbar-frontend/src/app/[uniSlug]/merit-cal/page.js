@@ -1,16 +1,20 @@
-export const metadata = {
-  title: "Aggregate & Merit Calculator",
-  description: "Calculate your aggregate for specific university admission in Pakistan.",
-};
+import { Suspense } from "react";
+import MeritCalculatorClient from "@/app/merit-calculator/MeritCalculatorClient";
 
-export default function UniMeritCalPage() {
+export async function generateMetadata({ params }) {
+  const { uniSlug } = await params;
+  const name = uniSlug ? uniSlug.replace(/-/g, " ").toUpperCase() : "University";
+  return {
+    title: `${name} Merit & Aggregate Calculator | Rahbars`,
+    description: `Calculate your aggregate score and check admission chances for ${name}.`,
+    alternates: { canonical: `https://www.rahbars.com/${uniSlug}/merit-cal` },
+  };
+}
+
+export default function UniMeritCalculatorPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-black text-slate-900 mb-4" style={{ fontFamily: "Sora" }}>Merit Calculator</h1>
-      <p className="text-slate-500 mb-6">Calculate your aggregate score for this university.</p>
-      <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
-        <p className="text-sm text-slate-400">Interactive calculator — loading...</p>
-      </div>
-    </div>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading Calculator...</div>}>
+      <MeritCalculatorClient />
+    </Suspense>
   );
 }

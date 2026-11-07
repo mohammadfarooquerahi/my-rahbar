@@ -1,13 +1,21 @@
-export const metadata = {
-  title: "Compare Universities",
-  description: "Side by side comparison of two Pakistani universities.",
-};
+import { Suspense } from "react";
+import CompareClient from "@/app/compare/CompareClient";
 
-export default function CompareDetailPage() {
+export async function generateMetadata({ params }) {
+  const { uni1Slug, uni2Slug } = await params;
+  const name1 = uni1Slug ? uni1Slug.replace(/-/g, " ").toUpperCase() : "University 1";
+  const name2 = uni2Slug ? uni2Slug.replace(/-/g, " ").toUpperCase() : "University 2";
+  return {
+    title: `${name1} vs ${name2} Comparison | Rahbars`,
+    description: `Compare fees, merit, rankings, and programs between ${name1} and ${name2}.`,
+    alternates: { canonical: `https://www.rahbars.com/${uni1Slug}/vs/${uni2Slug}` },
+  };
+}
+
+export default function UniVsUniPage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-black text-slate-900 mb-4" style={{ fontFamily: "Sora" }}>University Comparison</h1>
-      <p className="text-slate-500">Loading comparison...</p>
-    </div>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading Comparison...</div>}>
+      <CompareClient />
+    </Suspense>
   );
 }
