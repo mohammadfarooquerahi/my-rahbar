@@ -53,8 +53,36 @@ export default function UniversityCard({ uni }) {
     e.stopPropagation();
     if (watched) {
       removeUniversity(uniId);
+      if (typeof window !== "undefined") {
+        try {
+          const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
+          const token = auth?.state?.token;
+          if (token) {
+            fetch(`/api/watchlist/${uniId}`, {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
+            }).catch(() => {});
+          }
+        } catch {}
+      }
     } else {
       addUniversity({ ...uni, id: uniId });
+      if (typeof window !== "undefined") {
+        try {
+          const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
+          const token = auth?.state?.token;
+          if (token) {
+            fetch("/api/watchlist", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ universityId: uniId, sendConfirmation: true }),
+            }).catch(() => {});
+          }
+        } catch {}
+      }
     }
   };
 

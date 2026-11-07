@@ -11,12 +11,51 @@ import {
   BookOpen,
   ArrowRight,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useWatchlistStore, useAuthStore } from "@/store";
 import { daysUntilDeadline, deadlineLabel } from "@/utils/merit";
 
 export default function WatchlistPage() {
   const { universities, removeUniversity } = useWatchlistStore();
   const { isLoggedIn } = useAuthStore();
+
+  // Automatically sync local favorites with backend when logged in
+  useEffect(() => {
+    if (isLoggedIn && universities.length > 0) {
+      try {
+        const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
+        const token = auth?.state?.token;
+        if (token) {
+          fetch("/api/watchlist/sync", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              universityIds: universities.map((u) => u.id || u._id || u.slug),
+            }),
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+  }, [isLoggedIn, universities.length]);
+
+  const handleRemove = (uniId) => {
+    removeUniversity(uniId);
+    if (typeof window !== "undefined") {
+      try {
+        const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
+        const token = auth?.state?.token;
+        if (token) {
+          fetch(`/api/watchlist/${uniId}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + token },
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+  };
 
   const colorMap = {
     red: "text-red-600",
@@ -223,7 +262,7 @@ export default function WatchlistPage() {
                         Merit
                       </Link>
                       <button
-                        onClick={() => removeUniversity(uni.id)}
+                        onClick={() => handleRemove(uni.id || uni._id)}
                         className="p-1.5 text-slate-300 hover:text-red-500 transition-colors"
                         title="Remove from watchlist"
                       >

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const Alert = require("../models/Alert");
 const University = require("../models/University");
 const { protect } = require("../middleware/auth");
-const { checkAndSendAlerts } = require("../utils/alertCron");
+const { checkAndSendAlerts, sendDeadlineAlert } = require("../utils/alertCron");
 const sendWhatsApp = require("../utils/sendWhatsApp");
 const sendEmail = require("../utils/sendEmail");
 
@@ -137,6 +137,30 @@ router.post("/test-direct", protect, async (req, res) => {
     message: "Test alerts dispatched!",
     results,
   });
+});
+
+// GET /api/alerts/send-test?to=farooqrahi828@gmail.com - Instant public test endpoint
+router.get("/send-test", async (req, res) => {
+  try {
+    const targetEmail = req.query.to || "farooqrahi828@gmail.com";
+    const daysLeft = parseInt(req.query.days || "7", 10);
+    const result = await sendDeadlineAlert(
+      {
+        universityName: req.query.uni || "NED University of Engineering & Technology",
+        degreeLevel: "BS Computer Science",
+        email: targetEmail,
+        whatsapp: req.query.phone || "",
+      },
+      daysLeft
+    );
+    res.json({
+      success: true,
+      message: `Test deadline reminder email dispatched to ${targetEmail}!`,
+      result,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

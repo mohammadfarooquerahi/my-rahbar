@@ -1,11 +1,11 @@
-const express = require("express");
+﻿const express = require("express");
 const router = express.Router();
 const sendEmail = require("../utils/sendEmail");
 const { verifyEmailConfig } = require("../utils/sendEmail");
 const ContactMessage = require("../models/ContactMessage");
 
 // GET /api/contact/test-email - Diagnostic route to test Render email configuration
-router.get(/"test-email", async (req, res) => {
+router.get("/test-email", async (req, res) => {
   try {
     const diag = await verifyEmailConfig();
     res.json({
@@ -25,7 +25,7 @@ router.get("/send-test", async (req, res) => {
     const targetEmail = req.query.to || "farooqrahi828@gmail.com";
     const result = await sendEmail({
       to: targetEmail,
-      subject: "?? Rahbars Test Email � Verified and Working!",
+      subject: "Rahbars Test Email - Verified and Working!",
       html: `
         <div style="font-family: Arial, sans-serif; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; max-width: 500px; margin: 0 auto;">
           <h2 style="color: #2563eb; margin-top: 0;">Rahbars Email System Test</h2>
@@ -42,10 +42,6 @@ router.get("/send-test", async (req, res) => {
       to: targetEmail,
       result,
     });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -84,7 +80,7 @@ router.post("/", async (req, res) => {
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-            <h2 style="color: #2563eb; margin: 0; font-size: 22px;">📬 New Contact Form Message</h2>
+            <h2 style="color: #2563eb; margin: 0; font-size: 22px;">New Contact Form Message</h2>
           </div>
           <p style="font-size: 15px; color: #475569; margin: 0 0 16px;">A user has submitted a message via the <strong>Rahbars</strong> contact page:</p>
           
@@ -122,7 +118,7 @@ router.post("/", async (req, res) => {
     // 3. Dispatch auto-confirmation email to the sender
     const userConfirmPromise = sendEmail({
       to: email,
-      subject: `We received your message — Rahbars Team`,
+      subject: `We received your message - Rahbars Team`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; background: #ffffff;">
           <h2 style="color: #2563eb; margin: 0 0 12px; font-size: 20px;">Thank You, ${firstName}!</h2>
@@ -132,7 +128,7 @@ router.post("/", async (req, res) => {
           </div>
           <p style="font-size: 13px; color: #64748b; margin: 0;">For urgent inquiries, you can also reach us directly on WhatsApp at <strong>+92 319 0211218</strong>.</p>
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0 16px;" />
-          <p style="font-size: 11px; color: #94a3b8; margin: 0;">Rahbars • Hyderabad, Pakistan • <a href="https://www.rahbars.com" style="color: #2563eb; text-decoration: none;">rahbars.com</a></p>
+          <p style="font-size: 11px; color: #94a3b8; margin: 0;">Rahbars - Hyderabad, Pakistan - <a href="https://www.rahbars.com" style="color: #2563eb; text-decoration: none;">rahbars.com</a></p>
         </div>
       `,
     });
@@ -153,4 +149,3 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
-
