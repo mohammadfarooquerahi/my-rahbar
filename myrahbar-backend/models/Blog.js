@@ -14,9 +14,9 @@ const blogSchema = new mongoose.Schema(
     status:         { type: String, enum: ["draft", "pending", "published"], default: "draft" },
     views:          { type: Number, default: 0 },
 
-    // SEO fields
-    seoTitle:       { type: String, maxlength: 70 },
-    seoDescription: { type: String, maxlength: 160 },
+    // SEO fields (no restrictive maxlength to prevent validation errors)
+    seoTitle:       { type: String, default: "" },
+    seoDescription: { type: String, default: "" },
     keywords:       [{ type: String }],
     focusKeyword:   { type: String },           // primary keyword for on-page score
     canonicalUrl:   { type: String },           // custom override; auto-derived from slug if blank

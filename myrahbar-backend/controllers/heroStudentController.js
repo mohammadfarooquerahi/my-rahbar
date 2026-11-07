@@ -13,7 +13,7 @@ const DEFAULT_HERO_STUDENTS = [
   {
     name: "Muzammil Ahmed",
     tag: "UET Taxila",
-    subtitle: "CS Student | CGPA 3.53",
+    subtitle: "BS Mechanical Engineering",
     imageUrl: "/hero/muzammil-ahmed.jpg",
     color: "rose",
     order: 2,
@@ -22,9 +22,9 @@ const DEFAULT_HERO_STUDENTS = [
   {
     name: "Muhammad Abdullah",
     tag: "LUMS",
-    subtitle: "Sophomore CS Student",
+    subtitle: "BSc Accounting & Finance",
     imageUrl: "/hero/muhammad-abdullah.jpg",
-    color: "rose",
+    color: "amber",
     order: 3,
     isActive: true,
   },
@@ -40,7 +40,7 @@ const DEFAULT_HERO_STUDENTS = [
   {
     name: "Faizan Ahmed",
     tag: "NED",
-    subtitle: "BS Computer Science",
+    subtitle: "BE Civil Engineering",
     imageUrl: "/hero/faizan-ahmed.png",
     color: "blue",
     order: 5,
@@ -49,9 +49,9 @@ const DEFAULT_HERO_STUDENTS = [
   {
     name: "Abdullah Aamir",
     tag: "NUST",
-    subtitle: "BS Computer Science",
+    subtitle: "BS Artificial Intelligence",
     imageUrl: "/hero/abdullah-aamir.jpg",
-    color: "amber",
+    color: "sky",
     order: 6,
     isActive: true,
   },
@@ -71,7 +71,6 @@ const getPublicHeroStudents = async (req, res) => {
     res.json({ success: true, count: students.length, students });
   } catch (err) {
     console.error("[getPublicHeroStudents] Error:", err.message);
-    // Graceful fallback to static array if DB is connecting
     res.json({ success: true, count: DEFAULT_HERO_STUDENTS.length, students: DEFAULT_HERO_STUDENTS });
   }
 };
@@ -96,9 +95,10 @@ const createHeroStudent = async (req, res) => {
     const { name, tag, subtitle, color, order, isActive } = req.body;
     let imageUrl = (req.body.imageUrl || "").trim();
 
-    // If file was uploaded via multer
     if (req.file) {
-      imageUrl = `/uploads/hero/${req.file.filename}`;
+      if (!imageUrl || !imageUrl.startsWith("data:image/")) {
+        imageUrl = `/uploads/hero/${req.file.filename}`;
+      }
     }
 
     if (!name || !tag || !subtitle) {
@@ -106,13 +106,13 @@ const createHeroStudent = async (req, res) => {
     }
 
     if (!imageUrl) {
-      return res.status(400).json({ success: false, error: "Image URL or image upload is required." });
+      return res.status(400).json({ success: false, error: "Image URL or photo is required." });
     }
 
     const newStudent = await HeroStudent.create({
-      name,
-      tag,
-      subtitle,
+      name: name.trim(),
+      tag: tag.trim(),
+      subtitle: subtitle.trim(),
       imageUrl,
       color: color || "blue",
       order: Number(order) || 0,
@@ -133,7 +133,9 @@ const updateHeroStudent = async (req, res) => {
     let imageUrl = req.body.imageUrl;
 
     if (req.file) {
-      imageUrl = `/uploads/hero/${req.file.filename}`;
+      if (!imageUrl || !imageUrl.startsWith("data:image/")) {
+        imageUrl = `/uploads/hero/${req.file.filename}`;
+      }
     }
 
     const updateData = {};

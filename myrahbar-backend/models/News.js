@@ -4,7 +4,7 @@ const newsSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     content: { type: String, required: true },
-    type: { type: String, enum: ["news", "notification", "announcement"], default: "news" },
+    type: { type: String, enum: ["news", "notification", "announcement", "admission"], default: "news" },
     priority: { type: String, enum: ["low", "medium", "high"], default: "medium" },
     isActive: { type: Boolean, default: true },
     expiresAt: { type: Date },

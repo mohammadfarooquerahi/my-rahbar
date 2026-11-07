@@ -145,9 +145,15 @@ export default function HeroStudentsManager() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPreviewImage(URL.createObjectURL(file));
-      const optimized = await compressImage(file);
+      const optimized = await compressImage(file, 600, 0.85);
       setSelectedFile(optimized);
+      const reader = new FileReader();
+      reader.onload = (uploadEvt) => {
+        const base64 = uploadEvt.target.result;
+        setPreviewImage(base64);
+        setFormData((prev) => ({ ...prev, imageUrl: base64 }));
+      };
+      reader.readAsDataURL(optimized);
     }
   };
 
@@ -318,7 +324,8 @@ export default function HeroStudentsManager() {
                     alt={student.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400";
+                      e.target.onerror = null;
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name || 'Student')}&background=0284c7&color=fff&size=400`;
                     }}
                   />
                   {/* Uni Tag Badge */}
