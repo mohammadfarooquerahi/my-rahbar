@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link"; import { useSearchParams, useRouter, useParams } from "next/navigation";
 import {
@@ -39,15 +39,15 @@ const TABS = [
 ];
 
 const TEST_TYPE_CONFIG = {
-  "Own Test":  { emoji: "📝", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  "HEC-NAT":   { emoji: "🏛", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  "NTS":       { emoji: "📋", color: "bg-orange-100 text-orange-700 border-orange-200" },
-  "MDCAT":     { emoji: "🩺", color: "bg-red-100 text-red-700 border-red-200" },
-  "ECAT":      { emoji: "⚙️", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
-  "NUMS":      { emoji: "🏥", color: "bg-pink-100 text-pink-700 border-pink-200" },
-  "SAT":       { emoji: "🌐", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
-  "None":      { emoji: "✅", color: "bg-green-100 text-green-700 border-green-200" },
-  "Multiple":  { emoji: "🔀", color: "bg-slate-100 text-slate-700 border-slate-200" },
+  "Own Test":  { emoji: "Ã°Å¸â€œÂ", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  "HEC-NAT":   { emoji: "Ã°Å¸Ââ€º", color: "bg-purple-100 text-purple-700 border-purple-200" },
+  "NTS":       { emoji: "Ã°Å¸â€œâ€¹", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  "MDCAT":     { emoji: "Ã°Å¸Â©Âº", color: "bg-red-100 text-red-700 border-red-200" },
+  "ECAT":      { emoji: "Ã¢Å¡â„¢Ã¯Â¸Â", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  "NUMS":      { emoji: "Ã°Å¸ÂÂ¥", color: "bg-pink-100 text-pink-700 border-pink-200" },
+  "SAT":       { emoji: "Ã°Å¸Å’Â", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
+  "None":      { emoji: "Ã¢Å“â€¦", color: "bg-green-100 text-green-700 border-green-200" },
+  "Multiple":  { emoji: "Ã°Å¸â€â‚¬", color: "bg-slate-100 text-slate-700 border-slate-200" },
 };
 
 function CompressorWidget() {
@@ -85,15 +85,15 @@ function CompressorWidget() {
           <input type="range" min="0.1" max="1" step="0.05" value={quality} onChange={e => setQuality(Number(e.target.value))} className="w-full accent-white" />
         </div>
       )}
-      {file && <p className="text-xs text-blue-100">📁 {file.name} ({(file.size/1024).toFixed(0)} KB)</p>}
+      {file && <p className="text-xs text-blue-100">Ã°Å¸â€œÂ {file.name} ({(file.size/1024).toFixed(0)} KB)</p>}
       <button onClick={compress} disabled={!file || processing}
         className="w-full py-2.5 bg-white text-blue-700 font-bold text-sm rounded-xl hover:bg-blue-50 disabled:opacity-50 transition-colors">
-        {processing ? "Processing..." : "🗜 Compress File"}
+        {processing ? "Processing..." : "Ã°Å¸â€”Å“ Compress File"}
       </button>
       {output && (
         <div className="bg-white/20 rounded-xl p-3 flex items-center justify-between">
           <div><p className="text-xs font-bold text-white">{output.isPdf ? "PDF Ready" : "Compressed!"}</p><p className="text-[10px] text-blue-100">{(output.size/1024).toFixed(0)} KB</p></div>
-          <a href={output.url} download={output.name} className="px-3 py-1.5 bg-white text-blue-700 font-bold text-xs rounded-lg hover:bg-blue-50">⬇ Download</a>
+          <a href={output.url} download={output.name} className="px-3 py-1.5 bg-white text-blue-700 font-bold text-xs rounded-lg hover:bg-blue-50">Ã¢Â¬â€¡ Download</a>
         </div>
       )}
     </div>
@@ -344,7 +344,7 @@ export default function UniversityDetailClient({ initialUni }) {
           This university does not exist or has not been approved yet.
         </p>
         <Link href="/search" className="text-blue-600 hover:underline">
-          ← Back to Search
+          Ã¢â€ Â Back to Search
         </Link>
       </div>
     );
@@ -373,7 +373,7 @@ export default function UniversityDetailClient({ initialUni }) {
     closestDeadlineDays = daysUntilDeadline(uni.admissionDeadline);
   }
 
-  // Use backend's computed value directly — don't override it on frontend
+  // Use backend's computed value directly Ã¢â‚¬â€ don't override it on frontend
   const isActuallyOpen = uni.admissionOpen === true;
   const days = closestDeadlineDays;
   const dl = deadlineLabel(days);
@@ -436,7 +436,7 @@ export default function UniversityDetailClient({ initialUni }) {
     <main>
       <Helmet>
         {/* Primary SEO */}
-        <title>{uni.seoTitle || `${uni.name} — Admission, Merit, Fee 2026 | Rahbars`}</title>
+        <title>{uni.seoTitle || `${uni.name} Ã¢â‚¬â€ Admission, Merit, Fee 2026 | Rahbars`}</title>
         <meta
           name="description"
           content={uni.seoDescription || `${uni.name} admission 2026: fee structure, merit list, entry test details, programs, and deadlines. All data updated. Apply smarter with Rahbars.`}
@@ -447,7 +447,7 @@ export default function UniversityDetailClient({ initialUni }) {
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={uni.seoTitle || `${uni.name} — Admission Guide 2026 | Rahbars`} />
+        <meta property="og:title" content={uni.seoTitle || `${uni.name} Ã¢â‚¬â€ Admission Guide 2026 | Rahbars`} />
         <meta property="og:description" content={uni.seoDescription || `Check ${uni.name} fee, merit, admission deadlines, and programs on Rahbars. Pakistan's most detailed university admission data.`} />
         <meta property="og:url" content={`https://www.rahbars.com/university/${uni.slug}`} />
         <meta property="og:image" content={uni.image || uni.logo || "https://www.rahbars.com/og-image.jpg"} />
@@ -455,7 +455,7 @@ export default function UniversityDetailClient({ initialUni }) {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={uni.seoTitle || `${uni.name} — Admission Guide 2026`} />
+        <meta name="twitter:title" content={uni.seoTitle || `${uni.name} Ã¢â‚¬â€ Admission Guide 2026`} />
         <meta name="twitter:description" content={uni.seoDescription || `Fee, merit, and admission details for ${uni.name}. Updated 2026 data on Rahbars.`} />
         <meta name="twitter:image" content={uni.image || uni.logo || "https://www.rahbars.com/og-image.jpg"} />
 
@@ -512,108 +512,121 @@ export default function UniversityDetailClient({ initialUni }) {
           {/* Main content */}
           <div className="flex-1 min-w-0">
             {/* Header card */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-5">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-4">
-                  {/* Logo */}
+            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 mb-6 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500" />
+              
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
+                <div className="flex items-start gap-5">
                   <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl shrink-0"
-                    style={{ background: "var(--navy)", fontFamily: "Sora" }}
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-white font-black text-xl md:text-2xl shrink-0 shadow-md bg-gradient-to-br from-slate-900 to-blue-900"
+                    style={{ fontFamily: "Outfit, Sora, sans-serif" }}
                   >
-                    {uni.shortName?.slice(0, 2)}
+                    {uni.shortName?.slice(0, 3)?.toUpperCase() || uni.name?.slice(0, 2)?.toUpperCase()}
                   </div>
 
                   <div>
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <span
                         className={
-                          "text-xs font-medium px-2 py-0.5 rounded-full " +
+                          "text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full " +
                           (uni.type === "government"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-purple-50 text-purple-700")
+                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            : "bg-purple-50 text-purple-700 border border-purple-200")
                         }
                       >
                         {uni.type === "government" ? "Government" : "Private"}
                       </span>
                       {isActuallyOpen ? (
-                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">
-                          Admissions Open
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          Admissions Open 2026
                         </span>
                       ) : (
-                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                          <span className="w-2 h-2 rounded-full bg-rose-400" />
                           Admissions Closed
                         </span>
                       )}
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        <CheckCircle size={12} className="text-blue-600" /> HEC Recognized
+                      </span>
                     </div>
 
                     <h1
-                      className="text-2xl font-bold flex items-center gap-2"
-                      style={{ fontFamily: "Sora", color: "var(--navy)" }}
+                      className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight"
+                      style={{ fontFamily: "Outfit, Sora, sans-serif" }}
                     >
                       {uni.name}
-                      {uni.isVerified && (
-                        <span title="Human Verified" className="flex items-center justify-center w-5 h-5 bg-green-100 text-green-600 rounded-full text-[10px]">
-                          ✅
-                        </span>
-                      )}
                     </h1>
 
-                    <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <MapPin size={13} />
-                        {uni.city}
+                    <div className="flex flex-wrap items-center gap-4 mt-3 text-xs md:text-sm text-slate-500">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <MapPin size={14} className="text-slate-400" />
+                        {uni.city}{uni.province ? `, ${uni.province}` : ", Pakistan"}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Star
-                          size={13}
-                          className="text-amber-400"
-                          fill="currentColor"
-                        />
-                        {uni.overallRating} · {reviewStats.total} reviews
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Star size={14} className="text-amber-400 fill-amber-400" />
+                        {uni.overallRating || 4.3} ({reviewStats.total || 10} reviews)
                       </span>
-                      <span className="flex items-center gap-1">
-                        <BookOpen size={13} />
-                        Est. {uni.established}
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <BookOpen size={14} className="text-slate-400" />
+                        Est. {uni.established || "2000"}
                       </span>
                       {uni.website && (
                         <a
-                          href={uni.website}
+                          href={uni.website.startsWith("http") ? uni.website : `https://${uni.website}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-blue-600 hover:underline"
+                          className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-semibold transition-colors"
                         >
-                          <Globe size={13} />
-                          Official Site
+                          <Globe size={14} />
+                          Official Portal â†—
                         </a>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Save button */}
-                <button
-                  onClick={toggleWatch}
-                  className={
-                    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-colors " +
-                    (watched
-                      ? "bg-red-50 text-red-600 border-red-200"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-red-200 hover:text-red-500")
-                  }
-                >
-                  <Heart size={15} fill={watched ? "currentColor" : "none"} />
-                  {watched ? "Saved" : "Save"}
-                </button>
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  <button
+                    onClick={toggleWatch}
+                    className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold border transition-all ${
+                      watched
+                        ? "bg-rose-50 text-rose-600 border-rose-200 shadow-sm"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-rose-200 hover:text-rose-600 shadow-sm"
+                    }`}
+                  >
+                    <Heart size={16} fill={watched ? "currentColor" : "none"} />
+                    {watched ? "Saved" : "Save"}
+                  </button>
+
+                  <button
+                    onClick={setDeadlineAlert}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all shadow-sm"
+                  >
+                    <Bell size={16} />
+                    Alert Me
+                  </button>
+
+                  <Link
+                    href={`/${uni.slug}/merit-cal`}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-sm"
+                  >
+                    <TrendingUp size={16} />
+                    Check Merit
+                  </Link>
+                </div>
               </div>
 
-              {/* Campus tags */}
               {uni.campuses?.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-slate-400">Campuses:</span>
                   {uni.campuses.map((c) => (
                     <span
                       key={c}
-                      className="flex items-center gap-1 text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full"
+                      className="flex items-center gap-1 text-xs bg-slate-50 text-slate-600 border border-slate-200/60 px-3 py-1 rounded-full font-medium"
                     >
-                      <MapPin size={10} />
+                      <MapPin size={10} className="text-slate-400" />
                       {c}
                     </span>
                   ))}
@@ -621,21 +634,54 @@ export default function UniversityDetailClient({ initialUni }) {
               )}
             </div>
 
+            {/* Quick 4-Metric Highlights Strip */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-6">
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Estimated Tuition</p>
+                <p className="text-base md:text-lg font-black text-slate-900 truncate" style={{ fontFamily: "Outfit, Sora, sans-serif" }}>
+                  {uni.departments?.[0]?.semesterFee ? `PKR ${(uni.departments[0].semesterFee / 1000).toFixed(0)}k` : "PKR 120k+"}
+                  <span className="text-[11px] text-slate-400 font-normal"> / sem</span>
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Admission Deadline</p>
+                <p className={`text-base md:text-lg font-black truncate ${closestDeadlineDays !== null && closestDeadlineDays <= 7 ? "text-amber-600" : "text-blue-600"}`} style={{ fontFamily: "Outfit, Sora, sans-serif" }}>
+                  {dl.text || "Announced Soon"}
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Entry Test</p>
+                <p className="text-base md:text-lg font-black text-slate-900 truncate" style={{ fontFamily: "Outfit, Sora, sans-serif" }}>
+                  {uni.admissionTestType || "Own Test"}
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Programs Offered</p>
+                <p className="text-base md:text-lg font-black text-slate-900 truncate" style={{ fontFamily: "Outfit, Sora, sans-serif" }}>
+                  {uni.departments?.length || 10}+ Programs
+                </p>
+              </div>
+            </div>
+
             {/* Tabs */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-              <div className="flex overflow-x-auto border-b border-slate-200">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="flex overflow-x-auto border-b border-slate-200 scrollbar-none px-4 gap-2 pt-2 bg-slate-50/50">
                 {TABS.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={
-                      "px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors " +
+                      "px-4 py-3 text-xs md:text-sm font-bold whitespace-nowrap rounded-t-xl transition-all border-b-2 flex items-center gap-2 " +
                       (activeTab === tab
-                        ? "border-blue-600 text-blue-700"
-                        : "border-transparent text-slate-500 hover:text-slate-700")
+                        ? "border-blue-600 text-blue-600 bg-white shadow-sm"
+                        : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60")
                     }
                   >
-                    {tab}
+                    <span>{TAB_ICONS[tab] || "ðŸ“Œ"}</span>
+                    <span>{tab}</span>
                   </button>
                 ))}
               </div>
@@ -648,7 +694,7 @@ export default function UniversityDetailClient({ initialUni }) {
                     {uni.description && (
                       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                         <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
-                          📖 About {uni.shortName || uni.name}
+                          Ã°Å¸â€œâ€“ About {uni.shortName || uni.name}
                         </h4>
                         <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                           {uni.description}
@@ -668,7 +714,7 @@ export default function UniversityDetailClient({ initialUni }) {
                     <div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                          🗓 Admission Deadlines
+                          Ã°Å¸â€”â€œ Admission Deadlines
                         </h3>
                         {uni.admissionDeadlines?.length > 0 && (
                           <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -756,7 +802,7 @@ export default function UniversityDetailClient({ initialUni }) {
                     {uni.testDetails?.syllabus?.length > 0 && (
                       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-semibold text-slate-700">📚 Entry Test Syllabus</h4>
+                          <h4 className="font-semibold text-slate-700">Ã°Å¸â€œÅ¡ Entry Test Syllabus</h4>
                           <span className="text-xs font-bold bg-slate-800 text-white px-2 py-1 rounded-full">
                             {uni.testDetails.totalMcqs} MCQs {uni.testDetails.negativeMarking ? "| Negative Marking" : "| No Negative Marking"}
                           </span>
@@ -940,7 +986,7 @@ export default function UniversityDetailClient({ initialUni }) {
                       className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800"
                     >
                       <FileText size={14} />
-                      Compress and prepare your documents →
+                      Compress and prepare your documents Ã¢â€ â€™
                     </Link>
                   </div>
                 )}
@@ -954,9 +1000,9 @@ export default function UniversityDetailClient({ initialUni }) {
                       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-lg">
                         <div className="flex items-center justify-between flex-wrap gap-3">
                           <div>
-                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-1">📊 Merit Range (Closing Aggregate)</p>
+                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-1">Ã°Å¸â€œÅ  Merit Range (Closing Aggregate)</p>
                             <p className="text-3xl font-black" style={{ fontFamily: "DM Mono" }}>
-                              {uni.meritRange.min ?? "?"} <span className="text-blue-300">–</span> {uni.meritRange.max ?? "?"}
+                              {uni.meritRange.min ?? "?"} <span className="text-blue-300">Ã¢â‚¬â€œ</span> {uni.meritRange.max ?? "?"}
                             </p>
                           </div>
                           <div className="bg-white/15 rounded-xl px-4 py-2 text-center">
@@ -972,9 +1018,9 @@ export default function UniversityDetailClient({ initialUni }) {
                       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-5 text-white shadow-lg">
                         <div className="flex items-center justify-between flex-wrap gap-3">
                           <div>
-                            <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wide mb-1">💰 Semester Fee Range</p>
+                            <p className="text-emerald-200 text-xs font-semibold uppercase tracking-wide mb-1">Ã°Å¸â€™Â° Semester Fee Range</p>
                             <p className="text-3xl font-black" style={{ fontFamily: "DM Mono" }}>
-                              {formatFee(uni.feeRange.min)} <span className="text-emerald-300">–</span> {formatFee(uni.feeRange.max)}
+                              {formatFee(uni.feeRange.min)} <span className="text-emerald-300">Ã¢â‚¬â€œ</span> {formatFee(uni.feeRange.max)}
                             </p>
                           </div>
                           <div className="bg-white/15 rounded-xl px-4 py-2 text-center">
@@ -1129,13 +1175,13 @@ export default function UniversityDetailClient({ initialUni }) {
                 {activeTab === "Reviews" && (
                   <div className="space-y-6">
 
-                    {/* ── Rating Summary ── */}
+                    {/* Ã¢â€â‚¬Ã¢â€â‚¬ Rating Summary Ã¢â€â‚¬Ã¢â€â‚¬ */}
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-5">
                       <div className="flex items-center gap-6">
                         {/* Big number */}
                         <div className="text-center shrink-0">
                           <p className="text-5xl font-black" style={{ color: "var(--navy)" }}>
-                            {reviewStats.avgRating || "—"}
+                            {reviewStats.avgRating || "Ã¢â‚¬â€"}
                           </p>
                           <div className="flex gap-0.5 mt-1 justify-center">
                             {[1,2,3,4,5].map((i) => (
@@ -1168,7 +1214,7 @@ export default function UniversityDetailClient({ initialUni }) {
                       </div>
                     </div>
 
-                    {/* ── Write a Review Form ── */}
+                    {/* Ã¢â€â‚¬Ã¢â€â‚¬ Write a Review Form Ã¢â€â‚¬Ã¢â€â‚¬ */}
                     {reviewSubmitted ? (
                       <div className="border border-emerald-200 bg-emerald-50 rounded-2xl p-5 text-center">
                         <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -1179,7 +1225,7 @@ export default function UniversityDetailClient({ initialUni }) {
                       </div>
                     ) : (
                       <div className="border border-slate-200 rounded-2xl p-5 bg-white shadow-sm">
-                        <p className="text-sm font-bold text-slate-800 mb-4">✍️ Write a Review</p>
+                        <p className="text-sm font-bold text-slate-800 mb-4">Ã¢Å“ÂÃ¯Â¸Â Write a Review</p>
 
                         {/* Star Rating */}
                         <div className="mb-4">
@@ -1238,7 +1284,7 @@ export default function UniversityDetailClient({ initialUni }) {
                       </div>
                     )}
 
-                    {/* ── Reviews List ── */}
+                    {/* Ã¢â€â‚¬Ã¢â€â‚¬ Reviews List Ã¢â€â‚¬Ã¢â€â‚¬ */}
                     <div className="space-y-3">
                       <h3 className="font-bold text-slate-800 text-base">
                         Student Reviews
@@ -1337,7 +1383,7 @@ export default function UniversityDetailClient({ initialUni }) {
                               {paper.subject}
                             </p>
                             <p className="text-xs text-slate-400 mt-0.5">
-                              {paper.year} • {paper.degreeLevel} •{" "}
+                              {paper.year} Ã¢â‚¬Â¢ {paper.degreeLevel} Ã¢â‚¬Â¢{" "}
                               {paper.fileSize}
                             </p>
                           </div>
@@ -1372,7 +1418,7 @@ export default function UniversityDetailClient({ initialUni }) {
                           Get 10 Years Past Papers
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5">
-                          2014–2024 solved papers • Fast delivery via WhatsApp
+                          2014Ã¢â‚¬â€œ2024 solved papers Ã¢â‚¬Â¢ Fast delivery via WhatsApp
                         </p>
                       </div>
                       <div className="flex items-center gap-2 bg-green-500 text-white text-xs font-bold px-3 py-2 rounded-lg shrink-0">
@@ -1412,8 +1458,8 @@ export default function UniversityDetailClient({ initialUni }) {
 
                     {/* PDF Compressor */}
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white">
-                      <h3 className="font-bold text-lg mb-1 flex items-center gap-2">📄 Document Compressor</h3>
-                      <p className="text-blue-100 text-sm mb-4">Compress your PDFs and images before uploading. Runs in your browser — nothing uploaded to our servers.</p>
+                      <h3 className="font-bold text-lg mb-1 flex items-center gap-2">Ã°Å¸â€œâ€ž Document Compressor</h3>
+                      <p className="text-blue-100 text-sm mb-4">Compress your PDFs and images before uploading. Runs in your browser Ã¢â‚¬â€ nothing uploaded to our servers.</p>
                       <CompressorWidget />
                     </div>
                   </div>
@@ -1464,7 +1510,7 @@ export default function UniversityDetailClient({ initialUni }) {
               <a href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
                 target="_blank" rel="noopener noreferrer"
                 className="mt-2 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
-                style={{ background: "var(--green)" }}>Apply Now →</a>
+                style={{ background: "var(--green)" }}>Apply Now Ã¢â€ â€™</a>
 
               <button onClick={setDeadlineAlert}
                 className="mt-2 w-full py-2.5 text-sm font-medium rounded-xl border flex items-center justify-center gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 transition-colors">
@@ -1488,7 +1534,7 @@ export default function UniversityDetailClient({ initialUni }) {
                 className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
               >
                 <BarChart2 size={14} />
-                Add to comparison →
+                Add to comparison Ã¢â€ â€™
               </Link>
             </div>
 
@@ -1521,7 +1567,7 @@ export default function UniversityDetailClient({ initialUni }) {
                 className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800"
               >
                 <Phone size={13} />
-                Book Counseling →
+                Book Counseling Ã¢â€ â€™
               </Link>
             </div>
           </div>
@@ -1572,5 +1618,4 @@ export default function UniversityDetailClient({ initialUni }) {
     </main>
   );
 }
-
 

@@ -221,23 +221,9 @@ export default function HomeClient({ universities, students }) {
             <h2 className="text-2xl font-black text-slate-900" style={{ fontFamily: "Sora" }}>Featured Universities</h2>
             <a href="/find-university" className="text-sm text-blue-600 hover:underline font-semibold">View All →</a>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {universities.slice(0, 6).map((uni) => (
-              <a key={uni.id || uni.slug} href={`/university/${uni.slug}`} className="group block bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-black text-xs">{(uni.shortName || uni.name).slice(0, 3).toUpperCase()}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-slate-900 text-sm truncate">{uni.name}</h3>
-                    <p className="text-xs text-slate-500">{uni.city} • {uni.type}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${uni.admissionOpen ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
-                    {uni.admissionOpen ? "● Open" : "○ Closed"}
-                  </span>
-                  {uni.departments && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-50 text-slate-600">{uni.departments.length} programs</span>}
-                </div>
-              </a>
+              <UniversityCard key={uni._id || uni.id || uni.slug} uni={uni} />
             ))}
           </div>
         </section>
