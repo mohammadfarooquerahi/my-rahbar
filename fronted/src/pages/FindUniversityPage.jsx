@@ -273,9 +273,95 @@ export default function FindUniversityPage() {
                   Retake the quiz
                 </button>
               </div>
-            ) : (
-              <div className="space-y-4">
+             ) : ( <form
+    className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
+    onSubmit={(e) => {
+      e.preventDefault();
+      const matched = matchUniversities(answers);
+      setResults(matched);
+      setFinished(true);
+    }}
+  >
+    <div className="p-6 md:p-8">
+      {/* Questions list */}
+      <div className="flex flex-nowrap gap-4 overflow-x-auto p-2">
+        {QUESTIONS.map((q) => (
+          <div key={q.key} className="flex flex-col min-w-[280px]">
+            <h3 className="text-lg font-medium mb-2 text-slate-800" style={{ fontFamily: "Sora" }}>{q.question}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {q.options.map((opt) => (
+                <label
+                  key={opt.value}
+                  className={
+                    "flex items-center p-2 rounded cursor-pointer border " +
+                    (answers[q.key] === opt.value ? "border-slate-900 bg-slate-100" : "border-slate-200 bg-white")
+                  }
+                >
+                  <input
+                    type="radio"
+                    name={q.key}
+                    value={opt.value}
+                    checked={answers[q.key] === opt.value}
+                    onChange={() => setAnswer(q.key, opt.value)}
+                    className="hidden"
+                  />
+                  <span className="ml-2 text-sm text-slate-700">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Submit button */}
+      <div className="mt-8 flex justify-center">
+        <button
+          type="submit"
+          className="px-6 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium"
+          disabled={Object.keys(answers).length < QUESTIONS.length}
+        >
+          Find My University
+        </button>
+      </div>
+    </div>
+  </form> )
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {results.map(({ uni, score }, i) => (
+                <div key={uni.id} className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between h-full">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      {/* Rank badge */}
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: "var(--navy)" }}>
+                        {i + 1}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800" style={{ fontFamily: "Sora" }}>{uni.name}</h3>
+                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                          <span className="flex items-center gap-1"><MapPin size={11} /> {uni.city}</span>
+                          <span className="flex items-center gap-1"><Star size={11} className="text-amber-400" fill="currentColor" /> {uni.overallRating}</span>
+                          <span className={uni.type === "government" ? "text-blue-600" : "text-purple-600"}>{uni.type === "government" ? "Government" : "Private"}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Match score */}
+                    <div className={"text-center px-3 py-1.5 rounded-xl font-bold shrink-0 " + scoreColor(score)}>
+                      <p className="text-lg" style={{ fontFamily: "DM Mono" }}>{score}%</p>
+                      <p className="text-xs font-normal">match</p>
+                    </div>
+                  </div>
+                  {/* Department tags */}
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {uni.departments.slice(0, 3).map((d) => (
+                      <span key={d.name} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">{d.name}</span>
+                    ))}
+                  </div>
+                  {/* Actions */}
+                  <div className="flex gap-2 mt-4">
+                    <Link to={"/university/" + uni.slug} className="flex-1 text-center py-2 text-sm font-medium text-white rounded-xl" style={{ background: "var(--navy)" }}>View Details</Link>
+                    <Link to={"/" + uni.slug + "/merit-cal"} className="flex-1 text-center py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-xl hover:bg-blue-100">Check Merit</Link>
+                  </div>
+                </div>
+              ))}
+
                   <div
                     key={uni.id}
                     className="bg-white rounded-2xl border border-slate-200 p-5"
@@ -383,7 +469,57 @@ export default function FindUniversityPage() {
               </div>
             )}
           </div>
-        ) : (
+         ) : ( <form
+    className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
+    onSubmit={(e) => {
+      e.preventDefault();
+      const matched = matchUniversities(answers);
+      setResults(matched);
+      setFinished(true);
+    }}
+  >
+    <div className="p-6 md:p-8">
+      {/* Questions list */}
+      <div className="flex flex-nowrap gap-4 overflow-x-auto p-2">
+        {QUESTIONS.map((q) => (
+          <div key={q.key} className="flex flex-col min-w-[280px]">
+            <h3 className="text-lg font-medium mb-2 text-slate-800" style={{ fontFamily: "Sora" }}>{q.question}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {q.options.map((opt) => (
+                <label
+                  key={opt.value}
+                  className={
+                    "flex items-center p-2 rounded cursor-pointer border " +
+                    (answers[q.key] === opt.value ? "border-slate-900 bg-slate-100" : "border-slate-200 bg-white")
+                  }
+                >
+                  <input
+                    type="radio"
+                    name={q.key}
+                    value={opt.value}
+                    checked={answers[q.key] === opt.value}
+                    onChange={() => setAnswer(q.key, opt.value)}
+                    className="hidden"
+                  />
+                  <span className="ml-2 text-sm text-slate-700">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Submit button */}
+      <div className="mt-8 flex justify-center">
+        <button
+          type="submit"
+          className="px-6 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium"
+          disabled={Object.keys(answers).length < QUESTIONS.length}
+        >
+          Find My University
+        </button>
+      </div>
+    </div>
+  </form> )
           // Quiz screen
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
             {/* Progress bar */}

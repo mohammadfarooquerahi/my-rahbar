@@ -60,6 +60,7 @@ app.use(
       ...(process.env.NODE_ENV !== "production" ? ["http://localhost:5173"] : []),
       "https://rahbars.com",
       "https://www.rahbars.com",
+      "https://admin.rahbars.com",
       process.env.CLIENT_URL,
     ].filter(Boolean),
     credentials: true,
@@ -121,6 +122,9 @@ app.use("/api/ai-collect", aiCollectRoutes);
 
 app.use("/api/sitemap.xml", sitemapRoutes);
 app.use("/api/hero-students", heroStudentRoutes);
+
+// Root & Health check
+app.get("/", (req, res) => res.json({ status: "ok", message: "MyRahbar API is live" }));
 
 // Health check
 app.get("/api/health", (req, res) => {

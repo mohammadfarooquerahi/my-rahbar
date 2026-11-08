@@ -15,7 +15,7 @@ const {
   getTrendingTopics,
   aiGenerateBlog,
 } = require("../controllers/blogController");
-const { protect, adminOnly } = require("../middleware/auth");
+const { protect, adminOnly, optionalAuth } = require("../middleware/auth");
 
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, "../uploads/blogs");
@@ -63,7 +63,7 @@ router.get("/", getBlogs);
 
 // Specific admin actions (MUST be placed before :slug to prevent matching as a slug)
 router.post("/seed", protect, adminOnly, seedBlogs);
-router.get("/trending-topics", protect, adminOnly, getTrendingTopics);
+router.get("/trending-topics", optionalAuth, getTrendingTopics);
 router.post("/ai-generate", protect, adminOnly, aiGenerateBlog);
 
 // Single blog by slug (Public)

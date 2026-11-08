@@ -104,7 +104,8 @@ export default function UniversityCard({ uni }) {
     : null;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative p-5 md:p-6">
+    <Link to={`/university/${uni.slug}`} className="block">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative p-5 md:p-6">
       
       {/* Mobile Heart Button (Absolute top right) */}
       <button aria-label="Add to Watchlist" onClick={toggleWatch}

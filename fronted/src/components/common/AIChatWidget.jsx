@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { API_BASE } from "@/utils/api";
 
 const SYSTEM = `You are Rahbars AI, a helpful guide for Pakistani students.
 You ONLY answer questions about:
@@ -41,7 +42,7 @@ export default function AIChatWidget() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/ai/chat", {
+      const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -4,12 +4,12 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // genAI initialized dynamically
 
-// Fallback model chain — if one is overloaded or quota-limited, try the next
+// Fallback model chain — active and supported models on Google Gemini API
 const MODEL_CHAIN = [
   "gemini-2.5-flash",
-  "gemini-2.0-flash",
+  "gemini-1.5-flash",
   "gemini-2.5-flash-lite",
-  "gemini-2.0-flash-lite",
+  "gemini-1.5-pro",
 ];
 
 // ── BULLETPROOF JSON EXTRACTION ──────────────────────────────────────
@@ -76,25 +76,29 @@ async function generateWithGroq(prompt) {
 async function generateWithRetry(prompt) {
   let lastError = null;
 
-  // 1. Try Gemini first if key is present
+  // 1. Try Google Gemini with multi-model fallback chain
   if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== "") {
-    try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
-      if (text) {
-        console.log(`[AI] Success with Gemini 2.0 Flash (${text.length} chars)`);
-        return text;
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
+
+    for (const modelName of MODEL_CHAIN) {
+      try {
+        console.log(`[AI] Attempting Gemini model: ${modelName}`);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(prompt);
+        const text = result?.response?.text();
+        if (text && text.trim().length > 0) {
+          console.log(`[AI] Success with ${modelName} (${text.length} chars)`);
+          return text;
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`[AI] Gemini ${modelName} failed (${err.message}). Trying next candidate...`);
       }
-    } catch (err) {
-      lastError = err;
-      console.warn(`[AI] Gemini unavailable (${err.message}). Switching to Groq immediately...`);
     }
   }
 
-  // 2. Seamless Fallback to Groq (already configured on Render)
-  console.log("[AI] Using Groq fallback for generation...");
+  // 2. Seamless Fallback to Groq if Gemini is unavailable
+  console.log("[AI] Falling back to Groq for generation...");
   try {
     return await generateWithGroq(prompt);
   } catch (groqErr) {
@@ -105,7 +109,19 @@ async function generateWithRetry(prompt) {
 
 // ── UNIVERSITY DATA PROMPT ───────────────────────────────────────────
 const PROMPT_TEMPLATE = (universityName) => `You are a professional, highly accurate university data researcher for Pakistan. 
-You MUST use Google Search to find the absolute latest, real, and current 2025-2026 data for "${universityName}" in Pakistan.
+You MUST provide the absolute latest, real, verified, and current 2025-2026 data for "${universityName}" in Pakistan.
+
+PRIMARY TRUSTED VERIFICATION SOURCES (Pakistani Higher Education Ecosystem):
+1. Official University Website (.edu.pk) — The #1 most reliable authority for current deadlines, fee structure per semester, closing merit percentage, and eligibility criteria.
+2. HEC Official Portal (hec.gov.pk) — Higher Education Commission of Pakistan recognized universities list and degree accreditation status.
+3. Eduvision Pakistan (eduvision.edu.pk) — Comprehensive degree programs list, duration, fee per semester estimates, and admission calendar.
+4. ProPakistani Education (propakistani.pk/category/education) — Latest admission open news, test dates, and official announcements.
+5. PakMustaqbil (pakmustaqbil.com) — Cross-reference for degrees, departments, and admission updates.
+
+RESEARCH & VERIFICATION METHODOLOGY:
+- Cross-reference Eduvision and PakMustaqbil for full program lists and fee estimates.
+- Strictly confirm HEC recognition on hec.gov.pk.
+- Confirm final deadlines, eligibility, and fee structure directly from the official university website.
 
 CRITICAL RULES AGAINST HALLUCINATION:
 1. You must strictly verify details from the official university website and HEC records.
@@ -113,6 +129,7 @@ CRITICAL RULES AGAINST HALLUCINATION:
 3. DO NOT guess fee amounts or closing merit percentages. If you cannot find the exact number, set the value to 0 or omit it.
 4. For dates you cannot confirm, use an empty string "" instead of making one up.
 5. Include ONLY the top real departments (MAXIMUM 8) that the university actually offers.
+6. Populate "sources" array with verified URLs (e.g. university official portal, hec.gov.pk, eduvision.edu.pk).
 
 Return ONLY valid JSON (no markdown, no backticks, no explanation text) matching this exact structure:
 {
@@ -331,24 +348,35 @@ function buildLastMerit(val) {
   return [];
 }
 
+const FALLBACK_TOPICS = [
+  "MDCAT 2026 Registration Dates and Complete Preparation Guide",
+  "Top 10 Engineering and Computer Science Universities in Pakistan (HEC Recognized)",
+  "Latest Fall 2026 Admissions Open in Karachi, Lahore and Islamabad",
+  "ECAT 2026 Engineering Entry Test — Syllabus, Marks and Eligibility",
+  "HEC Recognized Universities List 2026 — Avoid Fake and Unrecognized Institutes",
+  "FAST vs NUST vs GIKI — Which is Best for BS Computer Science in 2026?",
+  "How to Apply for HEC Need-Based and Merit Scholarships 2026 (Step-by-Step)",
+  "Dow vs King Edward vs AKU — Top Medical Colleges in Pakistan 2026"
+];
+
 // ── GET /trending-topics ─────────────────────────────────────────────
 router.get("/trending-topics", async (req, res) => {
   try {
     const prompt = `You are an SEO expert and educational consultant for Pakistan.
-    Using Google Search, find the absolute latest trending topics (year 2026) related to universities, admissions, MDCAT, ECAT, or higher education in Pakistan.
+    Using verified education trends, find the absolute latest trending topics (year 2026) related to universities, admissions, MDCAT, ECAT, or higher education in Pakistan.
     Return ONLY a valid JSON array of 5 highly engaging, click-worthy blog post topics.
     Example: ["Top 10 Universities in Karachi for BS CS in 2026", "MDCAT 2026 Complete Preparation Guide"]
     Return the JSON array directly. No markdown, no backticks, no explanation.`;
 
     const rawText = await generateWithRetry(prompt);
     const topics = extractJSON(rawText);
-    if (!topics || !Array.isArray(topics)) {
-      throw new Error("AI did not return a valid topics array.");
+    if (!topics || !Array.isArray(topics) || topics.length === 0) {
+      return res.json({ topics: FALLBACK_TOPICS });
     }
     res.json({ topics });
   } catch (err) {
-    console.error("[AI] Trending Topics Error:", err.message);
-    res.status(500).json({ message: "Failed to fetch trending topics: " + err.message });
+    console.warn("[AI] Trending Topics AI error, serving fallback:", err.message);
+    res.json({ topics: FALLBACK_TOPICS });
   }
 });
 
