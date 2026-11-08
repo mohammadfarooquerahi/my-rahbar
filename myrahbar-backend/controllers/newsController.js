@@ -16,12 +16,6 @@ const getActiveNews = async (req, res) => {
 
     if (status !== "all") {
       query.isActive = true;
-      // Filter out expired items
-      query.$or = [
-        { expiresAt: { $exists: false } },
-        { expiresAt: null },
-        { expiresAt: { $gt: new Date() } },
-      ];
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
