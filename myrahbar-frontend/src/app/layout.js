@@ -31,6 +31,15 @@ export const metadata = {
   alternates: {
     canonical: "https://www.rahbars.com",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
