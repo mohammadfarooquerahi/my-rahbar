@@ -76,14 +76,6 @@ export default function HomeClient({ universities, students }) {
                 </div>
               </form>
 
-              {/* Popular tags */}
-              <div className="w-full mb-3 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1">Popular:</span>
-                {[{ label: "💻 CS & AI", q: "Computer Science" }, { label: "🩺 Medical / MDCAT", q: "MBBS" }, { label: "⚙️ Engineering", q: "Engineering" }, { label: "📊 Business", q: "BBA" }, { label: "⚖️ Law", q: "LLB" }].map((f) => (
-                  <a key={f.label} href={`/search?q=${encodeURIComponent(f.q)}`} className="px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition">{f.label}</a>
-                ))}
-              </div>
-
               {/* CTA buttons */}
               <div className="flex flex-wrap items-center gap-2.5 w-full mb-3.5">
                 <a href="/find-university" className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer">
