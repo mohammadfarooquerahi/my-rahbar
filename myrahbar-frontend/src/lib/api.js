@@ -4,21 +4,22 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://myrahbar-backend.o
 
 export async function fetchAPI(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeout || 8000);
 
   try {
     const res = await fetch(url, {
       ...options,
-      signal: controller.signal,
-      next: options.next || { revalidate: 3600 }, // ISR: revalidate every hour by default
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Rahbars-SSR",
+        ...(options.headers || {}),
+      },
+      signal: AbortSignal.timeout(options.timeout || 2000),
+      next: options.next || { revalidate: 1800 },
     });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error(`API ${res.status}: ${res.statusText}`);
+    if (!res.ok) throw new Error(`API ${res.status}`);
     return await res.json();
   } catch (err) {
-    clearTimeout(timeout);
-    console.error(`[fetchAPI] ${endpoint}:`, err.message);
+    console.warn(`[fetchAPI] ${endpoint} fallback:`, err.message);
     return null;
   }
 }
@@ -26,7 +27,7 @@ export async function fetchAPI(endpoint, options = {}) {
 // Public endpoints (no auth needed)
 export async function getUniversities(limit = 200) {
   const data = await fetchAPI(`/api/universities?limit=${limit}`);
-  return data?.universities || [];
+  return data?.universities || KARACHI_UNIVERSITIES || [];
 }
 
 export async function getUniversityBySlug(slug) {

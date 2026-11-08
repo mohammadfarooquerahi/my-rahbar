@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 const Helmet = () => null;
 import { useWatchlistStore } from "@/store";
+import { API_BASE } from "@/utils/api";
 import { daysUntilDeadline, deadlineLabel, formatFee } from "@/utils/merit";
 import { KARACHI_UNIVERSITIES } from "@/data/universities";
 import toast from "react-hot-toast";
@@ -165,7 +166,7 @@ export default function UniversityDetailClient({ initialUni }) {
     setLoading(true);
     setNotFound(false);
 
-    fetch("/api/universities/" + slug)
+    fetch((API_BASE || "") + "/api/universities/" + slug)
       .then((res) => {
         if (!res.ok) throw new Error("API status " + res.status);
         return res.json();
@@ -194,13 +195,13 @@ export default function UniversityDetailClient({ initialUni }) {
   // Fetch past papers and reviews when tabs opened
   useEffect(() => {
     if (activeTab === "Past Papers" && uni) {
-      fetch("/api/pastpapers?universityId=" + uni._id)
+      fetch((API_BASE || "") + "/api/pastpapers?universityId=" + uni._id)
         .then((res) => res.json())
         .then((data) => setPapers(Array.isArray(data) ? data : []))
         .catch(() => setPapers([]));
     }
     if (activeTab === "Reviews" && uni) {
-      fetch("/api/universities/" + uni._id + "/reviews")
+      fetch((API_BASE || "") + "/api/universities/" + uni._id + "/reviews")
         .then((res) => res.json())
         .then((data) => {
           setReviewsList(data.reviews || []);
@@ -234,7 +235,7 @@ export default function UniversityDetailClient({ initialUni }) {
         return;
       }
 
-      const res = await fetch("/api/universities/" + uni._id + "/reviews", {
+      const res = await fetch((API_BASE || "") + "/api/universities/" + uni._id + "/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -292,7 +293,7 @@ export default function UniversityDetailClient({ initialUni }) {
          return;
       }
 
-      const res = await fetch("/api/alerts", {
+      const res = await fetch((API_BASE || "") + "/api/alerts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -315,7 +316,7 @@ export default function UniversityDetailClient({ initialUni }) {
 
   const trackDownload = async (paper) => {
     try {
-      await fetch("/api/pastpapers/" + paper._id + "/download", {
+      await fetch((API_BASE || "") + "/api/pastpapers/" + paper._id + "/download", {
         method: "POST",
       });
     } catch {}
@@ -396,7 +397,7 @@ export default function UniversityDetailClient({ initialUni }) {
           const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
           const token = auth?.state?.token;
           if (token) {
-            fetch(`/api/watchlist/${uniId}`, {
+            fetch(`${API_BASE || ""}/api/watchlist/${uniId}`, {
               method: "DELETE",
               headers: { Authorization: "Bearer " + token },
             }).catch(() => {});
@@ -410,7 +411,7 @@ export default function UniversityDetailClient({ initialUni }) {
           const auth = JSON.parse(localStorage.getItem("rahbar-auth") || "{}");
           const token = auth?.state?.token;
           if (token) {
-            fetch("/api/watchlist", {
+            fetch((API_BASE || "") + "/api/watchlist", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
