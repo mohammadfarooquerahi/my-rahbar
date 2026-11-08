@@ -472,9 +472,37 @@ export default function AdminPage() {
         setBookings(data.bookings || []);
       }
       if (activeTab === "Dashboard") {
-        const res = await fetch(`${API_BASE}/api/admin/dashboard`, { headers });
-        const data = await res.json();
-        setDashboardStats(data);
+        try {
+          const [dashRes, uniRes, revRes, bookRes] = await Promise.all([
+            fetch(`${API_BASE}/api/admin/dashboard`, { headers })
+              .then((r) => (r.ok ? r.json() : null))
+              .catch(() => null),
+            fetch(`${API_BASE}/api/admin/universities`, { headers })
+              .then((r) => (r.ok ? r.json() : null))
+              .catch(() => null),
+            fetch(`${API_BASE}/api/admin/reviews`, { headers })
+              .then((r) => (r.ok ? r.json() : null))
+              .catch(() => null),
+            fetch(`${API_BASE}/api/admin/bookings`, { headers })
+              .then((r) => (r.ok ? r.json() : null))
+              .catch(() => null),
+          ]);
+          if (dashRes) setDashboardStats(dashRes);
+          if (uniRes?.universities && uniRes.universities.length > 0) {
+            setUnis(uniRes.universities);
+          } else {
+            try {
+              const pubRes = await fetch(`${API_BASE}/api/universities?limit=100`);
+              const pubData = await pubRes.json();
+              const list = Array.isArray(pubData) ? pubData : (pubData.universities || []);
+              if (list.length > 0) setUnis(list);
+            } catch (_) {}
+          }
+          if (revRes?.reviews) setReviews(revRes.reviews);
+          if (bookRes?.bookings) setBookings(bookRes.bookings);
+        } catch (dashErr) {
+          console.error("Dashboard data load error:", dashErr);
+        }
       }
       if (activeTab === "Error Logs") {
         const res = await fetch(`${API_BASE}/api/admin/error-logs`, { headers });
@@ -511,9 +539,22 @@ export default function AdminPage() {
         setBlogs(loadedBlogs);
       }
       if (activeTab === "News") {
-        const res = await fetch(`${API_BASE}/api/news`, { headers });
-        const data = await res.json();
-        setNews(data || []);
+        let loadedNews = [];
+        try {
+          const res = await fetch(`${API_BASE}/api/news/admin`, { headers });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) loadedNews = data;
+          }
+        } catch (_) {}
+        if (loadedNews.length === 0) {
+          try {
+            const pubRes = await fetch(`${API_BASE}/api/news?status=all`, { headers });
+            const pubData = await pubRes.json();
+            if (Array.isArray(pubData)) loadedNews = pubData;
+          } catch (_) {}
+        }
+        setNews(loadedNews);
       }
     } catch (err) {
       console.error(err);
@@ -596,6 +637,8 @@ export default function AdminPage() {
 
     const payload = {
       ...uniForm,
+      type: (uniForm.type || "government").toLowerCase(),
+      admissionDeadline: uniForm.admissionDeadline ? new Date(uniForm.admissionDeadline) : undefined,
       established: parseInt(uniForm.established) || 0,
       admissionFee: parseInt(uniForm.admissionFee) || 0,
       hostelFee: parseInt(uniForm.hostelFee) || null,
@@ -911,7 +954,7 @@ export default function AdminPage() {
                   {[
                     {
                       label: "Total Universities",
-                      value: unis.length,
+                      value: dashboardStats?.totalUniversities ?? (unis.length || 0),
                       icon: <BookOpen size={20} />,
                       color: "text-blue-600",
                       bg: "bg-blue-100",
@@ -919,7 +962,7 @@ export default function AdminPage() {
                     },
                     {
                       label: "Pending Approvals",
-                      value: unis.filter((u) => u.status === "pending").length,
+                      value: dashboardStats?.pendingApprovals ?? (unis.filter((u) => u.status === "pending").length),
                       icon: <Clock size={20} />,
                       color: "text-amber-600",
                       bg: "bg-amber-100",
@@ -927,7 +970,7 @@ export default function AdminPage() {
                     },
                     {
                       label: "New Reviews",
-                      value: reviews.length,
+                      value: dashboardStats?.totalReviews ?? (reviews.length || 0),
                       icon: <MessageSquare size={20} />,
                       color: "text-emerald-600",
                       bg: "bg-emerald-100",
@@ -935,7 +978,7 @@ export default function AdminPage() {
                     },
                     {
                       label: "Counseling Bookings",
-                      value: bookings.length,
+                      value: dashboardStats?.totalBookings ?? (bookings.length || 0),
                       icon: <Users size={20} />,
                       color: "text-purple-600",
                       bg: "bg-purple-100",
@@ -962,7 +1005,7 @@ export default function AdminPage() {
 
 
         {/* ===== DASHBOARD TAB ===== */}
-        {activeTab === "Dashboard" && dashboardStats && (
+        {activeTab === "Dashboard" && (
           <div className="space-y-6">
             <h2
               className="text-xl font-bold"
@@ -971,33 +1014,33 @@ export default function AdminPage() {
               System Overview
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center shadow-sm">
                 <p className="text-3xl font-black text-blue-600 mb-2">
-                  {dashboardStats.totalUsers}
+                  {dashboardStats?.totalUsers ?? 0}
                 </p>
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
                   Total Users
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
-                <p className="text-3xl font-black text-green-600 mb-2">
-                  {dashboardStats.totalReviews}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center shadow-sm">
+                <p className="text-3xl font-black text-emerald-600 mb-2">
+                  {dashboardStats?.totalBlogs ?? blogs.length}
                 </p>
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
-                  Total Reviews
+                  Published Blogs
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center shadow-sm">
                 <p className="text-3xl font-black text-purple-600 mb-2">
-                  {dashboardStats.totalBookings}
+                  {dashboardStats?.totalNews ?? news.length}
                 </p>
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
-                  Consult Bookings
+                  Active News / Alerts
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center shadow-sm">
                 <p className="text-3xl font-black text-red-600 mb-2">
-                  {dashboardStats.totalErrors}
+                  {dashboardStats?.totalErrors ?? 0}
                 </p>
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">
                   Logged Errors

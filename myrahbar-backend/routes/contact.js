@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const router = express.Router();
 const sendEmail = require("../utils/sendEmail");
 const { verifyEmailConfig } = require("../utils/sendEmail");
@@ -50,33 +50,40 @@ router.get("/send-test", async (req, res) => {
 // POST /api/contact
 router.post("/", async (req, res) => {
   try {
-    const { firstName, lastName, email, message } = req.body;
+    const { name, firstName, lastName, email, phone, whatsapp, subject, message } = req.body;
 
-    if (!firstName || !email || !message) {
-      return res.status(400).json({ message: "First name, email, and message are required." });
+    const resolvedFirst = firstName || (name ? name.split(" ")[0] : "");
+    const resolvedLast = lastName || (name ? name.split(" ").slice(1).join(" ") : "");
+    const resolvedPhone = phone || whatsapp || "";
+    const resolvedSubject = subject || "General Inquiry";
+
+    if (!resolvedFirst || !email || !message) {
+      return res.status(400).json({ message: "Name, email, and message are required." });
     }
 
     // 1. Save to MongoDB immediately so inquiries are never lost
     let savedMsg = null;
     try {
       savedMsg = await ContactMessage.create({
-        firstName,
-        lastName: lastName || "",
+        firstName: resolvedFirst,
+        lastName: resolvedLast,
         email,
+        phone: resolvedPhone,
+        subject: resolvedSubject,
         message,
       });
     } catch (dbErr) {
       console.warn("Could not save contact message to database:", dbErr.message);
     }
 
-    const fullName = `${firstName} ${lastName || ""}`.trim();
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "rahbarsofficial@gmail.com";
+    const fullName = `${resolvedFirst} ${resolvedLast}`.trim();
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "farooqrahi828@gmail.com";
 
     // 2. Dispatch notification email to admin
     const adminEmailPromise = sendEmail({
       to: adminEmail,
       replyTo: email,
-      subject: `New Inquiry from ${fullName} (Rahbars)`,
+      subject: `📩 New Contact Form Inquiry: ${fullName} - ${resolvedSubject}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
@@ -94,6 +101,15 @@ router.post("/", async (req, res) => {
                 <td style="padding: 6px 0; color: #64748b;"><strong>Email:</strong></td>
                 <td style="padding: 6px 0; color: #0f172a;"><a href="mailto:${email}" style="color: #2563eb; text-decoration: none; font-weight: 500;">${email}</a></td>
               </tr>
+              ${resolvedPhone ? `
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;"><strong>Phone:</strong></td>
+                <td style="padding: 6px 0; color: #0f172a;"><a href="https://wa.me/${resolvedPhone.replace(/[^0-9]/g, '')}" style="color: #16a34a; font-weight: 600; text-decoration: none;">${resolvedPhone} (WhatsApp)</a></td>
+              </tr>` : ''}
+              <tr>
+                <td style="padding: 6px 0; color: #64748b;"><strong>Subject:</strong></td>
+                <td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${resolvedSubject}</td>
+              </tr>
               <tr>
                 <td style="padding: 6px 0; color: #64748b;"><strong>Date:</strong></td>
                 <td style="padding: 6px 0; color: #0f172a;">${new Date().toLocaleString("en-PK", { timeZone: "Asia/Karachi" })}</td>
@@ -107,7 +123,7 @@ router.post("/", async (req, res) => {
           </div>
 
           <div style="text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid #f1f5f9;">
-            <a href="mailto:${email}?subject=Re:%20Inquiry%20on%20Rahbars" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 24px; border-radius: 8px;">Reply Directly to ${firstName}</a>
+            <a href="mailto:${email}?subject=Re:%20${encodeURIComponent(resolvedSubject)}%20(Rahbars)" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 24px; border-radius: 8px;">Reply Directly to ${resolvedFirst}</a>
           </div>
 
           <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 24px; margin-bottom: 0;">Sent via Rahbars (rahbars.com)</p>

@@ -219,7 +219,9 @@ export default function HomeClient({ universities, students }) {
         <section className="max-w-7xl mx-auto px-4 py-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black text-slate-900" style={{ fontFamily: "Sora" }}>Featured Universities</h2>
-            <a href="/find-university" className="text-sm text-blue-600 hover:underline font-semibold">View All →</a>
+            <a href="/search" className="text-sm text-blue-600 hover:underline font-semibold flex items-center gap-1">
+              View All <span>&rarr;</span>
+            </a>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {universities.slice(0, 6).map((uni) => (
@@ -228,6 +230,85 @@ export default function HomeClient({ universities, students }) {
           </div>
         </section>
       )}
+
+      {/* HOW RAHBARS WORKS — 4 STEPS */}
+      <section className="bg-slate-50/70 border-t border-slate-100 py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <h2
+              className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight"
+              style={{ fontFamily: "Sora" }}
+            >
+              How Rahbars Works — <span className="text-blue-600">4 Steps</span>
+            </h2>
+            <p className="text-slate-500 text-sm md:text-base mt-2 max-w-xl mx-auto">
+              Your step-by-step roadmap from confusion to landing into your dream Pakistani university.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                step: "STEP 01",
+                emoji: "🧐",
+                title: "You are confused — we get it",
+                desc: "Hundreds of universities, different deadlines. Every student feels lost.",
+                bg: "bg-blue-50/60",
+                border: "border-blue-100",
+                badgeColor: "text-blue-700 bg-blue-100/70",
+              },
+              {
+                step: "STEP 02",
+                emoji: "📋",
+                title: "Answer 10 simple questions",
+                desc: "Tell us your budget, field, marks and goals. Under 2 minutes.",
+                bg: "bg-emerald-50/60",
+                border: "border-emerald-100",
+                badgeColor: "text-emerald-700 bg-emerald-100/70",
+              },
+              {
+                step: "STEP 03",
+                emoji: "🎯",
+                title: "Get matched to your best university",
+                desc: "Top 3 universities that fit your profile — with merit prediction.",
+                bg: "bg-amber-50/60",
+                border: "border-amber-100",
+                badgeColor: "text-amber-700 bg-amber-100/70",
+              },
+              {
+                step: "STEP 04",
+                emoji: "✅",
+                title: "Apply with full confidence",
+                desc: "Documents ready, form filled, deadline tracked. Walk in knowing what to expect.",
+                bg: "bg-purple-50/60",
+                border: "border-purple-100",
+                badgeColor: "text-purple-700 bg-purple-100/70",
+              },
+            ].map((s, idx) => (
+              <div
+                key={idx}
+                className={`bg-white rounded-3xl border ${s.border} p-7 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col`}
+              >
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-inner ${s.bg}">
+                  <span role="img" aria-label={s.title}>{s.emoji}</span>
+                </div>
+                <span className={`text-[11px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full w-fit mb-3 ${s.badgeColor}`}>
+                  {s.step}
+                </span>
+                <h3
+                  className="font-bold text-slate-800 text-lg mb-2 leading-snug"
+                  style={{ fontFamily: "Sora" }}
+                >
+                  {s.title}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed mt-auto">
+                  {s.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

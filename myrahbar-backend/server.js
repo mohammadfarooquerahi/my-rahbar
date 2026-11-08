@@ -39,6 +39,9 @@ const cookieTracker = require("./middleware/cookieTracker.js");
 
 const app = express();
 
+// Trust reverse proxy (Render, Vercel edge) so express-rate-limit and IP detection use real client IP
+app.set("trust proxy", 1);
+
 // Connect to MongoDB
 connectDB();
 startAlertCron();
@@ -53,16 +56,28 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // CORS — allow frontend
+const allowedOrigins = [
+  "https://rahbars.com",
+  "https://www.rahbars.com",
+  "https://admin.rahbars.com",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [
-      // Allow localhost only in development
-      ...(process.env.NODE_ENV !== "production" ? ["http://localhost:5173"] : []),
-      "https://rahbars.com",
-      "https://www.rahbars.com",
-      "https://admin.rahbars.com",
-      process.env.CLIENT_URL,
-    ].filter(Boolean),
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        /^http:\/\/localhost:\d+$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
     credentials: true,
   }),
 );
@@ -78,7 +93,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Rate limiting — 100 requests per minute per IP (global)
 const limiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 100,
+  max: 300,
   message: { message: "Too many requests. Please slow down." },
 });
 app.use("/api", limiter);

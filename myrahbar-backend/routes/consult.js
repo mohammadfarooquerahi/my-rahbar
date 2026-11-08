@@ -24,7 +24,7 @@ router.post("/book", async (req, res) => {
       message: message || "",
     });
 
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "rahbarsofficial@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "farooqrahi828@gmail.com";
     const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, "");
 
     // 2. Send email notification to Admin

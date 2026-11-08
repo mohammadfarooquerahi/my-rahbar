@@ -3,6 +3,8 @@ const Review = require("../models/Review");
 const Booking = require("../models/ConsultingBooking");
 const User = require("../models/User");
 const ErrorLog = require("../models/ErrorLog");
+const Blog = require("../models/Blog");
+const News = require("../models/News");
 const xlsx = require("xlsx");
 const fs = require("fs");
 const slugify = require("slugify");
@@ -62,10 +64,39 @@ const getAllUsers = async (req, res) => {
 };
 
 const getDashboardStats = async (req, res) => {
-  const [totalUsers, totalReviews, totalBookings, totalErrors] = await Promise.all([
-    User.countDocuments(), Review.countDocuments(), Booking.countDocuments(), ErrorLog.countDocuments()
-  ]);
-  res.json({ totalUsers, totalReviews, totalBookings, totalErrors });
+  try {
+    const [
+      totalUsers,
+      totalReviews,
+      totalBookings,
+      totalErrors,
+      totalUniversities,
+      pendingApprovals,
+      totalBlogs,
+      totalNews,
+    ] = await Promise.all([
+      User.countDocuments().catch(() => 0),
+      Review.countDocuments().catch(() => 0),
+      Booking.countDocuments().catch(() => 0),
+      ErrorLog.countDocuments().catch(() => 0),
+      University.countDocuments().catch(() => 0),
+      University.countDocuments({ status: "pending" }).catch(() => 0),
+      Blog.countDocuments().catch(() => 0),
+      News.countDocuments().catch(() => 0),
+    ]);
+    res.json({
+      totalUsers,
+      totalReviews,
+      totalBookings,
+      totalErrors,
+      totalUniversities,
+      pendingApprovals,
+      totalBlogs,
+      totalNews,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load dashboard stats: " + err.message });
+  }
 };
 
 const getErrorLogs = async (req, res) => {

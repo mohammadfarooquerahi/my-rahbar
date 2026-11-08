@@ -12,6 +12,7 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import { API_BASE } from "@/utils/api";
 
 const TIME_SLOTS = [
   "10:00 AM",
@@ -55,7 +56,7 @@ export default function CounselingPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/consult/book", {
+      const res = await fetch(`${API_BASE}/api/consult/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -12,6 +12,11 @@ const protect = async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
+  // Fallback to cookie named token
+  if (!token && req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
   if (!token) {
     return res.status(401).json({ message: "Not authorized. Please login." });
   }
@@ -41,9 +46,14 @@ const adminOnly = (req, res, next) => {
 // Optional auth — populates req.user if valid token, never blocks
 const optionalAuth = async (req, res, next) => {
   try {
+    let token;
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) return next();
-    const token = authHeader.split(" ")[1];
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+    if (!token) return next();
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id).select("-password");
   } catch {

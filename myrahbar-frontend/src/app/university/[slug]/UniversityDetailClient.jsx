@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link"; import { useSearchParams, useRouter, useParams } from "next/navigation";
 import {
@@ -21,6 +21,8 @@ import {
   Eye,
   X,
   MessageCircle,
+  ExternalLink,
+  ArrowRight,
 } from "lucide-react";
 const Helmet = () => null;
 import { useWatchlistStore } from "@/store";
@@ -259,8 +261,10 @@ export default function UniversityDetailClient({ initialUni }) {
 
   const setDeadlineAlert = async () => {
     try {
-      const token = (typeof window !== "undefined" ? JSON.parse(localStorage.getItem("rahbar-auth") || "{}") : {})
-        ?.state?.token;
+      const token =
+        (typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem("rahbar-auth") || "{}")?.state?.token
+          : null);
 
       if (!token) {
         toast.error("Please login to set an alert");
@@ -268,30 +272,34 @@ export default function UniversityDetailClient({ initialUni }) {
       }
 
       // Compute the actual nearest deadline date string from the array
-      let actualDeadlineDate = uni.admissionDeadline; // fallback to legacy
+      let actualDeadlineDate = uni.admissionDeadline || "2026-08-30";
       if (uni.admissionDeadlines?.length > 0) {
         let minDays = null;
-        const filteredDeadlines = deadlineFilter === "All"
-          ? uni.admissionDeadlines
-          : uni.admissionDeadlines.filter(dl => dl.degreeLevel === deadlineFilter);
+        const filteredDeadlines =
+          deadlineFilter === "All"
+            ? uni.admissionDeadlines
+            : uni.admissionDeadlines.filter((dl) => dl.degreeLevel === deadlineFilter);
 
-        filteredDeadlines.forEach(dl => {
+        filteredDeadlines.forEach((dl) => {
           if (dl.deadline) {
             const d = daysUntilDeadline(dl.deadline);
-            if (d !== null && d >= 0) { // only future or today deadlines
+            if (d !== null && d >= 0) {
               if (minDays === null || d < minDays) {
                 minDays = d;
                 actualDeadlineDate = dl.deadline;
               }
+            } else if (!actualDeadlineDate) {
+              actualDeadlineDate = dl.deadline;
             }
           }
         });
+
+        if (!actualDeadlineDate && filteredDeadlines[0]?.deadline) {
+          actualDeadlineDate = filteredDeadlines[0].deadline;
+        }
       }
 
-      if (!actualDeadlineDate) {
-         toast.error("No active deadline found to alert you for.");
-         return;
-      }
+      const targetUniId = uni._id || uni.id || uni.slug;
 
       const res = await fetch((API_BASE || "") + "/api/alerts", {
         method: "POST",
@@ -300,17 +308,17 @@ export default function UniversityDetailClient({ initialUni }) {
           Authorization: "Bearer " + token,
         },
         body: JSON.stringify({
-          universityId: uniId,
+          universityId: targetUniId,
           universityName: uni.name,
           deadline: actualDeadlineDate,
           degreeLevel: deadlineFilter || "All",
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      toast.success(data.message);
+      if (!res.ok) throw new Error(data.message || "Failed to set alert");
+      toast.success(data.message || "Deadline alert activated successfully!");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to activate deadline alert");
     }
   };
 
@@ -591,10 +599,26 @@ export default function UniversityDetailClient({ initialUni }) {
                           className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-semibold transition-colors"
                         >
                           <Globe size={14} />
-                          Official Portal â†—
+                          <span>Official Portal</span>
+                          <ExternalLink size={12} />
                         </a>
                       )}
                     </div>
+
+                    {uni.campuses?.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                        <span className="text-xs font-semibold text-slate-400">Campuses:</span>
+                        {uni.campuses.map((c) => (
+                          <span
+                            key={c}
+                            className="flex items-center gap-1 text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md font-medium"
+                          >
+                            <MapPin size={10} className="text-slate-400" />
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -628,21 +652,6 @@ export default function UniversityDetailClient({ initialUni }) {
                   </Link>
                 </div>
               </div>
-
-              {uni.campuses?.length > 0 && (
-                <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-400">Campuses:</span>
-                  {uni.campuses.map((c) => (
-                    <span
-                      key={c}
-                      className="flex items-center gap-1 text-xs bg-slate-50 text-slate-600 border border-slate-200/60 px-3 py-1 rounded-full font-medium"
-                    >
-                      <MapPin size={10} className="text-slate-400" />
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Quick 4-Metric Highlights Strip */}
@@ -677,24 +686,27 @@ export default function UniversityDetailClient({ initialUni }) {
               </div>
             </div>
 
-            {/* Tabs */}
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="flex overflow-x-auto border-b border-slate-200 scrollbar-none px-4 gap-2 pt-2 bg-slate-50/50">
-                {TABS.map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={
-                      "px-4 py-3 text-xs md:text-sm font-bold whitespace-nowrap rounded-t-xl transition-all border-b-2 flex items-center gap-2 " +
-                      (activeTab === tab
-                        ? "border-blue-600 text-blue-600 bg-white shadow-sm"
-                        : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/60")
-                    }
-                  >
-                    <span>{TAB_ICONS[tab] || "📌"}</span>
-                    <span>{tab}</span>
-                  </button>
-                ))}
+            {/* Tabs Bar — Single Frame, Compact & No Scroll */}
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 border-b border-slate-200 bg-slate-50/70 p-1.5 gap-1">
+                {TABS.map((tab) => {
+                  const isActive = activeTab === tab;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={
+                        "py-2.5 px-1.5 flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-all text-center " +
+                        (isActive
+                          ? "bg-white text-blue-700 shadow-sm border border-slate-200/80"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-white/60")
+                      }
+                    >
+                      <span className="text-sm shrink-0">{TAB_ICONS[tab] || "📌"}</span>
+                      <span className="truncate">{tab}</span>
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="p-6">
@@ -705,7 +717,7 @@ export default function UniversityDetailClient({ initialUni }) {
                     {uni.description && (
                       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                         <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2 text-base">
-                          Ã°Å¸â€œâ€“ About {uni.shortName || uni.name}
+                          <span>📖</span> About {uni.shortName || uni.name}
                         </h4>
                         <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                           {uni.description}
@@ -725,7 +737,7 @@ export default function UniversityDetailClient({ initialUni }) {
                     <div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                          Ã°Å¸â€”â€œ Admission Deadlines
+                          <span>📅</span> Admission Deadlines
                         </h3>
                         {uni.admissionDeadlines?.length > 0 && (
                           <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -1394,8 +1406,7 @@ export default function UniversityDetailClient({ initialUni }) {
                               {paper.subject}
                             </p>
                             <p className="text-xs text-slate-400 mt-0.5">
-                              {paper.year} Ã¢â‚¬Â¢ {paper.degreeLevel} Ã¢â‚¬Â¢{" "}
-                              {paper.fileSize}
+                              {paper.year} • {paper.degreeLevel} • {paper.fileSize}
                             </p>
                           </div>
                           <div className="flex gap-2">
@@ -1429,7 +1440,7 @@ export default function UniversityDetailClient({ initialUni }) {
                           Get 10 Years Past Papers
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5">
-                          2014Ã¢â‚¬â€œ2024 solved papers Ã¢â‚¬Â¢ Fast delivery via WhatsApp
+                          2014–2024 solved papers • Fast delivery via WhatsApp
                         </p>
                       </div>
                       <div className="flex items-center gap-2 bg-green-500 text-white text-xs font-bold px-3 py-2 rounded-lg shrink-0">
@@ -1518,34 +1529,58 @@ export default function UniversityDetailClient({ initialUni }) {
                 </div>
               )}
 
-              <a href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
-                target="_blank" rel="noopener noreferrer"
-                className="mt-2 block w-full py-3 text-white text-sm font-semibold rounded-xl text-center hover:opacity-90 transition-opacity"
-                style={{ background: "var(--green)" }}>Apply Now Ã¢â€ â€™</a>
+              {/* Apply Now Button */}
+              <a
+                href={uni.website ? (uni.website.startsWith("http") ? uni.website : "https://" + uni.website) : "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 w-full py-3.5 px-4 text-white text-sm font-bold rounded-2xl flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <span>Apply on Official Portal</span>
+                <ExternalLink size={16} />
+              </a>
 
-              <button onClick={setDeadlineAlert}
-                className="mt-2 w-full py-2.5 text-sm font-medium rounded-xl border flex items-center justify-center gap-2 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 transition-colors">
-                <Bell size={14} /> Set Deadline Alert
+              {/* Set Deadline Alert */}
+              <button
+                onClick={setDeadlineAlert}
+                className="mt-2.5 w-full py-3 text-sm font-bold rounded-2xl border flex items-center justify-center gap-2 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 transition-colors shadow-sm"
+              >
+                <Bell size={16} className="text-blue-600" />
+                <span>Set Deadline Alert</span>
               </button>
 
-              <button onClick={toggleWatch}
-                className={"mt-2 w-full py-2.5 text-sm font-medium rounded-xl border transition-colors flex items-center justify-center gap-2 " + (watched ? "bg-red-50 text-red-600 border-red-200" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300")}>
+              {/* Watchlist */}
+              <button
+                onClick={toggleWatch}
+                className={
+                  "mt-2 w-full py-2.5 text-sm font-semibold rounded-2xl border transition-colors flex items-center justify-center gap-2 " +
+                  (watched
+                    ? "bg-rose-50 text-rose-600 border-rose-200"
+                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300")
+                }
+              >
                 <Heart size={14} fill={watched ? "currentColor" : "none"} />
-                {watched ? "Remove from Watchlist" : "Add to Watchlist"}
+                <span>{watched ? "Remove from Watchlist" : "Add to Watchlist"}</span>
               </button>
             </div>
 
-            {/* Compare */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5">
-              <p className="text-sm font-semibold text-slate-700 mb-2">
-                Compare Universities
+            {/* Compare Universities Card */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-1.5">
+                <BarChart2 size={18} className="text-blue-600" />
+                <p className="text-sm font-bold text-slate-800" style={{ fontFamily: "Sora" }}>
+                  Compare Universities
+                </p>
+              </div>
+              <p className="text-xs text-slate-500 mb-3">
+                Side-by-side merit, fee structures, and campus comparison.
               </p>
               <Link
                 href={"/compare?uni1=" + uni.slug}
-                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                className="w-full py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-blue-100"
               >
-                <BarChart2 size={14} />
-                Add to comparison Ã¢â€ â€™
+                <span>Add to comparison</span>
+                <ChevronRight size={14} />
               </Link>
             </div>
 

@@ -317,6 +317,12 @@ router.post("/submit-university", async (req, res) => {
       status: "pending",
     };
 
+    let candidateSlug = payload.slug;
+    const existing = await University.findOne({ slug: candidateSlug });
+    if (existing) {
+      payload.slug = `${candidateSlug}-${Date.now().toString().slice(-4)}`;
+    }
+
     const uni = await University.create(payload);
     res.status(201).json(uni);
   } catch (err) {

@@ -48,18 +48,29 @@ const upload = multer({
   },
 });
 
-// Middleware for clean JSON error responses from multer
+// Middleware for clean JSON error responses from multer (accepts featuredImage, image, or file)
 const handleUpload = (req, res, next) => {
-  upload.single("featuredImage")(req, res, (err) => {
+  upload.fields([
+    { name: "featuredImage", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+    { name: "file", maxCount: 1 },
+  ])(req, res, (err) => {
     if (err) {
       return res.status(400).json({ message: err.message || "Failed to upload image." });
+    }
+    if (req.files) {
+      req.file =
+        req.files["featuredImage"]?.[0] ||
+        req.files["image"]?.[0] ||
+        req.files["file"]?.[0] ||
+        req.file;
     }
     next();
   });
 };
 
 // Public routes
-router.get("/", getBlogs);
+router.get("/", optionalAuth, getBlogs);
 
 // Specific admin actions (MUST be placed before :slug to prevent matching as a slug)
 router.post("/seed", protect, adminOnly, seedBlogs);

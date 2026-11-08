@@ -7,19 +7,22 @@ const News = require("../models/News");
 ───────────────────────────────────────────── */
 const getActiveNews = async (req, res) => {
   try {
-    const { type, page = 1, limit = 20 } = req.query;
+    const { type, page = 1, limit = 50, status } = req.query;
 
-    const query = { isActive: true };
+    const query = {};
     if (type && ["news", "notification", "announcement"].includes(type)) {
       query.type = type;
     }
 
-    // Filter out expired items
-    query.$or = [
-      { expiresAt: { $exists: false } },
-      { expiresAt: null },
-      { expiresAt: { $gt: new Date() } },
-    ];
+    if (status !== "all") {
+      query.isActive = true;
+      // Filter out expired items
+      query.$or = [
+        { expiresAt: { $exists: false } },
+        { expiresAt: null },
+        { expiresAt: { $gt: new Date() } },
+      ];
+    }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 

@@ -102,12 +102,15 @@ const createBlog = async (req, res) => {
     try { parsedFaqs = typeof faqs === "string" ? JSON.parse(faqs) : faqs; } catch {}
   }
 
+  const rawTags = tags !== undefined ? tags : (req.body["tags[]"] || []);
+  const rawKeywords = keywords !== undefined ? keywords : (req.body["keywords[]"] || []);
+
   const blog = await Blog.create({
     title, slug, content,
     excerpt: excerpt || content.replace(/<[^>]*>/g, "").substring(0, 160) + "...",
     category,
-    tags: tags ? (typeof tags === "string" ? tags.split(",").map(t => t.trim()) : tags) : [],
-    keywords: keywords ? (typeof keywords === "string" ? keywords.split(",").map(k => k.trim()) : keywords) : [],
+    tags: rawTags ? (typeof rawTags === "string" ? rawTags.split(",").map(t => t.trim()) : rawTags) : [],
+    keywords: rawKeywords ? (typeof rawKeywords === "string" ? rawKeywords.split(",").map(k => k.trim()) : rawKeywords) : [],
     focusKeyword: focusKeyword || "",
     canonicalUrl: canonicalUrl || "",
     noIndex: noIndex === true || noIndex === "true",
@@ -144,8 +147,10 @@ const updateBlog = async (req, res) => {
   if (content) blog.content = content;
   if (excerpt) blog.excerpt = excerpt;
   if (category) blog.category = category;
-  if (tags !== undefined) blog.tags = typeof tags === "string" ? tags.split(",").map(t => t.trim()) : tags;
-  if (keywords !== undefined) blog.keywords = typeof keywords === "string" ? keywords.split(",").map(k => k.trim()) : keywords;
+  const rawTags = tags !== undefined ? tags : req.body["tags[]"];
+  const rawKeywords = keywords !== undefined ? keywords : req.body["keywords[]"];
+  if (rawTags !== undefined) blog.tags = typeof rawTags === "string" ? rawTags.split(",").map(t => t.trim()) : rawTags;
+  if (rawKeywords !== undefined) blog.keywords = typeof rawKeywords === "string" ? rawKeywords.split(",").map(k => k.trim()) : rawKeywords;
   if (focusKeyword !== undefined) blog.focusKeyword = focusKeyword;
   if (canonicalUrl !== undefined) blog.canonicalUrl = canonicalUrl;
   if (noIndex !== undefined) blog.noIndex = noIndex === true || noIndex === "true";
