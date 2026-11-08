@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
     ? slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
     : "University";
 
-  const title = uni?.seoTitle || `${uni?.name || prettyName} — Admission, Merit, Fee 2026 | Rahbars`;
+  const title = uni?.seoTitle?.replace(/\s*\|\s*Rahbars.*$/i, "") || `${uni?.name || prettyName} — Admission, Merit, Fee 2026`;
   const description =
     uni?.seoDescription ||
     `Explore ${uni?.name || prettyName} (${uni?.city || "Pakistan"}). Check 2026 admission deadlines, eligibility criteria, fee structure, closing merit, and departments.`;

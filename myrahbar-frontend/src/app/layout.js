@@ -6,7 +6,7 @@ export const metadata = {
   metadataBase: new URL("https://www.rahbars.com"),
   title: {
     default: "Rahbars | Pakistan's Smartest University Admission Platform",
-    template: "%s | Rahbars",
+    template: "%s",
   },
   description:
     "Rahbars helps Pakistani students find the best universities. Calculate merit, check fee structures, get deadline alerts, and apply smarter.",
