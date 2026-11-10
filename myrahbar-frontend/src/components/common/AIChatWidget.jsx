@@ -1,21 +1,10 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 
-const SYSTEM = `You are Rahbars AI, a helpful guide for Pakistani students.
-You ONLY answer questions about:
-- Universities in Pakistan (especially Karachi)
-- Admission process, merit, aggregate calculation
-- Scholarships, fee structure, hostel
-- Career paths and degree selection
-- Required documents for admission
-
-If someone asks anything unrelated, say:
-"I am only here to help with university admissions and education in Pakistan. Ask me about universities, merit, or career guidance!"
-
-Be friendly, brief, and supportive. Use PKR for amounts.`;
-
 export default function AIChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,11 +15,29 @@ export default function AIChatWidget() {
         "Assalamu Alaikum! I am your Rahbars AI guide. Ask me anything about university admissions, merit calculation, scholarships, or career guidance in Pakistan 🎓",
     },
   ]);
-  const bottomRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+
+  const scrollToBottom = (behavior = "smooth") => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior,
+      });
+    }
+  };
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, open]);
+    if (open) {
+      scrollToBottom("smooth");
+      const t = setTimeout(() => scrollToBottom("smooth"), 50);
+      return () => clearTimeout(t);
+    }
+  }, [messages, open, loading]);
+
+  // Hide floating widget on full AI chat page and admin
+  if (pathname === "/career-match" || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const send = async () => {
     const text = input.trim();
@@ -40,6 +47,7 @@ export default function AIChatWidget() {
     setMessages(updated);
     setInput("");
     setLoading(true);
+    setTimeout(() => scrollToBottom("smooth"), 20);
 
     try {
       const res = await fetch("/api/ai/chat", {
@@ -51,11 +59,12 @@ export default function AIChatWidget() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Failed to get AI response");
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+      setTimeout(() => scrollToBottom("smooth"), 50);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -64,6 +73,7 @@ export default function AIChatWidget() {
           content: "Sorry, could not connect. Please try again.",
         },
       ]);
+      setTimeout(() => scrollToBottom("smooth"), 50);
     } finally {
       setLoading(false);
     }
@@ -75,8 +85,9 @@ export default function AIChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full text-white shadow-xl flex items-center justify-center pulse-green transition-all hover:scale-105"
+          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full text-white shadow-xl flex items-center justify-center pulse-green transition-all hover:scale-105 cursor-pointer"
           style={{ background: "var(--green)" }}
+          aria-label="Open AI Chat Assistant"
         >
           <MessageCircle size={24} />
         </button>
@@ -98,25 +109,21 @@ export default function AIChatWidget() {
                 <Bot size={16} />
               </div>
               <div>
-                <p
-                  className="font-semibold text-sm"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  Rahbar AI Guide
-                </p>
-                <p className="text-xs text-blue-200">Education help only</p>
+                <p className="font-semibold text-sm leading-tight">Rahbars AI Guide</p>
+                <p className="text-[11px] text-green-300">● Online</p>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              aria-label="Close Chat"
             >
               <X size={16} />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
             {messages.map((m, i) => (
               <div
                 key={i}
@@ -140,7 +147,7 @@ export default function AIChatWidget() {
                 </div>
                 <div
                   className={
-                    "max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed " +
+                    "max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap " +
                     (m.role === "user"
                       ? "bg-blue-600 text-white rounded-tr-sm"
                       : "bg-white text-slate-700 border border-slate-100 rounded-tl-sm")
@@ -175,8 +182,6 @@ export default function AIChatWidget() {
                 </div>
               </div>
             )}
-
-            <div ref={bottomRef} />
           </div>
 
           {/* Input */}
@@ -192,8 +197,9 @@ export default function AIChatWidget() {
               <button
                 onClick={send}
                 disabled={!input.trim() || loading}
-                className="p-1.5 rounded-lg text-white disabled:opacity-40 transition-opacity"
+                className="p-1.5 rounded-lg text-white disabled:opacity-40 transition-opacity cursor-pointer"
                 style={{ background: "var(--navy)" }}
+                aria-label="Send message"
               >
                 <Send size={14} />
               </button>
@@ -204,4 +210,3 @@ export default function AIChatWidget() {
     </>
   );
 }
-

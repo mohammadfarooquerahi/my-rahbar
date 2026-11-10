@@ -11,6 +11,31 @@ const STARTER_QUESTIONS = [
   "What is the salary of a software engineer in Karachi?",
 ];
 
+// Helper to format assistant responses (handles **bold**, bullet points, and newlines)
+function formatAssistantMessage(content) {
+  if (!content) return null;
+  const lines = content.split("\n");
+  return lines.map((line, lIdx) => {
+    const parts = line.split(/(\*\*[^*]+\*\*)/g);
+    const formatted = parts.map((part, pIdx) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={pIdx} className="font-bold text-slate-900">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+
+    return (
+      <span key={lIdx} className="block min-h-[1.25rem]">
+        {formatted}
+      </span>
+    );
+  });
+}
+
 export default function CareerMatchPage() {
   const [messages, setMessages] = useState([
     {
@@ -28,16 +53,42 @@ What is your question?`,
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesContainerRef = useRef(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
+  const scrollToBottom = (behavior = "smooth") => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior,
+      });
+    }
+  };
+
+  // Scroll to latest message whenever messages or loading state changes
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom("smooth");
+    const t = setTimeout(() => scrollToBottom("smooth"), 60);
+    return () => clearTimeout(t);
   }, [messages, loading]);
 
-  // Focus input on mount
+  // Lock outer window scrolling so the page never jumps to the footer
   useEffect(() => {
-    inputRef.current?.focus();
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+
+    inputRef.current?.focus({ preventScroll: true });
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
   }, []);
 
   const send = async (text) => {
@@ -49,6 +100,9 @@ What is your question?`,
     setInput("");
     setLoading(true);
 
+    // Immediately scroll down to reveal the user's message
+    setTimeout(() => scrollToBottom("smooth"), 20);
+
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
@@ -59,22 +113,27 @@ What is your question?`,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Failed to fetch response");
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+      setTimeout(() => scrollToBottom("smooth"), 50);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, could not connect. Please try again.",
+          content: "Sorry, could not connect to AI advisor. Please try again.",
         },
       ]);
+      setTimeout(() => scrollToBottom("smooth"), 50);
     } finally {
       setLoading(false);
-      inputRef.current?.focus();
+      setTimeout(() => {
+        inputRef.current?.focus({ preventScroll: true });
+        scrollToBottom("smooth");
+      }, 80);
     }
   };
 
@@ -96,19 +155,21 @@ What is your question?`,
         <meta name="twitter:description" content="Confused about your career? Chat with our AI counselor about degrees, scope, and admissions." />
       </Helmet>
 
-      {/* Full-screen chat layout — fills viewport below navbar */}
-      <div
-        className="flex flex-col"
-        style={{ height: "calc(100vh - 64px)" }}
-      >
-        {/* Messages area */}
-        <div className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
-            {/* Header — only shown at the top */}
+      {/* Full-screen chat layout — strictly contained within viewport height below navbar */}
+      <div className="flex flex-col flex-1 h-[calc(100dvh-4rem)] md:h-[calc(100dvh-5rem)] max-h-[calc(100dvh-4rem)] md:max-h-[calc(100dvh-5rem)] overflow-hidden bg-slate-50">
+        
+        {/* Messages area — scrollable container */}
+        <div
+          ref={messagesContainerRef}
+          className="flex-1 min-h-0 overflow-y-auto px-4 py-4 sm:py-6 overscroll-contain"
+        >
+          <div className="max-w-3xl mx-auto space-y-4">
+            
+            {/* Header / Intro — only shown at the top when starting */}
             {messages.length <= 1 && (
-              <div className="text-center py-4 fade-up">
+              <div className="text-center py-4 sm:py-6 fade-up">
                 <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm"
                   style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
                 >
                   <Sparkles size={26} className="text-white" />
@@ -119,8 +180,8 @@ What is your question?`,
                 >
                   AI Career Counselor
                 </h1>
-                <p className="text-slate-500 text-sm">
-                  Ask any question about careers, degrees, and job market in Pakistan
+                <p className="text-slate-500 text-sm max-w-md mx-auto">
+                  Ask any question about degrees, careers, merit, and job market scope in Pakistan
                 </p>
 
                 {/* Starter questions */}
@@ -129,7 +190,7 @@ What is your question?`,
                     <button
                       key={q}
                       onClick={() => send(q)}
-                      className="text-xs bg-white border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-700 hover:shadow-sm px-3 py-2 rounded-xl transition-all text-left"
+                      className="text-xs bg-white border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-700 hover:shadow-sm px-3.5 py-2 rounded-xl transition-all text-left cursor-pointer active:scale-95"
                     >
                       {q}
                     </button>
@@ -150,10 +211,10 @@ What is your question?`,
                 {/* Avatar */}
                 <div
                   className={
-                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 " +
+                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-xs " +
                     (m.role === "user"
                       ? "bg-blue-600 text-white"
-                      : "bg-white border border-slate-200 shadow-sm")
+                      : "bg-white border border-slate-200")
                   }
                 >
                   {m.role === "user" ? (
@@ -166,13 +227,13 @@ What is your question?`,
                 {/* Bubble */}
                 <div
                   className={
-                    "max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap " +
+                    "max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap " +
                     (m.role === "user"
-                      ? "bg-blue-600 text-white rounded-tr-sm"
+                      ? "bg-blue-600 text-white rounded-tr-sm shadow-sm"
                       : "bg-white text-slate-700 border border-slate-100 shadow-sm rounded-tl-sm")
                   }
                 >
-                  {m.content}
+                  {m.role === "user" ? m.content : formatAssistantMessage(m.content)}
                 </div>
               </div>
             ))}
@@ -180,21 +241,21 @@ What is your question?`,
             {/* Typing indicator */}
             {loading && (
               <div className="flex gap-3 fade-up">
-                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
                   <Bot size={14} className="text-indigo-600" />
                 </div>
                 <div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-tl-sm px-4 py-3">
                   <div className="flex gap-1.5 items-center">
                     <span
-                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
                       style={{ animationDelay: "0ms" }}
                     />
                     <span
-                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
                       style={{ animationDelay: "150ms" }}
                     />
                     <span
-                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
                       style={{ animationDelay: "300ms" }}
                     />
                   </div>
@@ -202,33 +263,34 @@ What is your question?`,
               </div>
             )}
 
-            <div ref={bottomRef} />
+            <div ref={bottomRef} className="h-1" />
           </div>
         </div>
 
-        {/* Input bar — sticky at bottom */}
-        <div className="bg-white border-t border-slate-200 px-4 py-3">
+        {/* Input bar — pinned at bottom */}
+        <div className="shrink-0 bg-white border-t border-slate-200 px-4 py-3 z-10 shadow-[0_-2px_10px_rgba(0,0,0,0.03)]">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-3 bg-slate-100 rounded-xl px-4 py-1">
-              <Sparkles size={15} className="text-indigo-400 shrink-0" />
+            <div className="flex items-center gap-3 bg-slate-100 rounded-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:bg-white transition-all border border-transparent focus-within:border-indigo-200">
+              <Sparkles size={16} className="text-indigo-500 shrink-0" />
               <input
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
                 placeholder="Ask about careers, salaries, or which degree to choose..."
-                className="flex-1 bg-transparent py-2.5 text-sm outline-none text-slate-700 placeholder:text-slate-400"
+                className="flex-1 bg-transparent py-2 text-sm outline-none text-slate-800 placeholder:text-slate-400"
               />
               <button
                 onClick={() => send()}
                 disabled={!input.trim() || loading}
-                className="p-2 rounded-xl text-white disabled:opacity-40 transition-all hover:scale-105 shrink-0"
+                className="p-2 rounded-xl text-white disabled:opacity-40 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
                 style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+                aria-label="Send message"
               >
                 <Send size={14} />
               </button>
             </div>
-            <p className="text-xs text-center text-slate-400 mt-1.5">
+            <p className="text-[11px] text-center text-slate-400 mt-1.5">
               AI guidance only — always verify with official university sources
             </p>
           </div>
@@ -237,4 +299,3 @@ What is your question?`,
     </>
   );
 }
-
